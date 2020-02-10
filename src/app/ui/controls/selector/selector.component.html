@@ -1,1 +1,3 @@
-<p>selector works!</p>
+<mat-button-toggle-group [(value)]="initialValue" (change)="valueChanged($event)" #group="matButtonToggleGroup">
+  <mat-button-toggle *ngFor="let item of toggleOptions; let i = index;" [value]="i">{{item}}</mat-button-toggle>
+</mat-button-toggle-group>
