@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SelectionData, Labels, Values } from '../selector/selection-data';
 
 @Component({
   selector: 'app-control-factors',
