@@ -17,7 +17,8 @@ import { ControlFactorsComponent } from './control-factors/control-factors.compo
   ],
   exports: [
     NavBarComponent,
-    SelectorComponent
+    SelectorComponent,
+    ControlFactorsComponent
   ]
 })
 export class OeiControlsModule { }

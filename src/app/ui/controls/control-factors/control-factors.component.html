@@ -1,1 +1,105 @@
-<p>control-factors works!</p>
+<div class="control-factors-parent">
+  <div class="container-fluid">
+
+    <!-- INOP ENGINE -->
+    <div class="row mb-auto align-items-center">
+      <div class="col-4">
+        <h5 class="text-center">INOP. ENGINE</h5>
+      </div>
+      <div class="col-8">
+        <app-selector [toggleOptions]="['LEFT','RIGHT']" [initialValue]="0"></app-selector>
+      </div>
+    </div>
+
+    <!-- POWER -->
+    <div class="row align-items-center">
+      <div class="col-4">
+        <h5 class="text-center">POWER</h5>
+      </div>
+      <div class="col-8">
+        <app-selector [toggleOptions]="['IDLE','-','-','-','FULL']" [initialValue]="4"></app-selector>
+      </div>
+    </div>
+
+    <!-- DENSITY ALTITUDE -->
+    <div class="row align-items-center">
+      <div class="col-4">
+        <h5 class="text-center">DENSITY ALTITUDE</h5>
+      </div>
+      <div class="col-8">
+        <app-selector [toggleOptions]="['0','1500','3000','4500','6000']" [initialValue]="2"></app-selector>
+      </div>
+    </div>
+
+    <!-- PROPELLER -->
+    <div class="row align-items-center">
+      <div class="col-4">
+        <h5 class="text-center">PROPELLER</h5>
+      </div>
+      <div class="col-8">
+        <app-selector [toggleOptions]="['WINDMILL','FEATHER']" [initialValue]="0"></app-selector>
+      </div>
+    </div>
+
+    <!-- CONTROL TECHNIQUE -->
+    <div class="row align-items-center">
+      <div class="col-4">
+        <h5 class="text-center">CONTROL TECHNIQUE</h5>
+      </div>
+      <div class="col-8">
+        <app-selector [toggleOptions]="['WINGS LEVEL','ZERO SIDE SLIP']" [initialValue]="1"></app-selector>
+      </div>
+    </div>
+
+    <!-- AIRSPEED (KIAS) -->
+    <div class="row align-items-center">
+      <div class="col-4">
+        <h5 class="text-center">AIRSPEED (KIAS)</h5>
+      </div>
+      <div class="col-8">
+        <app-selector [toggleOptions]="['83','-','88','-','93']" [initialValue]="2"></app-selector>
+      </div>
+    </div>
+
+    <!-- WEIGHT -->
+    <div class="row align-items-center">
+      <div class="col-4">
+        <h5 class="text-center">WEIGHT</h5>
+      </div>
+      <div class="col-8">
+        <app-selector [toggleOptions]="['MIN','-','-','-','MAX']" [initialValue]="0"></app-selector>
+      </div>
+    </div>
+
+    <!-- CENTER OF GRAVTY -->
+    <div class="row align-items-center">
+      <div class="col-4">
+        <h5 class="text-center">CENTER OF GRAVITY</h5>
+      </div>
+      <div class="col-8">
+        <app-selector [toggleOptions]="['AFT','-','-','-','FORE']" [initialValue]="0"></app-selector>
+      </div>
+    </div>
+
+    <!-- FLAPS -->
+    <div class="row align-items-center">
+      <div class="col-4">
+        <h5 class="text-center">FLAPS</h5>
+      </div>
+      <div class="col-8">
+        <app-selector [toggleOptions]="['0','10','25','40']" [initialValue]="0"></app-selector>
+      </div>
+    </div>
+
+    <!-- LANDING GEAR -->
+    <div class="row align-items-center">
+      <div class="col-4">
+        <h5 class="text-center">LANDING GEAR</h5>
+      </div>
+      <div class="col-8">
+        <app-selector [toggleOptions]="['UP','DOWN']" [initialValue]="0"></app-selector>
+      </div>
+    </div>
+
+  </div>
+</div>
