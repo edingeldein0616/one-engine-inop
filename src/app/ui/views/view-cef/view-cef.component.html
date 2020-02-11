@@ -1,20 +1,87 @@
 <div class="panel data">
 
-  <div class="panel control">
-    <app-control-factors [disablePower]="true"></app-control-factors>
+</div>
+
+<div class="panel control">
+
+  <div class="container-fluid">
+
+    <div class="row control">
+      <div class="col">
+        <h2 class="text-center">CRITICAL ENGINE FACTORS</h2>
+      </div>
+    </div>
+
+    <div class="row control">
+      <div class="col-4">
+        <h5 class="text-center">INOP. ENGINE</h5>
+      </div>
+      <div class="col-8">
+        <app-selector label="INOP. ENGINE" [useValue]="true" [toggleOptions]="['LEFT','RIGHT']" [initialValue]="0"></app-selector>
+      </div>
+    </div>
+
+    <div class="row control">
+      <div class="col-4">
+        <h5 class="text-center">ENGINE CONFIG.</h5>
+      </div>
+      <div class="col-8">
+        <app-selector label="ENGIN CONFIG." [useValue]="true" [toggleOptions]="['CONVENTIONAL', 'COUNTER ROT.']" [initialValue]="0"></app-selector>
+      </div>
+    </div>
+
+    <div class="row control">
+      <div class="col-4">
+        <h5 class="text-center">P-FACTOR</h5>
+      </div>
+      <div class="col-8">
+        <p class="text-center">Single toggle control goes here.</p>
+      </div>
+    </div>
+
+    <div class="row control">
+      <div class="col-4">
+        <h5 class="text-center">SPIRALING SLIPSTREAM</h5>
+      </div>
+      <div class="col-8">
+        <p class="text-center">Single toggle control goes here.</p>
+      </div>
+    </div>
+
+    <div class="row control">
+      <div class="col-4">
+        <h5 class="text-center">ACCELERATED SLIPSTREAM</h5>
+      </div>
+      <div class="col-8">
+        <p class="text-center">Single toggle control goes here.</p>
+      </div>
+    </div>
+
+    <div class="row control">
+      <div class="col-4">
+        <h5 class="text-center">TORQUE</h5>
+      </div>
+      <div class="col-8">
+        <p class="text-center">Single toggle control goes here.</p>
+      </div>
+    </div>
+
   </div>
-  <div class="panel description">
 
-    <p>
-      This section covers single-engine performance. Change the factor settings on the right to see the resulting
-      effects
-      on the aircraft. Click on the "Data" and "Control Factors" text labels to read descriptive text here. Clicking on
-      the graphics above
-      whenever the cursor changes to a pointing hand will also display additional text here.
-    </p>
+</div>
 
+<div class="panel description">
 
-  </div>
-  <div class="panel logo">
+  <p>
+    This section covers single-engine performance. Change the factor settings on the right to see the resulting
+    effects
+    on the aircraft. Click on the "Data" and "Control Factors" text labels to read descriptive text here. Clicking on
+    the graphics above
+    whenever the cursor changes to a pointing hand will also display additional text here.
+  </p>
 
-  </div>
+</div>
+
+<div class="panel logo">
+
+</div>
