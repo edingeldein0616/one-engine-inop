@@ -1,6 +1,14 @@
 <div class="control-factors-parent">
   <div class="container-fluid">
 
+    <!-- Title -->
+    <div class="row mb-auto align-items-center">
+      <div class="col">
+        <h2 class="text-center">Control Factors</h2>
+        <hr>
+      </div>
+    </div>
+
     <!-- INOP ENGINE -->
     <div class="row mb-auto align-items-center">
       <div class="col-4">
@@ -17,7 +25,12 @@
         <h5 class="text-center">POWER</h5>
       </div>
       <div class="col-8">
-        <app-selector label="POWER" [useValue]="false" [toggleOptions]="['IDLE','-','-','-','FULL']" [initialValue]="4"></app-selector>
+        <div *ngIf="!disablePower; else elseBlock">
+          <app-selector label="POWER" [useValue]="false" [toggleOptions]="['IDLE','-','-','-','FULL']" [initialValue]="4"></app-selector>
+        </div>
+        <ng-template #elseBlock>
+          <app-selector label="POWER" [useValue]="false" [toggleOptions]="['IDLE','-','-','-','FULL']" [initialValue]="4" [disableGroup]="true"></app-selector>
+        </ng-template>
       </div>
     </div>
 

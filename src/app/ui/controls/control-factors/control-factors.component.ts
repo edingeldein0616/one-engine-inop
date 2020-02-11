@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { SelectionData, Labels, Values } from '../selector/selection-data';
 
 @Component({
@@ -7,6 +7,8 @@ import { SelectionData, Labels, Values } from '../selector/selection-data';
   styleUrls: ['./control-factors.component.scss']
 })
 export class ControlFactorsComponent implements OnInit {
+
+  @Input() disablePower: boolean;
 
   constructor() { }
 

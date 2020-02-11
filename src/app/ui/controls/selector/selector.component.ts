@@ -12,6 +12,7 @@ export class SelectorComponent implements AfterViewInit {
   @Input() initialValue: number;
   @Input() toggleOptions: Array<string>;
   @Input() useValue: boolean;
+  @Input() disableGroup = false;
 
   @Output() valueOutput = new EventEmitter<SelectionData>();
 
