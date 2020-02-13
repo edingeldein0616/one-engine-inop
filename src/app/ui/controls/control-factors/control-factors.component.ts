@@ -9,6 +9,7 @@ import { SelectionData, Labels, Values } from '../selector/selection-data';
 export class ControlFactorsComponent implements OnInit {
 
   @Input() disablePower: boolean;
+  @Input() title: string;
 
   constructor() { }
 

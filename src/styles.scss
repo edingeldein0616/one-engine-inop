@@ -15,7 +15,12 @@
 
   .mat-button-toggle-checked {
     background-color: mat-color($primary);
+
+    .mat-button-toggle-label-content {
+      color: $dark-primary-text;
+    }
   }
+
 }
 
 // specify theme class eg: <body class="my-theme">...</body>
