@@ -1,1 +1,64 @@
-<p>view-zst works!</p>
+<div class="panel control">
+
+  <div class="container-fluid">
+
+    <div class="row control">
+      <div class="col">
+        <h2 class="text-center">ZERO SIDESLIP FACTORS</h2>
+      </div>
+    </div>
+
+    <div class="row control">
+      <div class="col-4">
+        <h5 class="text-center">INOP. ENGINE</h5>
+      </div>
+      <div class="col-8">
+        <app-selector label="INOP. ENGINE" [useValue]="true" [toggleOptions]="['LEFT','RIGHT']" [initialValue]="0"></app-selector>
+      </div>
+    </div>
+
+    <div class="row control">
+      <div class="col-4">
+        <h5 class="text-center">CONTROL TECHNIQUE</h5>
+      </div>
+      <div class="col-8">
+        <app-selector label="CONTROL TECHNIQUE" [useValue]="true" [toggleOptions]="['WINGS LEVEL', 'ZERO SIDESLIP']" [initialValue]="0"></app-selector>
+      </div>
+    </div>
+
+    <div class="row control">
+      <div class="col">
+        <h3 class="text-center">INCLINOMETER</h3>
+      </div>
+    </div>
+
+    <div class="row control">
+      <div class="col">
+        <h5>Inclinometer animation or something.....</h5>
+      </div>
+    </div>
+
+    <div class="row control">
+      <div class="col text-center">
+        <button mat-raised-button class="exercise-button" color="primary">
+          <h2>Zero Sideslip Exercise</h2>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="panel description">
+
+  <p>
+    This section covers the zero sideslip control technique. Change the factor settings on the right to see the resulting effects
+    on the aircraft. Click on the "Zero Sideslip Factors" text labels to read descriptive text here.
+  </p>
+
+</div>
+
+<div class="panel logo">
+
+</div>
