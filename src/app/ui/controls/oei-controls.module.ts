@@ -4,11 +4,13 @@ import { MaterialModule } from './material.module';
 import { SelectorComponent } from './selector/selector.component';
 import { ControlFactorsComponent } from './control-factors/control-factors.component';
 import { AppRoutingModule } from 'src/app/app-routing.module';
+import { ToggleComponent } from './toggle/toggle.component';
 
 @NgModule({
   declarations: [
     SelectorComponent,
-    ControlFactorsComponent
+    ControlFactorsComponent,
+    ToggleComponent
   ],
   imports: [
     CommonModule,
@@ -18,6 +20,7 @@ import { AppRoutingModule } from 'src/app/app-routing.module';
   exports: [
     SelectorComponent,
     ControlFactorsComponent,
+    ToggleComponent,
     MaterialModule
   ]
 })

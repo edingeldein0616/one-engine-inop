@@ -3,3 +3,39 @@
   width: 25%;
   height: 80%;
 }
+
+.panel {
+  position: absolute;
+  border: 4px solid purple;
+  padding: 0;
+}
+
+.panel.control {
+  width: 25%;
+  height: 79%;
+  right: 0em;
+}
+
+.panel.description {
+  width: 75%;
+  height: 15%;
+  bottom: 0em;
+  padding: 10px;
+}
+
+.panel.data {
+  width: 17%;
+  height: 79%;
+  padding: 10px;
+}
+
+.panel.logo {
+  width: 25%;
+  height: 15%;
+  bottom: 0em;
+  right: 0em;
+}
+
+.row.control {
+  margin-top: 20px;
+}
