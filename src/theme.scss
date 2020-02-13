@@ -1,0 +1,11 @@
+// define 3 theme color
+// mat-palette accepts $palette-name, main, lighter and darker variants
+$app-primary: mat-palette($mat-red, 700, 300, 900);
+$app-accent: mat-palette($mat-light-blue);
+$app-warn: mat-palette($mat-deep-purple);
+
+$app-theme: mat-dark-theme(
+  $app-primary,
+  $app-accent,
+  $app-warn
+);

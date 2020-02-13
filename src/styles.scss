@@ -1,9 +1,33 @@
 /* You can add global styles to this file, and also import other style files */
-@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+// @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 @import '~bootstrap/dist/css/bootstrap.min.css';
+@import '~@angular/material/theming';
+
+// always include only once per project
+@include mat-core();
+
+// import our custom theme
+@import 'theme.scss';
+
+// custom toggle mixing theme
+@mixin mix-app-theme($app-theme) {
+  $primary: map-get($app-theme, primary);
+
+  .mat-button-toggle-checked {
+    background-color: mat-color($primary);
+  }
+}
+
+// specify theme class eg: <body class="my-theme">...</body>
+.app-theme {
+  // use our theme with angular-material-theme mixin
+  @include angular-material-theme($app-theme);
+  // include custom mixin
+  @include mix-app-theme($app-theme);
+}
 
 html, body {
   height: 100%;
   overflow: hidden;
 }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; }
