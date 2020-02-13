@@ -1,24 +1,27 @@
 @import 'src/styles.scss';
 
-.test-parent {
-  margin-left: 2em;
-  width: 25%;
-  height: 80%;
+@mixin app-borders($app-theme) {
+  $accent: map-get($app-theme, accent);
+
+  border-color: mat-color($accent);
+  border-width: 1px;
 }
 
 .panel {
   position: absolute;
-  border: 4px solid #ffa000;
   padding: 0;
+  @include app-borders($app-theme);
 }
 
 .panel.control {
+  border-style: none none none solid;
   width: 25%;
   height: 79%;
   right: 0em;
 }
 
 .panel.description {
+  border-style: solid none none none;
   width: 75%;
   height: 15%;
   bottom: 0em;
@@ -26,12 +29,14 @@
 }
 
 .panel.data {
+  border-style: none solid none none;
   width: 17%;
   height: 79%;
   padding: 10px;
 }
 
 .panel.logo {
+  border-style: solid none none solid;
   width: 25%;
   height: 15%;
   bottom: 0em;
