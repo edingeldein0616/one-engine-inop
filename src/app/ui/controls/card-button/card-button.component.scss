@@ -1,0 +1,20 @@
+@import 'src/styles.scss';
+
+@mixin app-card-button($app-theme) {
+  $background: map-get($app-theme, background);
+  $accent: map-get($app-theme, accent);
+
+  .card {
+    cursor: pointer;
+    background-color: mat-color($background, card);
+  }
+
+  .card:hover {
+    background-color: mat-color($accent);
+    .header {
+      color: $dark-primary-text;
+    }
+  }
+}
+
+@include app-card-button($app-theme);
