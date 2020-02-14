@@ -12,6 +12,7 @@ import { ViewSepComponent } from './ui/views/view-sep/view-sep.component';
 import { ViewCefComponent } from './ui/views/view-cef/view-cef.component';
 import { ViewZstComponent } from './ui/views/view-zst/view-zst.component';
 import { ViewMenuComponent } from './ui/views/view-menu/view-menu.component';
+import { EngineComponent } from './engine/engine.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { ViewMenuComponent } from './ui/views/view-menu/view-menu.component';
     ViewSepComponent,
     ViewCefComponent,
     ViewZstComponent,
-    ViewMenuComponent
+    ViewMenuComponent,
+    EngineComponent
   ],
   imports: [
     BrowserModule,
