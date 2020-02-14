@@ -33,13 +33,15 @@ export class EngineService implements OnDestroy {
       alpha: true,  // transparent background
       antialias: true
     });
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    // this.renderer.setSize(width, height);
 
     // create the scene
     this.scene = new THREE.Scene();
 
+    const width = this.canvas.clientWidth;
+    const height = this.canvas.clientHeight;
     this.camera = new THREE.PerspectiveCamera(
-      75, window.innerWidth / window.innerHeight, 0.1, 1000
+      75, width / height, 0.1, 1000
     );
     this.camera.position.z = 5;
     this.scene.add(this.camera);
@@ -50,15 +52,18 @@ export class EngineService implements OnDestroy {
     this.scene.add(this.light);
 
     const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
     this.model = new THREE.Mesh(geometry, material);
     this.scene.add(this.model);
+
+    this.resize();
   }
 
   public animate(): void {
     // We have to run this outside angular zones,
     // because it could trigger heavy changeDetection cycles.
     this.ngZone.runOutsideAngular(() => {
+      this.resize();
       if (document.readyState !== 'loading') {
         this.render();
       } else {
@@ -69,7 +74,7 @@ export class EngineService implements OnDestroy {
 
       window.addEventListener('resize', () => {
         this.resize();
-      })
+      });
     });
   }
 
@@ -84,12 +89,13 @@ export class EngineService implements OnDestroy {
   }
 
   public resize(): void {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    const width = this.canvas.clientWidth;
+    const height = this.canvas.clientHeight;
 
-    this.camera.aspect = width / height;
-    this.camera.updateProjectionMatrix();
-
-    this.renderer.setSize(width, height);
+    if (this.canvas.width !== width || this.canvas.height !== height) {
+      this.renderer.setSize(width, height, false);
+      this.camera.aspect = width / height;
+      this.camera.updateProjectionMatrix();
+    }
   }
 }
