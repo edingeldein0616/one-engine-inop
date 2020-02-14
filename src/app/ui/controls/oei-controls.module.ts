@@ -5,12 +5,14 @@ import { SelectorComponent } from './selector/selector.component';
 import { ControlFactorsComponent } from './control-factors/control-factors.component';
 import { AppRoutingModule } from 'src/app/app-routing.module';
 import { ToggleComponent } from './toggle/toggle.component';
+import { CardButtonComponent } from './card-button/card-button.component';
 
 @NgModule({
   declarations: [
     SelectorComponent,
     ControlFactorsComponent,
-    ToggleComponent
+    ToggleComponent,
+    CardButtonComponent
   ],
   imports: [
     CommonModule,
@@ -21,7 +23,8 @@ import { ToggleComponent } from './toggle/toggle.component';
     SelectorComponent,
     ControlFactorsComponent,
     ToggleComponent,
-    MaterialModule
+    MaterialModule,
+    CardButtonComponent
   ]
 })
 export class OeiControlsModule { }

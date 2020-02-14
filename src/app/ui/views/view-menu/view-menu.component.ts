@@ -12,4 +12,8 @@ export class ViewMenuComponent implements OnInit {
   ngOnInit() {
   }
 
+  onClick() {
+    console.log('sup homie.');
+  }
+
 }
