@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { EngineService } from 'src/app/engine/engine.service';
 
 @Component({
   selector: 'app-view-dcv',
@@ -7,9 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ViewDcvComponent implements OnInit {
 
-  constructor() { }
+  constructor(private engineService: EngineService) { }
 
   ngOnInit() {
+  }
+
+  killCube() {
+    this.engineService.dispose();
   }
 
 }

@@ -1,22 +1,27 @@
 import { Injectable, NgZone, ElementRef, OnDestroy } from '@angular/core';
 import * as THREE from 'three';
+import { ResourceTracker } from './resouce-tracker';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EngineService implements OnDestroy {
 
+  private resourceTracker: ResourceTracker;
   private canvas: HTMLCanvasElement;
   private renderer: THREE.WebGLRenderer;
   private camera: THREE.PerspectiveCamera;
   private scene: THREE.Scene;
   private light: THREE.AmbientLight;
 
-  private model: THREE.Mesh;
+  private meshes: THREE.Mesh[];
 
   private frameId: number = null;
 
-  constructor(private ngZone: NgZone) { }
+  constructor(private ngZone: NgZone) {
+    this.resourceTracker = new ResourceTracker();
+    this.meshes = new Array<THREE.Mesh>();
+  }
 
   public ngOnDestroy(): void {
     if (this.frameId != null) {
@@ -27,13 +32,13 @@ export class EngineService implements OnDestroy {
   public createScene(canvas: ElementRef<HTMLCanvasElement>): void {
     // The first step is to get teh reference of the canvas element from our HTML document
     this.canvas = canvas.nativeElement;
+    const track = this.resourceTracker.track.bind(this.resourceTracker);
 
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
       alpha: true,  // transparent background
       antialias: true
     });
-    // this.renderer.setSize(width, height);
 
     // create the scene
     this.scene = new THREE.Scene();
@@ -51,10 +56,11 @@ export class EngineService implements OnDestroy {
     this.light.position.z = 10;
     this.scene.add(this.light);
 
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    this.model = new THREE.Mesh(geometry, material);
-    this.scene.add(this.model);
+    const geometry: THREE.BoxGeometry = new THREE.BoxGeometry(1, 1, 1);
+    const material: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    const mesh: THREE.Mesh = track(new THREE.Mesh(geometry, material));
+    this.meshes.push(mesh);
+    this.meshes.forEach(m => this.scene.add(m));
 
     this.resize();
   }
@@ -83,8 +89,10 @@ export class EngineService implements OnDestroy {
       this.render();
     });
 
-    this.model.rotation.x += 0.01;
-    this.model.rotation.y += 0.01;
+    this.meshes.forEach(model =>  {
+      model.rotation.x += 0.01;
+      model.rotation.y += 0.01;
+    });
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -98,4 +106,10 @@ export class EngineService implements OnDestroy {
       this.camera.updateProjectionMatrix();
     }
   }
+
+  public dispose() {
+    this.resourceTracker.dispose();
+    this.meshes.length = 0;
+  }
+
 }
