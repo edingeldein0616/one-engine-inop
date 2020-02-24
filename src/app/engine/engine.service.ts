@@ -1,5 +1,6 @@
 import { Injectable, NgZone, ElementRef, OnDestroy } from '@angular/core';
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { ResourceTracker } from './resouce-tracker';
 
 @Injectable({
@@ -8,19 +9,23 @@ import { ResourceTracker } from './resouce-tracker';
 export class EngineService implements OnDestroy {
 
   private resourceTracker: ResourceTracker;
+  private track;
+
   private canvas: HTMLCanvasElement;
   private renderer: THREE.WebGLRenderer;
   private camera: THREE.PerspectiveCamera;
   private scene: THREE.Scene;
-  private light: THREE.AmbientLight;
 
   private meshes: THREE.Mesh[];
+  private lights: THREE.Light[];
 
   private frameId: number = null;
 
   constructor(private ngZone: NgZone) {
     this.resourceTracker = new ResourceTracker();
+    this.track = this.resourceTracker.track.bind(this.resourceTracker);
     this.meshes = new Array<THREE.Mesh>();
+    this.lights = new Array<THREE.Light>();
   }
 
   public ngOnDestroy(): void {
@@ -30,39 +35,61 @@ export class EngineService implements OnDestroy {
   }
 
   public createScene(canvas: ElementRef<HTMLCanvasElement>): void {
-    // The first step is to get teh reference of the canvas element from our HTML document
+    // Get canvas element reference
     this.canvas = canvas.nativeElement;
-    const track = this.resourceTracker.track.bind(this.resourceTracker);
 
+    // Set up renderer
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
       alpha: true,  // transparent background
       antialias: true
     });
 
-    // create the scene
-    this.scene = new THREE.Scene();
+    // Set the scene
+    this.setScene(null);
 
+    // Resize camera to fit canvas
+    this.resize();
+  }
+
+  public setScene(scene: THREE.Scene) {
+
+    // create the scene
+    if (!scene) {
+      scene = new THREE.Scene();
+    }
+    this.scene = scene;
+
+    // Initialize the camera
     const width = this.canvas.clientWidth;
     const height = this.canvas.clientHeight;
     this.camera = new THREE.PerspectiveCamera(
       75, width / height, 0.1, 1000
     );
     this.camera.position.z = 5;
-    this.scene.add(this.camera);
+    this.addToScene([this.camera]);
 
-    // soft white light
-    this.light = new THREE.AmbientLight(0x404040);
-    this.light.position.z = 10;
-    this.scene.add(this.light);
+    const controls = new OrbitControls(this.camera, this.renderer.domElement);
 
-    const geometry: THREE.BoxGeometry = new THREE.BoxGeometry(1, 1, 1);
-    const material: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    const mesh: THREE.Mesh = track(new THREE.Mesh(geometry, material));
-    this.meshes.push(mesh);
-    this.meshes.forEach(m => this.scene.add(m));
+    // Add lighting
+    const light = this.track(new THREE.AmbientLight(0x404040));
+    light.position.z = 10;
+    this.lights.push(light);
+    this.addToScene(this.lights);
 
-    this.resize();
+    // Add meshes
+    // const geometry: THREE.BoxGeometry = new THREE.BoxGeometry(1, 1, 1);
+    // const material: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    // const mesh: THREE.Mesh = this.track(new THREE.Mesh(geometry, material));
+    // this.meshes.push(mesh);
+    // this.addToScene(this.meshes);
+  }
+
+  public addToScene(objects: THREE.Object3D[]) {
+    objects.forEach(obj => {
+      this.track(obj);
+      this.scene.add(obj);
+    });
   }
 
   public animate(): void {
@@ -110,6 +137,8 @@ export class EngineService implements OnDestroy {
   public dispose() {
     this.resourceTracker.dispose();
     this.meshes.length = 0;
+    this.canvas.remove();
+    this.canvas = null;
   }
 
 }
