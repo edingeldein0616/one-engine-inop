@@ -3,6 +3,7 @@ import { Observable, Subscriber } from 'rxjs';
 import { Scene } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { EngineService } from './engine.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import { EngineService } from './engine.service';
 export class LoaderService {
 
   private gltfLoader = new GLTFLoader();
-  private path = 'http://localhost:50002/';
+  private path = environment.modelUrl;
 
   constructor(private engineService: EngineService) {
 
