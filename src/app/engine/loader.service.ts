@@ -3,7 +3,6 @@ import { Observable, Subscriber } from 'rxjs';
 import { Scene } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { EngineService } from './engine.service';
-import { CdkStepperNext } from '@angular/cdk/stepper';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +10,7 @@ import { CdkStepperNext } from '@angular/cdk/stepper';
 export class LoaderService {
 
   private gltfLoader = new GLTFLoader();
-  private path = 'assets/';
+  private path = 'http://localhost:50002/';
 
   constructor(private engineService: EngineService) {
 
@@ -29,7 +28,7 @@ export class LoaderService {
   }
 
   loadScene(sceneName: string) {
-    this.loadModel('archer.glb')
+    this.loadModel('seminole.gltf')
       .subscribe(scene => {
         this.engineService.setScene(scene);
       }, error => console.error(error));

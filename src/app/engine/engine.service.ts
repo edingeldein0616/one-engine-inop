@@ -76,13 +76,6 @@ export class EngineService implements OnDestroy {
     light.position.z = 10;
     this.lights.push(light);
     this.addToScene(this.lights);
-
-    // Add meshes
-    // const geometry: THREE.BoxGeometry = new THREE.BoxGeometry(1, 1, 1);
-    // const material: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    // const mesh: THREE.Mesh = this.track(new THREE.Mesh(geometry, material));
-    // this.meshes.push(mesh);
-    // this.addToScene(this.meshes);
   }
 
   public addToScene(objects: THREE.Object3D[]) {
