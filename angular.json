@@ -17,6 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "baseHref": "/one-engine-inop/",
             "outputPath": "dist/one-engine-inop",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -41,6 +42,7 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
+              "baseHref": "/edingeldein/one-engine-inop/",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
