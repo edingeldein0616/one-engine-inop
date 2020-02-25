@@ -20,6 +20,7 @@ export class LoaderService {
   private loadModel(filename: string): Observable<Scene> {
     return new Observable<Scene>(sub => {
       const filepath = this.path + filename;
+      console.log('model filepath: ' + filepath);
       this.gltfLoader.load(filepath, gltf => {
         sub.next(gltf.scene);
       },
