@@ -26,7 +26,8 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/web.config"
             ],
             "styles": [
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",
@@ -35,6 +36,20 @@
             "scripts": []
           },
           "configurations": {
+            "local": {
+              "outputPath": "D:/IIS/testsite/one-engine-inop/",
+              "baseHref": "/one-engine-inop/"
+            },
+            "staging": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.staging.ts"
+                }
+              ],
+              "outputPath": "S:/edingeldein/one-engine-inop/",
+              "baseHref": "/edingeldein/one-engine-inop/"
+            },
             "production": {
               "fileReplacements": [
                 {
@@ -42,6 +57,7 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
+              "outputPath": "S:/edingeldein/one-engine-inop/",
               "baseHref": "/edingeldein/one-engine-inop/",
               "optimization": true,
               "outputHashing": "all",
