@@ -14,6 +14,7 @@ import { ViewCefComponent } from './ui/views/view-cef/view-cef.component';
 import { ViewZstComponent } from './ui/views/view-zst/view-zst.component';
 import { ViewMenuComponent } from './ui/views/view-menu/view-menu.component';
 import { EngineComponent } from './engine/engine.component';
+import { ControlFactorsComponent } from './ui/views/view-dcv/control-factors/control-factors.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { EngineComponent } from './engine/engine.component';
     ViewCefComponent,
     ViewZstComponent,
     ViewMenuComponent,
-    EngineComponent
+    EngineComponent,
+    ControlFactorsComponent
   ],
   imports: [
     BrowserModule,
