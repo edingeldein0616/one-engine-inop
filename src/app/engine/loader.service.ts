@@ -32,7 +32,7 @@ export class LoaderService {
   loadScene(sceneName: string) {
     this.loadModel('seminole.gltf')
       .subscribe(scene => {
-        this.engineService.setScene(scene);
+        //this.engineService.setScene(scene);
       }, error => console.error(error));
   }
 }
