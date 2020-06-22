@@ -1,5 +1,5 @@
 import { Component } from '@nova-engine/ecs';
-import { Scene, Mesh, Object3D, Light, Color, Material, MeshBasicMaterial, Camera, PerspectiveCamera } from 'three';
+import { Scene, Mesh, Object3D, Light, PerspectiveCamera } from 'three';
 
 class SceneComponent implements Component {
   static tag = 'SceneComponent';

@@ -1,7 +1,4 @@
-import { SceneEntity, GenericEntity, CameraEntity, ModelEntity } from './BaseEntities';
-import { SceneComponent, PerspectiveCameraComponent, RootComponent, AnimationManagerComponent, LightComponent } from '../components';
-import { PerspectiveCamera, AnimationMixer, DirectionalLight, AmbientLight } from 'three';
-import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
+import { GenericEntity } from './BaseEntities';
 import { Entity } from '@nova-engine/ecs';
 
 class EntityFactory {

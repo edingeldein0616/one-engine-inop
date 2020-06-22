@@ -20,8 +20,8 @@ abstract class EventBus {
     return instance;
   }
 
-  abstract subscribe(topic: string, listener: Listener): void;
-  abstract unsubscribe(topic: string, listener: Listener): void;
+  abstract subscribe(topic: string, listener: Listener): EventBus;
+  abstract unsubscribe(topic: string, listener: Listener): EventBus;
 
   abstract publish(topic: string, subject: Subject): void;
 
@@ -34,20 +34,22 @@ class ConcreteEventBus extends EventBus {
     [key: string]: Listener[]
   } = {};
 
-  public subscribe(topic: string, receiver: Listener): void {
+  public subscribe(topic: string, receiver: Listener): EventBus {
     if(!this.listeners[topic]) {
       this.listeners[topic] = [];
     }
 
     this.listeners[topic].push(receiver);
+    return this;
   }
 
-  public unsubscribe(topic: string, receiver: Listener): void {
+  public unsubscribe(topic: string, receiver: Listener): EventBus {
     if(!this.listeners[topic]) {
       return;
     }
 
     this.listeners[topic] = this.listeners[topic].filter(item => item !== receiver);
+    return this;
   }
 
   public publish(topic: string, subject: Subject): void {

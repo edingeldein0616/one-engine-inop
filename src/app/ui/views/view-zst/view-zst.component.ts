@@ -1,19 +1,25 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { EngineService } from 'src/app/engine/engine.service';
-import { LoaderService } from 'src/app/engine/loader.service';
+import { environment } from 'src/environments/environment';
+import { AssetManager } from 'src/app/engine/core/AssetManager';
 
 @Component({
   selector: 'app-view-zst',
   templateUrl: './view-zst.component.html',
   styleUrls: ['./view-zst.component.scss']
 })
-export class ViewZstComponent implements OnInit, OnDestroy {
+export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  constructor(private engineService: EngineService,
-              private loaderService: LoaderService) { }
+  constructor(private engineService: EngineService) { }
 
   ngOnInit() {
-    this.loaderService.loadScene('view-zst');
+    if(!environment.production) {
+      AssetManager.get().print();
+    }
+  }
+
+  ngAfterViewInit() {
+    this.engineService.loadModel(environment.assetUrl, environment.seminole);
   }
 
   ngOnDestroy() {
