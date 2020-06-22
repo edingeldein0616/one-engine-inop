@@ -40,6 +40,14 @@
               "outputPath": "D:/IIS/testsite/one-engine-inop/",
               "baseHref": "/one-engine-inop/"
             },
+            "local-testing": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.staging.ts"
+                }
+              ]
+            },
             "staging": {
               "fileReplacements": [
                 {
@@ -88,6 +96,9 @@
             "browserTarget": "one-engine-inop:build"
           },
           "configurations": {
+            "local-testing": {
+              "browserTarget": "one-engine-inop:build:local-testing"
+            },
             "production": {
               "browserTarget": "one-engine-inop:build:production"
             }
