@@ -1,5 +1,5 @@
 export const environment = {
-  modelUrl: 'http://staging.aero.und.edu/edingeldein/models/',
+  assetUrl: 'http://staging.aero.und.edu/edingeldein/assets/',
   skybox: 'skybox',
   envmap: 'envmap',
   seminole: 'seminole',
