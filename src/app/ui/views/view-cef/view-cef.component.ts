@@ -1,19 +1,25 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { EngineService } from 'src/app/engine/engine.service';
-import { LoaderService } from 'src/app/engine/loader.service';
+import { AssetManager } from 'src/app/engine/core/AssetManager';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-view-cef',
   templateUrl: './view-cef.component.html',
   styleUrls: ['./view-cef.component.scss']
 })
-export class ViewCefComponent implements OnInit, OnDestroy {
+export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  constructor(private engineService: EngineService,
-              private loaderService: LoaderService) { }
+  constructor(private engineService: EngineService) { }
 
   ngOnInit() {
-    this.loaderService.loadScene('view-cef');
+    if(!environment.production) {
+      AssetManager.get().print();
+    }
+  }
+
+  ngAfterViewInit() {
+    this.engineService.loadModel(environment.assetUrl, environment.seminole);
   }
 
   ngOnDestroy() {

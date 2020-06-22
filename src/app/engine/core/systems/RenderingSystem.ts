@@ -1,6 +1,9 @@
 import { System, Engine, Entity, Family, FamilyBuilder, EngineEntityListener } from '@nova-engine/ecs';
-import { WebGLRenderer, PerspectiveCamera, Object3D } from 'three';
-import { SceneComponent, RootComponent, SceneEntity, Listener, EventBus, Subject } from '../../core';
+import { WebGLRenderer, PerspectiveCamera, Object3D, DataTexture, PMREMGenerator, sRGBEncoding, Mesh, SphereBufferGeometry, MeshBasicMaterial } from 'three';
+import { Sky } from 'three/examples/jsm/objects/Sky'
+import { SceneComponent, RootComponent } from '../components';
+import { SceneEntity } from '../entities'
+import { Listener, EventBus, Subject } from '../events';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 /**
@@ -95,11 +98,16 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
       antialias: true,
     });
     this._renderer.setClearColor(0xFF00FF);
+    this._renderer.outputEncoding = sRGBEncoding;
+    this._renderer.gammaFactor = 8;
 
     var orbitControls = new OrbitControls(this._camera, this._canvas);
 
-    // Subscribe to state-check event.
-    EventBus.get().subscribe('state-check', this);
+    // Subscribe to events.
+    EventBus.get()
+      .subscribe('state-check', this)
+      .subscribe('envmap', this)
+      .subscribe('skybox', this);
 
     console.log('Rendering system attached to engine', this, engine);
   }
@@ -128,8 +136,11 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
     this._renderer.dispose();
 
-    // Unsubscribe from stat-check event
-    EventBus.get().unsubscribe('state-check', this);
+    // Unsubscribe from events
+    EventBus.get()
+      .unsubscribe('state-check', this)
+      .unsubscribe('envmap', this)
+      .unsubscribe('skybox', this);
 
     // Dispose of renderer and call super.
     // this._renderer.dispose(); This does not work properly
@@ -146,10 +157,86 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
       case 'state-check':
         console.log('STATE CHECK', this._renderer.state);
         break;
+      case 'envmap':
+        console.log('HDRI ENVIRONMENT MAP', subject.data);
+        this._environmentMap(subject.data);
+        break;
+      case 'skybox':
+        console.log('SKYBOX');
+        this._skybox();
+        break;
       default:
         console.log(`Unknown event passed: ${topic}`, subject);
         break;
     }
+  }
+
+  private _environmentMap(dt: DataTexture): void {
+    const pmremGen = new PMREMGenerator(this._renderer);
+    const envMap = pmremGen.fromEquirectangular(dt).texture;
+
+    this._family.entities.forEach(sceneEntity => {
+      const scene = sceneEntity.getComponent(SceneComponent).scene;
+      //scene.background = envMap;
+      scene.environment = envMap;
+    });
+  }
+
+  private _skybox(): void {
+    // Create sky
+    const sky = new Sky();
+    sky.scale.setScalar(450000);
+
+    var effectController = {
+      turbidity: 10,
+      rayleigh: 2,
+      mieCoefficient: 0.005,
+      mieDirectionalG: 0.8,
+      luminance: 1,
+      inclination: 0.7457, // elevation / inclination
+      azimuth: 0.659, // Facing front,
+      sun: ! true
+    };
+
+    // Add Sun Helper
+    const sunSphere = new Mesh(
+      new SphereBufferGeometry(20000, 16, 8),
+      new MeshBasicMaterial({ color: 0xffffff })
+    );
+    sunSphere.position.y = - 700000;
+    sunSphere.visible = false;
+
+    var uniforms = sky.material.uniforms;
+    uniforms[ "turbidity" ].value = effectController.turbidity;
+    uniforms[ "rayleigh" ].value = effectController.rayleigh;
+    uniforms[ "mieCoefficient" ].value = effectController.mieCoefficient;
+    uniforms[ "mieDirectionalG" ].value = effectController.mieDirectionalG;
+    uniforms[ "luminance" ].value = effectController.luminance;
+
+    const theta = Math.PI * ( effectController.inclination - 0.5 );
+    const phi = 2 * Math.PI * ( effectController.azimuth - 0.5 );
+
+    const distance = 400000;
+    sunSphere.position.x = distance * Math.cos( phi );
+    sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
+    sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );
+
+    sunSphere.visible = effectController.sun;
+
+    uniforms[ "sunPosition" ].value.copy( sunSphere.position );
+
+    this._family.entities.forEach(sceneEntity => {
+      const scene = sceneEntity.getComponent(SceneComponent).scene;
+      scene.add(sky, sunSphere);
+    })
+    //this._addToScene(sky);
+  }
+
+  private _addToScene(...obj: Object3D[]): void {
+    this._family.entities.forEach(sceneEntiy => {
+      const scene = sceneEntiy.getComponent(SceneComponent).scene;
+      obj.forEach(o => scene.add(o));
+    });
   }
 
   /**

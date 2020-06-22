@@ -4,7 +4,10 @@
 */
 
 export const environment = {
-  modelUrl: 'http://localhost:50001/models/',
+  assetUrl: 'http://localhost:50001/assets/',
+  skybox: 'skybox',
+  envmap: 'envmap',
+  seminole: 'seminole',
   production: false
 };
 

@@ -1,6 +1,8 @@
 import { Engine, System, Entity } from '@nova-engine/ecs';
 import { PerspectiveCamera } from 'three';
-import { CameraEntity, SceneEntity, PerspectiveCameraComponent, RenderingSystem } from './core';
+import { CameraEntity, SceneEntity } from './core/entities';
+import { PerspectiveCameraComponent } from './core/components';
+import { RenderingSystem } from './core/systems';
 
 class ThreeEngine extends Engine {
 

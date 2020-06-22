@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { EngineService } from './engine.service';
-import { EntityFactory, SceneEntity } from './core';
+import { EntityFactory, SceneEntity } from './core/entities';
 
 @Component({
   selector: 'app-engine',

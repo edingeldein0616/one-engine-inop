@@ -1,5 +1,5 @@
 import { Entity } from '@nova-engine/ecs';
-import { SceneComponent, PerspectiveCameraComponent, LightComponent, RootComponent, AnimationManagerComponent } from '../../core';
+import { SceneComponent, PerspectiveCameraComponent, LightComponent, RootComponent, AnimationManagerComponent } from '../components';
 import { PerspectiveCamera, DirectionalLight, AmbientLight } from 'three';
 
 class SceneEntity extends Entity {

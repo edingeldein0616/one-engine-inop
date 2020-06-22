@@ -1,9 +1,10 @@
 import { Injectable, NgZone, ElementRef, OnDestroy } from '@angular/core';
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { ResourceTracker } from './resouce-tracker';
 import { ThreeEngine } from './ThreeEngine';
-import { EntityFactory, CameraEntity, SceneEntity, ResourceManager } from './core';
+import { EntityFactory, CameraEntity, SceneEntity, ModelEntity, DirectionalLightEntity, AmbientLightEntity } from './core/entities';
+import { ResourceManager, AssetManager } from './core';
+import { RootComponent, AnimationManagerComponent } from './core/components';
+import { AnimationMixer } from 'three';
+import { EventBus, Subject } from './core/events';
 
 @Injectable({
   providedIn: 'root'
@@ -32,8 +33,24 @@ export class EngineService implements OnDestroy {
       EntityFactory.build(CameraEntity),
       EntityFactory.build(SceneEntity));
 
+    // Register hdri environment map
+    const subject = new Subject();
+    subject.data = AssetManager.get().texture('envmap');
+    EventBus.get().publish('envmap', subject);
+    EventBus.get().publish('skybox', null);
+
     this._animate();
 
+  }
+
+  public loadModel(path: string, filename: string) {
+    const gltf = AssetManager.get().model(filename);
+    const me = EntityFactory.build(ModelEntity);
+    me.getComponent(RootComponent).obj = gltf.scene;
+    const am = me.getComponent(AnimationManagerComponent);
+    am.mixer = new AnimationMixer(gltf.scene);
+    am.registerClips(gltf.animations)
+    this._threeEngine.addEntity(me);
   }
 
   public dispose() {
