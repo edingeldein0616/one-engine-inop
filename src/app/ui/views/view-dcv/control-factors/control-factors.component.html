@@ -15,7 +15,8 @@
         <h5 class="text-center">INOP. ENGINE</h5>
       </div>
       <div class="col-8">
-        <app-selector label="INOP. ENGINE" [useValue]="true" [toggleOptions]="['LEFT','RIGHT']" [initialValue]="0"></app-selector>
+        <app-selector label="INOP. ENGINE" [useValue]="true" [toggleOptions]="['LEFT','RIGHT']" [initialValue]="0"
+        (valueOutput)="selected($event)"></app-selector>
       </div>
     </div>
 
@@ -26,7 +27,8 @@
       </div>
       <div class="col-8">
         <div *ngIf="!disablePower; else elseBlock">
-          <app-selector label="POWER" [useValue]="false" [toggleOptions]="['IDLE','-','-','-','FULL']" [initialValue]="4"></app-selector>
+          <app-selector label="POWER" [useValue]="false" [toggleOptions]="['IDLE','-','-','-','FULL']" [initialValue]="4"
+          (valueOutput)="selected($event)"></app-selector>
         </div>
         <ng-template #elseBlock>
           <app-selector label="POWER" [useValue]="false" [toggleOptions]="['IDLE','-','-','-','FULL']" [initialValue]="4" [disableGroup]="true"></app-selector>
@@ -40,7 +42,8 @@
         <h5 class="text-center">DENSITY ALTITUDE</h5>
       </div>
       <div class="col-8">
-        <app-selector label="DENSITY ALTITUDE" [useValue]="false" [toggleOptions]="['0','1500','3000','4500','6000']" [initialValue]="2"></app-selector>
+        <app-selector label="DENSITY ALTITUDE" [useValue]="false" [toggleOptions]="['0','1500','3000','4500','6000']" [initialValue]="2"
+        (valueOutput)="selected($event)"></app-selector>
       </div>
     </div>
 
@@ -50,7 +53,8 @@
         <h5 class="text-center">PROPELLER</h5>
       </div>
       <div class="col-8">
-        <app-selector label="PROPELLER" [useValue]="true" [toggleOptions]="['WINDMILL','FEATHER']" [initialValue]="0"></app-selector>
+        <app-selector label="PROPELLER" [useValue]="true" [toggleOptions]="['WINDMILL','FEATHER']" [initialValue]="0"
+        (valueOutput)="selected($event)"></app-selector>
       </div>
     </div>
 
@@ -60,7 +64,8 @@
         <h5 class="text-center">CONTROL TECHNIQUE</h5>
       </div>
       <div class="col-8">
-        <app-selector label="CONTROL TECHNIQUE" [useValue]="true" [toggleOptions]="['WINGS LEVEL','ZERO SIDE SLIP']" [initialValue]="1"></app-selector>
+        <app-selector label="CONTROL TECHNIQUE" [useValue]="true" [toggleOptions]="['WINGS LEVEL','ZERO SIDE SLIP']" [initialValue]="1"
+        (valueOutput)="selected($event)"></app-selector>
       </div>
     </div>
 
@@ -70,7 +75,8 @@
         <h5 class="text-center">AIRSPEED (KIAS)</h5>
       </div>
       <div class="col-8">
-        <app-selector label="AIRSPEED (KIAS)" [useValue]="false" [toggleOptions]="['83','-','88','-','93']" [initialValue]="2"></app-selector>
+        <app-selector label="AIRSPEED (KIAS)" [useValue]="false" [toggleOptions]="['83','-','88','-','93']" [initialValue]="2"
+        (valueOutput)="selected($event)"></app-selector>
       </div>
     </div>
 
@@ -80,7 +86,8 @@
         <h5 class="text-center">WEIGHT</h5>
       </div>
       <div class="col-8">
-        <app-selector label="WEIGHT" [useValue]="false" [toggleOptions]="['MIN','-','-','-','MAX']" [initialValue]="0"></app-selector>
+        <app-selector label="WEIGHT" [useValue]="false" [toggleOptions]="['MIN','-','-','-','MAX']" [initialValue]="0"
+        (valueOutput)="selected($event)"></app-selector>
       </div>
     </div>
 
@@ -90,7 +97,8 @@
         <h5 class="text-center">CENTER OF GRAVITY</h5>
       </div>
       <div class="col-8">
-        <app-selector label="CENTER OF GRAVITY" [useValue]="false" [toggleOptions]="['AFT','-','-','-','FORE']" [initialValue]="0"></app-selector>
+        <app-selector label="CENTER OF GRAVITY" [useValue]="false" [toggleOptions]="['AFT','-','-','-','FORE']" [initialValue]="0"
+        (valueOutput)="selected($event)"></app-selector>
       </div>
     </div>
 
@@ -100,7 +108,8 @@
         <h5 class="text-center">FLAPS</h5>
       </div>
       <div class="col-8">
-        <app-selector label="FLAPS" [useValue]="false" [toggleOptions]="['0','10','25','40']" [initialValue]="0"></app-selector>
+        <app-selector label="FLAPS" [useValue]="false" [toggleOptions]="['0','10','25','40']" [initialValue]="0"
+        (valueOutput)="selected($event)"></app-selector>
       </div>
     </div>
 
@@ -110,7 +119,8 @@
         <h5 class="text-center">LANDING GEAR</h5>
       </div>
       <div class="col-8">
-        <app-selector label="LANDING GEAR" [useValue]="true" [toggleOptions]="['UP','DOWN']" [initialValue]="0"></app-selector>
+        <app-selector label="LANDING GEAR" [useValue]="true" [toggleOptions]="['UP','DOWN']" [initialValue]="0"
+        (valueOutput)="selected($event)"></app-selector>
       </div>
     </div>
 
