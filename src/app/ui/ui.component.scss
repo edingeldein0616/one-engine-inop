@@ -1,4 +1,4 @@
-@import 'src/styles.scss';
+@import 'src/styles/styles.scss';
 
 @mixin app-borders($app-theme) {
   $accent: map-get($app-theme, accent);
