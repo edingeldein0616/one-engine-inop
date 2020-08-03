@@ -1,4 +1,8 @@
-@import "src/styles.scss";
+@import "src/styles/styles.scss";
+
+mat-toolbar {
+  height:6%;
+}
 
 .fill-middle {
   flex: 1 1 auto;

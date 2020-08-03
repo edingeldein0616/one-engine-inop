@@ -8,6 +8,7 @@
 
 // import our custom theme
 @import 'theme.scss';
+@import 'fonts.scss';
 
 // custom toggle mixing theme
 @mixin mix-app-theme($app-theme) {
@@ -35,4 +36,15 @@ html, body {
   height: 100%;
   overflow: hidden;
 }
+
 body { margin: 0; }
+
+div.mat-button-toggle-label-content  {
+  padding: 0!important;
+  width: 100%;
+  height: 100%;
+  min-width: 1%!important;
+  min-height: 1%!important;
+  text-align: center!important;
+  font-size: 0.8vw;
+}

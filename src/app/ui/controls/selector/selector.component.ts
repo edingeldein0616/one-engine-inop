@@ -27,7 +27,7 @@ export class SelectorComponent implements AfterViewInit {
 
     const data: SelectionData = { label: this.label, value: v, percent: p};
     this.valueOutput.emit(data);
-    console.log(`Selection data: ${data.label}, ${data.value}, ${data.percent}`);
+    //console.log(`Selection data: ${data.label}, ${data.value}, ${data.percent}`);
   }
 
   ngAfterViewInit() {

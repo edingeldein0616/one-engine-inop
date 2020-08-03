@@ -4,7 +4,8 @@ import { EntityFactory, CameraEntity, SceneEntity, ModelEntity, DirectionalLight
 import { ResourceManager, AssetManager } from './core';
 import { RootComponent, AnimationManagerComponent } from './core/components';
 import { AnimationMixer } from 'three';
-import { EventBus, Subject } from './core/events';
+import { EventBus, Subject, Listener } from './core/events';
+import { Labels } from '../ui/controls/selector/selection-data';
 
 @Injectable({
   providedIn: 'root'
@@ -42,6 +43,8 @@ export class EngineService implements OnDestroy {
     this._animate();
 
   }
+
+
 
   public loadModel(path: string, filename: string) {
     const gltf = AssetManager.get().model(filename);

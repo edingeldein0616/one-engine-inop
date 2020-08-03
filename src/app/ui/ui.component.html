@@ -1,2 +1,7 @@
 <app-nav-bar></app-nav-bar>
-<router-outlet></router-outlet>
+<div *ngIf="!loading; else loadingWheel">
+  <router-outlet></router-outlet>
+</div>
+<ng-template #loadingWheel>
+  <h1>Loading...</h1>
+</ng-template>

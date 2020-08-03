@@ -2,6 +2,7 @@ import { Scene, Group, Texture, UnsignedByteType, DataTexture, PMREMGenerator, T
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 
 let instance = null;
 
@@ -21,6 +22,19 @@ export class AssetManager {
     return instance;
   }
 
+  /**
+   * Determines if assets are currently being loaded. Loading semphore.
+   */
+  private _loading: boolean = false;
+  private _setLoading(value: boolean):void {
+    this._loading = value;
+    this._loadingSubject.next(this._loading);
+  }
+  private _loadingSubject: BehaviorSubject<boolean>;
+  public get loadingObservable(): Observable<boolean> {
+    return this._loadingSubject.asObservable();
+  };
+
   // Loaded assets
   private _assets: Map<string, any>;
 
@@ -29,6 +43,7 @@ export class AssetManager {
    */
   constructor() {
     this._assets = new Map<string, any>();
+    this._loadingSubject = new BehaviorSubject<boolean>(this._loading);
   }
 
   /**
@@ -71,10 +86,12 @@ export class AssetManager {
     let root;
     switch (extension) {
       case 'gltf':
+        this._setLoading(true);
         const gltf = await this._loadGltfModel(fullPath);
         root = gltf;
         break;
       case 'fbx':
+        this._setLoading(true);
         root = await this._loadFbxModel(fullPath);
         break;
     }
@@ -88,9 +105,11 @@ export class AssetManager {
     let texture;
     switch(extension) {
       case 'hdr':
+        this._setLoading(true);
         texture = await this._loadHDR(fullPath);
         break;
       case 'jpg' || 'png':
+        this._setLoading(true);
         texture = await this._loadTexture(fullPath);
         break;
       default:
@@ -134,6 +153,7 @@ export class AssetManager {
     return new Promise(resolve => {
       const loader = new GLTFLoader();
       loader.load(path, gltf => {
+        this._setLoading(false);
         resolve(gltf);
       },
       () => {},
@@ -147,7 +167,9 @@ export class AssetManager {
     return new Promise(resolve => {
       const loader = new FBXLoader();
       loader.load(path, fbx => {
+        this._setLoading(false);
         resolve(fbx);
+
       },
       () => {},
       err => {
@@ -161,6 +183,7 @@ export class AssetManager {
       new RGBELoader()
         .setDataType(UnsignedByteType)
         .load(path, texture => {
+          this._setLoading(false);
           resolve(texture);
         },
         () => {},
@@ -174,6 +197,7 @@ export class AssetManager {
     return new Promise(resolve => {
       new TextureLoader()
         .load(path, texture => {
+          this._setLoading(false);
           resolve(texture);
         },
         () => {},
