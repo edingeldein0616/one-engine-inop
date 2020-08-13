@@ -24,17 +24,30 @@ class AnimationManagerComponent implements Component {
   /**
    * Group of animation clips of a model.
    */
-  private _clips: { [key: string]: AnimationClip };
-  public registerClip(clip: AnimationClip): void {
-    if(!this._clips) {
-      this._clips = {};
+  private _clips: AnimationClip[];
+  /**
+   * Caches animation clips.
+   * @param clip Single clip or list of clips to store.
+   */
+  public registerClip(...clip: AnimationClip[]): void {
+    if (!this._clips) {
+      this._clips = [];
     }
-    this._clips[clip.name] = clip;
+
+    for(const c of clip) {
+      this._clips.push(c);
+    }
+
+    console.log(`CLIPS: ${this._clips}`);
   }
-  public registerClips(clips: AnimationClip[]): void {
-    clips.forEach(clip => {
-      this.registerClip(clip);
-    });
+  /**
+  * Returns a list of the names of the cached animation clips.
+  */
+  public clipNames(): string[] {
+    if(!this._clips) {
+      throw new Error('Clip dictionary not initialized.');
+    }
+    return this._clips.map(clip => clip.name);
   }
 
   /**
@@ -43,11 +56,12 @@ class AnimationManagerComponent implements Component {
    * @returns clip The clip matching the name parameter.
    */
   public clip(name: string): AnimationClip {
-    if(!this._clips[name]) {
+    const clip = this._clips.find(c => c.name === name);
+    if(!clip) {
       throw new Error(`No clip with name ${name} registered in component.`);
     }
 
-    return this._clips[name];
+    return clip;
   }
 
   /**

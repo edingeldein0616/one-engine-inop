@@ -55,7 +55,7 @@
                   "with": "src/environments/environment.staging.ts"
                 }
               ],
-              "outputPath": "S:/edingeldein/one-engine-inop/",
+              "outputPath": "Z:/edingeldein/one-engine-inop/",
               "baseHref": "/edingeldein/one-engine-inop/"
             },
             "production": {

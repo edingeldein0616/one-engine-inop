@@ -44,22 +44,24 @@ export class EngineService implements OnDestroy {
 
   }
 
-
-
   public loadModel(path: string, filename: string) {
+
     const gltf = AssetManager.get().model(filename);
+
     const me = EntityFactory.build(ModelEntity);
     me.getComponent(RootComponent).obj = gltf.scene;
+
     const am = me.getComponent(AnimationManagerComponent);
     am.mixer = new AnimationMixer(gltf.scene);
-    am.registerClips(gltf.animations)
+    am.registerClip(...gltf.animations);
+
     this._threeEngine.addEntity(me);
   }
 
   public dispose() {
     this._threeEngine.disposeEngine();
     this._threeEngine = null;
-    ResourceManager.get().dispose();
+    AssetManager.get().dispose();
   }
 
   private _animate(): void {

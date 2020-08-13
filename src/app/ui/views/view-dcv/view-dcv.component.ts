@@ -3,6 +3,7 @@ import { EngineService } from 'src/app/engine/engine.service';
 import { ModelDcv } from './model-dcv';
 import { environment } from 'src/environments/environment';
 import { AssetManager } from 'src/app/engine/core/AssetManager';
+import { EventBus } from 'src/app/engine/core/events';
 
 @Component({
   selector: 'app-view-dcv',
@@ -27,6 +28,7 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.engineService.loadModel(environment.assetUrl, environment.seminole);
+    EventBus.get().publish('propRAction', null);
   }
 
   ngOnDestroy() {
