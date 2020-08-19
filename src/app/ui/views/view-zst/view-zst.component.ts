@@ -19,7 +19,7 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.engineService.loadModel(environment.assetUrl, environment.seminole);
+    this.engineService.loadModel(environment.seminole);
   }
 
   ngOnDestroy() {

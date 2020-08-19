@@ -12,8 +12,6 @@ import { EventBus } from 'src/app/engine/core/events';
 })
 export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  private _model: ModelDcv;
-
   constructor(private engineService: EngineService) { }
 
   onNotify() {
@@ -27,8 +25,7 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.engineService.loadModel(environment.assetUrl, environment.seminole);
-    EventBus.get().publish('propRAction', null);
+    this.engineService.loadModel(environment.seminole);
   }
 
   ngOnDestroy() {

@@ -2,7 +2,7 @@ import { Injectable, NgZone, ElementRef, OnDestroy } from '@angular/core';
 import { ThreeEngine } from './ThreeEngine';
 import { EntityFactory, CameraEntity, SceneEntity, ModelEntity, DirectionalLightEntity, AmbientLightEntity } from './core/entities';
 import { ResourceManager, AssetManager } from './core';
-import { RootComponent, AnimationManagerComponent } from './core/components';
+import { RootComponent } from './core/components';
 import { AnimationMixer } from 'three';
 import { EventBus, Subject, Listener } from './core/events';
 import { Labels } from '../ui/controls/selector/selection-data';
@@ -41,19 +41,14 @@ export class EngineService implements OnDestroy {
     EventBus.get().publish('skybox', null);
 
     this._animate();
-
   }
 
-  public loadModel(path: string, filename: string) {
+  public loadModel(filename: string) {
 
     const gltf = AssetManager.get().model(filename);
 
     const me = EntityFactory.build(ModelEntity);
     me.getComponent(RootComponent).obj = gltf.scene;
-
-    const am = me.getComponent(AnimationManagerComponent);
-    am.mixer = new AnimationMixer(gltf.scene);
-    am.registerClip(...gltf.animations);
 
     this._threeEngine.addEntity(me);
   }

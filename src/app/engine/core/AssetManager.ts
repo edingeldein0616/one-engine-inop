@@ -26,7 +26,7 @@ export class AssetManager {
    * Determines if assets are currently being loaded. Loading semphore.
    */
   private _loading: boolean = false;
-  private _setLoading(value: boolean):void {
+  private set loading(value: boolean) {
     this._loading = value;
     this._loadingSubject.next(this._loading);
   }
@@ -86,12 +86,12 @@ export class AssetManager {
     let root;
     switch (extension) {
       case 'gltf':
-        this._setLoading(true);
+        this.loading = true;
         const gltf = await this._loadGltfModel(fullPath);
         root = gltf;
         break;
       case 'fbx':
-        this._setLoading(true);
+        this.loading = true;
         root = await this._loadFbxModel(fullPath);
         break;
     }
@@ -105,11 +105,11 @@ export class AssetManager {
     let texture;
     switch(extension) {
       case 'hdr':
-        this._setLoading(true);
+        this.loading = true;
         texture = await this._loadHDR(fullPath);
         break;
       case 'jpg' || 'png':
-        this._setLoading(true);
+        this.loading = true;
         texture = await this._loadTexture(fullPath);
         break;
       default:
@@ -153,7 +153,7 @@ export class AssetManager {
     return new Promise(resolve => {
       const loader = new GLTFLoader();
       loader.load(path, gltf => {
-        this._setLoading(false);
+        this.loading = false;
         resolve(gltf);
       },
       () => {},
@@ -167,7 +167,7 @@ export class AssetManager {
     return new Promise(resolve => {
       const loader = new FBXLoader();
       loader.load(path, fbx => {
-        this._setLoading(false);
+        this.loading = false;
         resolve(fbx);
 
       },
@@ -183,7 +183,7 @@ export class AssetManager {
       new RGBELoader()
         .setDataType(UnsignedByteType)
         .load(path, texture => {
-          this._setLoading(false);
+          this.loading = false;
           resolve(texture);
         },
         () => {},
@@ -197,7 +197,7 @@ export class AssetManager {
     return new Promise(resolve => {
       new TextureLoader()
         .load(path, texture => {
-          this._setLoading(false);
+          this.loading = false;
           resolve(texture);
         },
         () => {},
