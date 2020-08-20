@@ -6,6 +6,7 @@ import { RootComponent } from './core/components';
 import { AnimationMixer } from 'three';
 import { EventBus, Subject, Listener } from './core/events';
 import { Labels } from '../ui/controls/selector/selection-data';
+import { AnimatorComponent } from './core/components/Animation';
 
 @Injectable({
   providedIn: 'root'
@@ -49,6 +50,7 @@ export class EngineService implements OnDestroy {
 
     const me = EntityFactory.build(ModelEntity);
     me.getComponent(RootComponent).obj = gltf.scene;
+    me.getComponent(AnimatorComponent).configureAnimations(gltf);
 
     this._threeEngine.addEntity(me);
   }

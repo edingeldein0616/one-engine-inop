@@ -2,7 +2,7 @@ import { Engine, System, Entity } from '@nova-engine/ecs';
 import { PerspectiveCamera } from 'three';
 import { CameraEntity, SceneEntity } from './core/entities';
 import { PerspectiveCameraComponent } from './core/components';
-import { RenderingSystem } from './core/systems';
+import { RenderingSystem, AnimationSystem } from './core/systems';
 
 class ThreeEngine extends Engine {
 
@@ -12,6 +12,7 @@ class ThreeEngine extends Engine {
   private _canvas: HTMLCanvasElement;
   private _camera: PerspectiveCamera;
   private _renderingSystem: any;
+  private _animationSystem: any;
 
   private _registeredEntities: Entity[] = [];
   private _registeredSystems: System[] = [];
@@ -25,6 +26,9 @@ class ThreeEngine extends Engine {
     // Set up rendering system
     this._time = 0;
     this._initRenderingSystem();
+
+    this._animationSystem = new AnimationSystem();
+    this.addSystem(this._animationSystem);
 
     // Add scene and camera entities (scene needs to be added first... hacky, I know)
     this.addEntities(scene, camera);

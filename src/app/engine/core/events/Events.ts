@@ -1,10 +1,16 @@
+
+
 class Subject {
   data: any;
 }
 
+
+
 interface Listener {
   receive(topic: string, subject: Subject);
 }
+
+
 
 let instance = null;
 
@@ -27,6 +33,8 @@ abstract class EventBus {
 
   static build(): EventBus { return new ConcreteEventBus(); }
 }
+
+
 
 class ConcreteEventBus extends EventBus {
 
@@ -69,5 +77,7 @@ class ConcreteEventBus extends EventBus {
   }
 
 }
+
+
 
 export {  Subject , Listener, EventBus };

@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { EventBus, Subject } from 'src/app/engine/core/events';
+import { AnimationData } from 'src/app/engine/core/systems';
 
 @Component({
   selector: 'app-control-factors',
@@ -21,7 +22,11 @@ export class ControlFactorsComponent implements OnInit {
     var subject = new Subject();
     subject.data = eventData as SelectionData;
     // console.log(`{ label: ${selection.label}, value: ${selection.value}, percent: ${selection.percent} }`);
-    EventBus.get().publish(subject.data.label, subject)
+    // EventBus.get().publish(subject.data.label, subject);
+    console.log('Sending animation data');
+    const animationData = new Subject();
+    animationData.data = new AnimationData('propRAction', action => action.play());
+    EventBus.get().publish('animation', animationData);
   }
 
 }

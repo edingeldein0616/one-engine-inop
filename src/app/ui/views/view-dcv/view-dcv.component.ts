@@ -3,7 +3,8 @@ import { EngineService } from 'src/app/engine/engine.service';
 import { ModelDcv } from './model-dcv';
 import { environment } from 'src/environments/environment';
 import { AssetManager } from 'src/app/engine/core/AssetManager';
-import { EventBus } from 'src/app/engine/core/events';
+import { EventBus, Subject } from 'src/app/engine/core/events';
+import { AnimationData } from 'src/app/engine/core/systems';
 
 @Component({
   selector: 'app-view-dcv',
@@ -26,6 +27,10 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.engineService.loadModel(environment.seminole);
+    const propRPlay = new Subject()
+    propRPlay.data = new AnimationData('propRAction', action => action.play());
+    EventBus.get().publish('animation', propRPlay);
+    EventBus.get().publish('gey', null);
   }
 
   ngOnDestroy() {
