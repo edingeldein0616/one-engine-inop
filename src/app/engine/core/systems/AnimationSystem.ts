@@ -1,82 +1,72 @@
-import { System, Engine, Family, FamilyBuilder, EngineEntityListener, Entity } from '@nova-engine/ecs'
-import { Listener, Subject, EventBus } from '../events';
-import { AnimationManagerComponent } from '../components';
+import { System, Engine, Entity, Family, FamilyBuilder } from '@nova-engine/ecs';
+import { Listener, Subject, EventBus } from 'src/app/engine/core/events';
+import { AnimatorComponent } from '../components/Animation';
+import { ModelEntity } from '../entities';
+import { AnimationAction, Clock } from 'three';
 
-export class AnimationSystem extends System implements Listener, EngineEntityListener {
+export class AnimationSystem extends System implements Listener {
 
   private _family: Family;
-  private _animationClipKeys: string[];
-
-  public setClipKeys(clipKeys: string[]) {
-    this._animationClipKeys = clipKeys;
-
-    for(var i = 0; i < this._animationClipKeys.length; i++) {
-      EventBus.get().subscribe(this._animationClipKeys[i], this);
-    }
-
-    console.log(this._animationClipKeys);
-  }
-
-  public removeClipKeys(clipKeys: string[]) {
-
-    if (clipKeys == null || clipKeys.length < 1) {
-      this._animationClipKeys = [];
-      return;
-    }
-
-    const filteredKeys = this._animationClipKeys.filter(key => {
-      for (const keySearch in clipKeys.values()) {
-        if (key === keySearch) {
-          return true;
-        }
-      }
-      return false;
-    });
-
-    this._animationClipKeys = filteredKeys;
-
-    for(var i = 0; i < this._animationClipKeys.length; i++) {
-      EventBus.get().unsubscribe(this._animationClipKeys[i], this);
-    }
-  }
-
-  onEntityAdded(entity: Entity): void {
-
-    if (!entity.hasComponent(AnimationManagerComponent)) {
-      return;
-    }
-
-    const amc = entity.getComponent(AnimationManagerComponent);
-    this.setClipKeys(amc.clipNames());
-  }
-
-  onEntityRemoved(entity: Entity): void {
-
-    if (!entity.hasComponent(AnimationManagerComponent)) {
-      return;
-    }
-
-    const amc = entity.getComponent(AnimationManagerComponent);
-    this.removeClipKeys(amc.clipNames());
-  }
+  private _clock: Clock = new Clock();
 
   public onAttach(engine: Engine) {
     super.onAttach(engine);
 
-    // Builds a family of all entities that contain a AnimationManagerComponent.
-    this._family = new FamilyBuilder(engine).include(AnimationManagerComponent).build();
+    this._family = new FamilyBuilder(engine).include(AnimatorComponent).build();
 
-    console.log('Animation system attached to engine', this, engine);
+    EventBus.get().subscribe('animation', this);
+
   }
 
-  public update(engine: Engine, delta: number): void { }
+  public onDetach(engine: Engine) {
 
-  public receive(topic: string, subject: Subject) {
+    EventBus.get().unsubscribe('animation', this);
+
+  }
+
+  update(engine: Engine, delta: number): void {
+
     this._family.entities.forEach(entity => {
-      const amComp = entity.getComponent(AnimationManagerComponent);
-      const action = amComp.action(topic);
-      action.play();
+
+      const ac = entity.getComponent(AnimatorComponent);
+      if(ac.animationMixer) {
+        ac.animationMixer.update(this._clock.getDelta());
+      }
+
     });
+
+  }
+
+  receive(topic: string, subject: Subject) {
+
+    const data = subject.data as AnimationData;
+    if(!data) {
+      throw Error(`Incorrect animation data: ${subject}`);
+    }
+
+    console.log(`Recieved animation event: ${data.clipName}`)
+
+    this._family.entities.forEach(entity => {
+
+      const ac = entity.getComponent(AnimatorComponent);
+      const action = ac.action(data.clipName);
+      action.play();
+
+    });
+  }
+
+}
+
+
+
+export class AnimationData {
+
+  public readonly clipName: string;
+  public actionCallback: (action: AnimationAction) => void;
+
+  constructor(clipName: string, actionCallback: (action: AnimationAction) => void) {
+    this.clipName = clipName;
+    this.actionCallback = actionCallback;
   }
 
 }

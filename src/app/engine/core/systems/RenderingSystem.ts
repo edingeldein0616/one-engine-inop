@@ -18,6 +18,7 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
   private _renderer: WebGLRenderer;
   private _camera: PerspectiveCamera;
   private _family: Family;
+  private _controls: OrbitControls;
   private _objects: Object3D[] = [];
 
   public get camera() { return this._camera};
@@ -101,7 +102,10 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     this._renderer.outputEncoding = sRGBEncoding;
     this._renderer.gammaFactor = 8;
 
-    var orbitControls = new OrbitControls(this._camera, this._canvas);
+    this._controls = new OrbitControls(this._camera, this._canvas);
+    this._controls.enablePan = false;
+    this._controls.enableDamping = true;
+    this._controls.dampingFactor = 0.05;
 
     // Subscribe to events.
     EventBus.get()
@@ -280,6 +284,10 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
    * @param delta The time delta since last update.
    */
   public update(engine: Engine, delta: number): void {
+
+    // Update camera controls since damping is enabled.
+    this._controls.update();
+
     // Check if family is initialized
     if(this._family) {
       // For each entity in the family (Entities that contain SceneComponent)

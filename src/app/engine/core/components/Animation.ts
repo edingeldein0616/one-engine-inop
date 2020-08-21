@@ -1,79 +1,37 @@
 import { Component } from '@nova-engine/ecs';
-import { AnimationMixer, AnimationClip, AnimationAction, Vector3 } from 'three';
+import { AnimationMixer, AnimationAction, AnimationClip, AnimationUtils } from 'three';
+import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
+import { Subject } from '../events';
 
-class AnimationComponent implements Component {
-  static tag = 'AnimationComponent';
-  public angularVelocity: Vector3;
+export class AnimatorComponent implements Component {
+  static tag = 'AnimatorComponent'
+
+  private _animationMixer: AnimationMixer;
+  public get animationMixer() { return this._animationMixer; }
+
+  private _animationClips: AnimationClip[];
+
+  public configureAnimations(gltf: GLTF): void {
+    this._animationMixer = new AnimationMixer(gltf.scene);
+    this._animationClips = gltf.animations;
+  }
+
+  public clip(clipName: string): AnimationClip {
+    return this._animationClips.find(clip => clip.name === clipName);
+  }
+
+  public clipAction(clip: AnimationClip): AnimationAction {
+    return this._animationMixer.clipAction(clip);
+  }
+
+  public action(clipName: string): AnimationAction {
+    var clip = this.clip(clipName);
+    return this.clipAction(clip);
+  }
+
+  public subClip(sourceClip: AnimationClip, newClipName: string, from: number, to: number): AnimationClip {
+    var subClip = AnimationUtils.subclip(sourceClip, newClipName, from, to);
+    this._animationClips.push(subClip);
+    return subClip;
+  }
 }
-
-class AnimationManagerComponent implements Component {
-
-  /**
-   * Underlying AnimationMixer to wrap.
-   */
-  private _mixer: AnimationMixer;
-  public get mixer(): AnimationMixer {
-    return this._mixer;
-  }
-  public set mixer(v: AnimationMixer) {
-    if(!this._mixer) {
-      this._mixer = v;
-    }
-  }
-
-  /**
-   * Group of animation clips of a model.
-   */
-  private _clips: AnimationClip[];
-  /**
-   * Caches animation clips.
-   * @param clip Single clip or list of clips to store.
-   */
-  public registerClip(...clip: AnimationClip[]): void {
-    if (!this._clips) {
-      this._clips = [];
-    }
-
-    for(const c of clip) {
-      this._clips.push(c);
-    }
-
-    console.log(`CLIPS: ${this._clips}`);
-  }
-  /**
-  * Returns a list of the names of the cached animation clips.
-  */
-  public clipNames(): string[] {
-    if(!this._clips) {
-      throw new Error('Clip dictionary not initialized.');
-    }
-    return this._clips.map(clip => clip.name);
-  }
-
-  /**
-   * Retrives a saved clip.
-   * @param name Name of the clip to retrieve.
-   * @returns clip The clip matching the name parameter.
-   */
-  public clip(name: string): AnimationClip {
-    const clip = this._clips.find(c => c.name === name);
-    if(!clip) {
-      throw new Error(`No clip with name ${name} registered in component.`);
-    }
-
-    return clip;
-  }
-
-  /**
-   * Retrives an action from the mixer.
-   * @param name Name of the clip that contains the action.
-   * @returns action The action in the mixer matching the clip.
-   */
-  public action(name: string): AnimationAction {
-    const clip = this.clip(name);
-    return this._mixer.clipAction(clip);
-  }
-
-}
-
-export { AnimationComponent, AnimationManagerComponent }

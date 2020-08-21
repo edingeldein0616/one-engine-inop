@@ -12,7 +12,7 @@ class ThreeEngine extends Engine {
   private _canvas: HTMLCanvasElement;
   private _camera: PerspectiveCamera;
   private _renderingSystem: any;
-  private _animationSystem: AnimationSystem;
+  private _animationSystem: any;
 
   private _registeredEntities: Entity[] = [];
   private _registeredSystems: System[] = [];
@@ -27,11 +27,8 @@ class ThreeEngine extends Engine {
     this._time = 0;
     this._initRenderingSystem();
 
-    // Set up animation system
     this._animationSystem = new AnimationSystem();
     this.addSystem(this._animationSystem);
-    this.addEntityListener(this._animationSystem);
-    this._registeredSystems.push(this._animationSystem);
 
     // Add scene and camera entities (scene needs to be added first... hacky, I know)
     this.addEntities(scene, camera);
@@ -50,8 +47,6 @@ class ThreeEngine extends Engine {
     // add rendering system to engine systems and add it to entity listener
     this.addSystem(this._renderingSystem);
     this.addEntityListener(this._renderingSystem);
-    // push it to registerd systems array for proper disposal in the future
-    this._registeredSystems.push(this._renderingSystem);
     // run resize to container to fit the renderer to the canvas dimensions
     this._renderingSystem.resizeToContainer();
   }

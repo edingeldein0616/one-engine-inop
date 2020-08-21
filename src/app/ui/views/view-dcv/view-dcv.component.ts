@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { EngineService } from 'src/app/engine/engine.service';
 import { ModelDcv } from './model-dcv';
 import { environment } from 'src/environments/environment';
-import { AssetManager } from 'src/app/engine/core/AssetManager';
-import { EventBus } from 'src/app/engine/core/events';
+import { EventBus, Subject } from 'src/app/engine/core/events';
+import { AnimationData } from 'src/app/engine/core/systems';
 
 @Component({
   selector: 'app-view-dcv',
@@ -12,8 +12,6 @@ import { EventBus } from 'src/app/engine/core/events';
 })
 export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  private _model: ModelDcv;
-
   constructor(private engineService: EngineService) { }
 
   onNotify() {
@@ -21,14 +19,14 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    if(!environment.production) {
-      AssetManager.get().print();
-    }
   }
 
   ngAfterViewInit() {
-    this.engineService.loadModel(environment.assetUrl, environment.seminole);
-    EventBus.get().publish('propRAction', null);
+    this.engineService.loadModel(environment.seminole);
+    const propRPlay = new Subject()
+    propRPlay.data = new AnimationData('propRAction', action => action.play());
+    EventBus.get().publish('animation', propRPlay);
+    EventBus.get().publish('gey', null);
   }
 
   ngOnDestroy() {

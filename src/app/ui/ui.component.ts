@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AssetManager } from 'src/app/engine/core/AssetManager';
 import { Subscription } from 'rxjs';
+import { LoaderService } from '../services/loader.service';
 
 @Component({
   selector: 'app-ui',
@@ -13,10 +13,15 @@ export class UiComponent implements OnInit, OnDestroy {
 
   private _loadingSub: Subscription;
 
+  /**
+   *
+   */
+  constructor(private _loaderService: LoaderService) {
+  }
+
   public ngOnInit(): void {
-    this._loadingSub = AssetManager.get().loadingObservable.subscribe(
-      value => this.loading = value
-    );
+    this._loadingSub = this._loaderService.isLoadingObservable
+      .subscribe(value => this.loading = value);
   }
 
   public ngOnDestroy(): void {

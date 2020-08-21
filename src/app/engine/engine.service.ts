@@ -1,11 +1,12 @@
 import { Injectable, NgZone, ElementRef, OnDestroy } from '@angular/core';
 import { ThreeEngine } from './ThreeEngine';
-import { EntityFactory, CameraEntity, SceneEntity, ModelEntity, DirectionalLightEntity, AmbientLightEntity } from './core/entities';
-import { ResourceManager, AssetManager } from './core';
-import { RootComponent, AnimationManagerComponent } from './core/components';
-import { AnimationMixer } from 'three';
-import { EventBus, Subject, Listener } from './core/events';
-import { Labels } from '../ui/controls/selector/selection-data';
+import { EntityFactory, CameraEntity, SceneEntity, ModelEntity } from './core/entities';
+import { RootComponent } from './core/components';
+import { EventBus, Subject } from './core/events';
+import { AnimatorComponent } from './core/components/Animation';
+import { LoaderService } from '../services/loader.service';
+import { Subscription } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +14,10 @@ import { Labels } from '../ui/controls/selector/selection-data';
 export class EngineService implements OnDestroy {
 
   private _threeEngine: ThreeEngine;
+  private _loadingSubscription: Subscription;
 
-  constructor(private ngZone: NgZone) {
+  constructor(private ngZone: NgZone,
+    private loaderService: LoaderService) {
 
   }
 
@@ -36,24 +39,20 @@ export class EngineService implements OnDestroy {
 
     // Register hdri environment map
     const subject = new Subject();
-    subject.data = AssetManager.get().texture('envmap');
-    EventBus.get().publish('envmap', subject);
-    EventBus.get().publish('skybox', null);
+    subject.data = this.loaderService.getAsset(environment.envmap);
+    EventBus.get().publish(environment.envmap, subject);
+    EventBus.get().publish(environment.skybox, null);
 
     this._animate();
-
   }
 
-  public loadModel(path: string, filename: string) {
+  public loadModel(filename: string) {
 
-    const gltf = AssetManager.get().model(filename);
+    const gltf = this.loaderService.getAsset(environment.seminole);
 
     const me = EntityFactory.build(ModelEntity);
     me.getComponent(RootComponent).obj = gltf.scene;
-
-    const am = me.getComponent(AnimationManagerComponent);
-    am.mixer = new AnimationMixer(gltf.scene);
-    am.registerClip(...gltf.animations);
+    me.getComponent(AnimatorComponent).configureAnimations(gltf);
 
     this._threeEngine.addEntity(me);
   }
@@ -61,7 +60,6 @@ export class EngineService implements OnDestroy {
   public dispose() {
     this._threeEngine.disposeEngine();
     this._threeEngine = null;
-    AssetManager.get().dispose();
   }
 
   private _animate(): void {
