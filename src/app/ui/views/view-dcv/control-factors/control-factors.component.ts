@@ -23,10 +23,6 @@ export class ControlFactorsComponent implements OnInit {
     subject.data = eventData as SelectionData;
     // console.log(`{ label: ${selection.label}, value: ${selection.value}, percent: ${selection.percent} }`);
     // EventBus.get().publish(subject.data.label, subject);
-    console.log('Sending animation data');
-    const animationData = new Subject();
-    animationData.data = new AnimationData('propRAction', action => action.play());
-    EventBus.get().publish('animation', animationData);
   }
 
 }

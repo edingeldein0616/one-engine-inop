@@ -38,9 +38,14 @@ export class AnimationSystem extends System implements Listener {
   }
 
   receive(topic: string, subject: Subject) {
-    console.log('recieved animation event: topic - ' + topic);
 
     const data = subject.data as AnimationData;
+    if(!data) {
+      throw Error(`Incorrect animation data: ${subject}`);
+    }
+
+    console.log(`Recieved animation event: ${data.clipName}`)
+
     this._family.entities.forEach(entity => {
 
       const ac = entity.getComponent(AnimatorComponent);

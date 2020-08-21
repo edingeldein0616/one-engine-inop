@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { EngineService } from 'src/app/engine/engine.service';
 import { environment } from 'src/environments/environment';
-import { AssetManager } from 'src/app/engine/core/AssetManager';
 
 @Component({
   selector: 'app-view-zst',
@@ -13,9 +12,6 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private engineService: EngineService) { }
 
   ngOnInit() {
-    if(!environment.production) {
-      AssetManager.get().print();
-    }
   }
 
   ngAfterViewInit() {

@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { EngineService } from 'src/app/engine/engine.service';
 import { ModelDcv } from './model-dcv';
 import { environment } from 'src/environments/environment';
-import { AssetManager } from 'src/app/engine/core/AssetManager';
 import { EventBus, Subject } from 'src/app/engine/core/events';
 import { AnimationData } from 'src/app/engine/core/systems';
 
@@ -20,9 +19,6 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    if(!environment.production) {
-      AssetManager.get().print();
-    }
   }
 
   ngAfterViewInit() {
