@@ -50,23 +50,23 @@ export class AnimationSystem extends System implements Listener {
 
       const ac = entity.getComponent(AnimatorComponent);
       const action = ac.action(data.clipName);
-      action.play();
+      data.actionCallback(action, data.args);
 
     });
   }
 
 }
 
-
-
 export class AnimationData {
 
   public readonly clipName: string;
-  public actionCallback: (action: AnimationAction) => void;
+  public actionCallback: (action: AnimationAction, ...args: any[]) => void;
+  public args: any[];
 
-  constructor(clipName: string, actionCallback: (action: AnimationAction) => void) {
+  constructor(clipName: string, actionCallback: (action: AnimationAction, ...args: any[]) => void, ...args: any[]) {
     this.clipName = clipName;
     this.actionCallback = actionCallback;
+    this.args = args;
   }
 
 }

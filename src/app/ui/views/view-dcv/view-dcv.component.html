@@ -48,7 +48,7 @@
 <!--    CONTROL        -->
 <!-- ----------------  -->
 <div class="panel control">
-  <app-control-factors title="CONTROL FACTORS" [disablePower]="false"></app-control-factors>
+  <app-control-factors title="CONTROL FACTORS" [disablePower]="false" (controlOutput)="valueChanged($event)"></app-control-factors>
 </div>
 
 <!-- ----------------  -->

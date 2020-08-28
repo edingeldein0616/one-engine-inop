@@ -1,9 +1,11 @@
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { EngineService } from 'src/app/engine/engine.service';
-import { ModelDcv } from './model-dcv';
 import { environment } from 'src/environments/environment';
 import { EventBus, Subject } from 'src/app/engine/core/events';
 import { AnimationData } from 'src/app/engine/core/systems';
+import { AnimationAction } from 'three';
+import { AnimationDriver, AnimationPosition } from 'src/app/ui/views/AnimationDriver';
+import { SelectionData } from '../../controls/selector/selection-data';
 
 @Component({
   selector: 'app-view-dcv',
@@ -12,24 +14,39 @@ import { AnimationData } from 'src/app/engine/core/systems';
 })
 export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
 
+  private _animationDriver: AnimationDriver;
+
   constructor(private engineService: EngineService) { }
 
-  onNotify() {
-
+  public ngOnInit() {
+    this._animationDriver = new AnimationDriver();
   }
 
-  ngOnInit() {
-  }
-
-  ngAfterViewInit() {
+  public ngAfterViewInit() {
     this.engineService.loadModel(environment.seminole);
-    const propRPlay = new Subject()
-    propRPlay.data = new AnimationData('propRAction', action => action.play());
-    EventBus.get().publish('animation', propRPlay);
-    EventBus.get().publish('gey', null);
+    this._animationDriver.play('propRAction');
+    this._animationDriver.play('propLAction');
   }
 
-  ngOnDestroy() {
+  public valueChanged(data: SelectionData) {
+    console.log(data);
+
+    switch(data.label) {
+      case 'LANDING GEAR':
+        this.gear(data.value === 'DOWN');
+      break;
+    }
+  }
+
+  public gear(down: boolean): void {
+    if(down) {
+      this._animationDriver.jumpTo('GearAction', AnimationPosition.Beginning);
+    } else {
+      this._animationDriver.jumpTo('GearAction', AnimationPosition.End);
+    }
+  }
+
+  public ngOnDestroy() {
     this.engineService.dispose();
   }
 

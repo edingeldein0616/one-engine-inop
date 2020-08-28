@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output } from '@angular/core';
 import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { EventBus, Subject } from 'src/app/engine/core/events';
-import { AnimationData } from 'src/app/engine/core/systems';
+import { EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-control-factors',
@@ -13,16 +13,15 @@ export class ControlFactorsComponent implements OnInit {
   @Input() disablePower: boolean;
   @Input() title: string;
 
+  @Output() controlOutput = new EventEmitter<SelectionData>();
+
   constructor() { }
 
   ngOnInit() {
   }
 
   public selected(eventData: any) {
-    var subject = new Subject();
-    subject.data = eventData as SelectionData;
-    // console.log(`{ label: ${selection.label}, value: ${selection.value}, percent: ${selection.percent} }`);
-    // EventBus.get().publish(subject.data.label, subject);
+    this.controlOutput.emit(eventData);
   }
 
 }
