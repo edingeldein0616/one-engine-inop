@@ -7,6 +7,7 @@ export class AnimationDriver {
 
   private _playAction: (a: AnimationAction) => void;
   private _stopAction: (a: AnimationAction) => void;
+  private _pauseAction: (a: AnimationAction) => void;
   private _resetAction: (a: AnimationAction) => void;
   private _jumpToAction: (a: AnimationAction, position: AnimationPosition) => void;
   private _haltAction: (a: AnimationAction) => void;
@@ -17,6 +18,9 @@ export class AnimationDriver {
     };
     this._stopAction = (a: AnimationAction) => {
       a.stop();
+    };
+    this._pauseAction = (a: AnimationAction) => {
+      a.paused = true;
     };
     this._resetAction = (a: AnimationAction) => {
       a.reset();
@@ -47,6 +51,11 @@ export class AnimationDriver {
   public stop(actionName: string): void {
     const stopAction = this._subject(actionName, this._stopAction);
     EventBus.get().publish('animation', stopAction);
+  }
+
+  public pause(actionName: string): void {
+    const pauseAction = this._subject(actionName, this._pauseAction);
+    EventBus.get().publish('animation', pauseAction);
   }
 
   public jumpTo(actionName: string, position: number): void {

@@ -5,6 +5,7 @@ import { AnimationDriver } from 'src/app/ui/views/AnimationDriver';
 import { SelectionData } from '../../controls/selector/selection-data';
 import { Subject, Subscription } from 'rxjs';
 import { SeminoleActionModel } from './seminole-action-model';
+import { withModule } from '@angular/core/testing';
 
 @Component({
   selector: 'app-view-dcv',
@@ -17,8 +18,6 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
   private _sam: SeminoleActionModel;
 
   private _currentFlapsAction: string;
-  private _inopEngine: string;
-  private _controlTechnique: string;
 
   private _disposables: Subscription[] = [];
 
@@ -29,8 +28,24 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
     this._sam = new SeminoleActionModel();
 
     this._disposables = [
+
       this._sam.inopEngineObservable.subscribe(inopEngine => {
-        console.log(inopEngine);
+        this.inopEngine(inopEngine);
+        this.clearOrientation();
+        this.controlTechnique(this._sam.controlTechnique, inopEngine);
+      }),
+
+      this._sam.controlTehcniqueObservable.subscribe(controlTechnique => {
+        this.clearOrientation()
+        this.controlTechnique(controlTechnique, this._sam.inopEngine);
+      }),
+
+      this._sam.flapsObservable.subscribe(flaps => {
+        this.flaps(flaps);
+      }),
+
+      this._sam.gearObservable.subscribe(gear => {
+        this.gear(gear === 'DOWN');
       })
     ];
   }
@@ -39,48 +54,61 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
     this.engineService.loadModel(environment.seminole);
   }
 
-  public controlTechnique(inopEngine: string) {
-    if(this._controlTechnique === 'WINGS LEVEL') {
+  public valueChanged(data: SelectionData) {
+    switch(data.label) {
+      case 'INOP. ENGINE':
+        this._sam.inopEngine = data.value;
+      break;
+      case 'FLAPS':
+        this._sam.flaps = Number(data.percent);
+      break;
+      case 'LANDING GEAR':
+        this._sam.gear = data.value;
+      break;
+      case 'CONTROL TECHNIQUE':
+        this._sam.controlTechnique = data.value;
+      break;
+
+    }
+  }
+
+  public controlTechnique(controlTechnique: string, inopEngine: string) {
+    this.clearRudder();
+    this.rudder(controlTechnique, inopEngine);
+
+    if(controlTechnique === 'WINGS LEVEL') {
       this.wingsLevel(inopEngine);
     } else {
       this.zeroSideSlip(inopEngine);
     }
   }
 
-  public valueChanged(data: SelectionData) {
-    console.log(data);
+  public inopEngine(inopEngine: string) {
+    const inopEngineAction = inopEngine === 'LEFT' ? 'propLAction' : 'propRAction';
+    const otherEngineAction = inopEngine === 'LEFT' ? 'propRAction' : 'propLAction';
+    this._animationDriver.play(inopEngineAction);
+    this._animationDriver.stop(otherEngineAction);
+  }
 
-    switch(data.label) {
-      case 'INOP. ENGINE':
-        this._inopEngine = data.value;
-        const inopEngine = this._inopEngine === 'LEFT' ? 'propLAction' : 'propRAction';
-        const otherEngine = this._inopEngine === 'LEFT' ? 'propRAction' : 'propLAction';
-        this._animationDriver.play(inopEngine);
-        this._animationDriver.stop(otherEngine);
-
-        if(this._controlTechnique === 'WINGS LEVEL') {
-          this.setYaw(true);
-        } else {
-          this.setBank(true);
-        }
-
-      break;
-      case 'FLAPS':
-        this.flaps(Number(data.percent));
-      break;
-      case 'LANDING GEAR':
-        this.gear(data.value === 'DOWN');
-      break;
-      case 'CONTROL TECHNIQUE':
-        this._controlTechnique = data.value;
-        if(data.value === 'WINGS LEVEL') {
-          this.setYaw(true);
-        } else {
-          this.setBank(true);
-        }
-      break;
-
+  public rudder(controlTechnique: string, inopEngine: string) {
+    if(controlTechnique === 'WINGS LEVEL') {
+      const rudderAction = inopEngine === 'LEFT' ? 'rudderRightAction' : 'rudderLeftAction';
+      this._animationDriver.jumpTo(rudderAction, 100);
+    } else {
+      this._animationDriver.jumpTo('rudderLeftAction', 0);
     }
+  }
+
+  public clearOrientation() {
+    this._animationDriver.stop('yawRightAction');
+    this._animationDriver.stop('yawLeftAction');
+    this._animationDriver.stop('rollRightAction');
+    this._animationDriver.stop('rollLeftAction');
+  }
+
+  public clearRudder() {
+    this._animationDriver.stop('rudderRightAction');
+    this._animationDriver.stop('rudderLeftAction');
   }
 
   public wingsLevel(inopEngine: string) {
@@ -91,28 +119,6 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
   public zeroSideSlip(inopEngine: string) {
     const rollAction = inopEngine === 'LEFT' ? 'rollRightAction' : 'rollLeftAction';
     this._animationDriver.jumpTo(rollAction, 100);
-  }
-
-  public setYaw(yaw: boolean): void {
-    if(yaw) {
-      this.setBank(false);
-      const yawAction = this._inopEngine == 'LEFT' ? 'yawRightAction' : 'yawLeftAction';
-      this._animationDriver.jumpTo(yawAction, 100);
-    } else {
-      this._animationDriver.stop('yawRightAction');
-      this._animationDriver.stop('yawLeftAction');
-    }
-  }
-
-  public setBank(bank: boolean): void {
-    if(bank) {
-      this.setYaw(false);
-      const bankAction = this._inopEngine == 'LEFT' ? 'rollRightAction' : 'rollLeftAction';
-      this._animationDriver.jumpTo(bankAction, 100);
-    } else {
-      this._animationDriver.halt('rollRightAction');
-      this._animationDriver.halt('rollLeftAction');
-    }
   }
 
   public gear(down: boolean): void {
@@ -142,6 +148,9 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public ngOnDestroy() {
     this.engineService.dispose();
+    while(this._disposables.length > 0) {
+      this._disposables.pop().unsubscribe();
+    }
   }
 
 }
