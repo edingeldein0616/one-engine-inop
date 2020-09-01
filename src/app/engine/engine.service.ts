@@ -46,9 +46,9 @@ export class EngineService implements OnDestroy {
     this._animate();
   }
 
-  public loadModel(filename: string) {
+  public loadModel(assetName: string) {
 
-    const gltf = this.loaderService.getAsset(environment.seminole);
+    const gltf = this.loaderService.getAsset(assetName);
 
     const me = EntityFactory.build(ModelEntity);
     me.getComponent(RootComponent).obj = gltf.scene;

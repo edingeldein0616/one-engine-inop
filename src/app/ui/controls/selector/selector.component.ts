@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter, AfterViewInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, AfterViewInit, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { SelectionData } from './selection-data';
+import { MatButtonToggle } from '@angular/material';
 
 @Component({
   selector: 'app-selector',
@@ -16,6 +17,10 @@ export class SelectorComponent implements AfterViewInit {
 
   @Output() valueOutput = new EventEmitter<SelectionData>();
 
+  @ViewChild('selector') selector: ElementRef<MatButtonToggle>;
+
+  private _currentSelection: SelectionData;
+
   constructor() { }
 
   valueChanged(item) {
@@ -27,10 +32,10 @@ export class SelectorComponent implements AfterViewInit {
 
     const data: SelectionData = { label: this.label, value: v, percent: p};
     this.valueOutput.emit(data);
-    //console.log(`Selection data: ${data.label}, ${data.value}, ${data.percent}`);
   }
 
   ngAfterViewInit() {
+    this.valueChanged({ value: this.initialValue });
   }
 
 }

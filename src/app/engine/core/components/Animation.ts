@@ -10,10 +10,25 @@ export class AnimatorComponent implements Component {
   public get animationMixer() { return this._animationMixer; }
 
   private _animationClips: AnimationClip[];
+  private _animationActions: Map<string, AnimationAction>;
 
   public configureAnimations(gltf: GLTF): void {
     this._animationMixer = new AnimationMixer(gltf.scene);
     this._animationClips = gltf.animations;
+    this._animationActions = new Map<string, AnimationAction>();
+
+    const flapsClip = this._animationClips.find(clip => clip.name === 'FlapsAction');
+    if(flapsClip) {
+      this.subClip(flapsClip, 'flapsTo0Action', 0, 1);
+      this.subClip(flapsClip, 'flapsTo10Action', 0, 50);
+      this.subClip(flapsClip, 'flapsTo25Action', 50, 100);
+      this.subClip(flapsClip, 'flapsTo40Action', 100, 150);
+    }
+
+    for(let clip of this._animationClips) {
+      const action = this._animationMixer.clipAction(clip);
+      this._animationActions.set(clip.name, action);
+    }
   }
 
   public clip(clipName: string): AnimationClip {
@@ -21,6 +36,9 @@ export class AnimatorComponent implements Component {
   }
 
   public clipAction(clip: AnimationClip): AnimationAction {
+    if(this._animationActions.has(clip.name)) {
+      return this._animationActions.get(clip.name);
+    }
     return this._animationMixer.clipAction(clip);
   }
 
