@@ -9,6 +9,8 @@ export class AnimationSystem extends System implements Listener {
   private _family: Family;
   private _clock: Clock = new Clock();
 
+  private _animationQueue: AnimationData[] = [];
+
   public onAttach(engine: Engine) {
     super.onAttach(engine);
 
@@ -29,6 +31,16 @@ export class AnimationSystem extends System implements Listener {
     this._family.entities.forEach(entity => {
 
       const ac = entity.getComponent(AnimatorComponent);
+
+      while(this._animationQueue.length > 0) {
+        let str = '';
+        this._animationQueue.forEach(o => str += `${o.clipName} -- `);
+        const ad = this._animationQueue.shift();
+        const action  = ac.action(ad.clipName);
+        ad.actionCallback(action, ad.args);
+        console.log(str);
+      }
+
       if(ac.animationMixer) {
         ac.animationMixer.update(this._clock.getDelta());
       }
@@ -44,15 +56,7 @@ export class AnimationSystem extends System implements Listener {
       throw Error(`Incorrect animation data: ${subject}`);
     }
 
-    console.log(`Recieved animation event: ${data.clipName}`)
-
-    this._family.entities.forEach(entity => {
-
-      const ac = entity.getComponent(AnimatorComponent);
-      const action = ac.action(data.clipName);
-      data.actionCallback(action, data.args);
-
-    });
+    this._animationQueue.push(data);
   }
 
 }

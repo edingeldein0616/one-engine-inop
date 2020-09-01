@@ -7,7 +7,9 @@ export class AnimationDriver {
 
   private _playAction: (a: AnimationAction) => void;
   private _stopAction: (a: AnimationAction) => void;
+  private _resetAction: (a: AnimationAction) => void;
   private _jumpToAction: (a: AnimationAction, position: AnimationPosition) => void;
+  private _haltAction: (a: AnimationAction) => void;
 
   constructor() {
     this._playAction = (a: AnimationAction) => {
@@ -16,15 +18,24 @@ export class AnimationDriver {
     this._stopAction = (a: AnimationAction) => {
       a.stop();
     };
-    this._jumpToAction = (a: AnimationAction, position: AnimationPosition) => {
+    this._resetAction = (a: AnimationAction) => {
+      a.reset();
+    };
+    this._jumpToAction = (a: AnimationAction, position: number) => {
+      if(a.isRunning()) {
+        a.stop();
+      }
       const clip = a.getClip();
-      let time = position == AnimationPosition.Beginning
-        ? 0
-        : clip.duration;
+      let time = (position / 100) * clip.duration;
 
       a.time = time;
       a.paused = true;
       a.play();
+    }
+
+    this._haltAction = (a: AnimationAction) => {
+      a.reset();
+      a.stop();
     }
   }
 
@@ -38,9 +49,19 @@ export class AnimationDriver {
     EventBus.get().publish('animation', stopAction);
   }
 
-  public jumpTo(actionName: string, position: AnimationPosition): void {
+  public jumpTo(actionName: string, position: number): void {
     const jumpToAction = this._subject(actionName, this._jumpToAction, position)
     EventBus.get().publish('animation', jumpToAction);
+  }
+
+  public reset(actionName: string): void {
+    const resetAction = this._subject(actionName, this._resetAction);
+    EventBus.get().publish('animation', resetAction);
+  }
+
+  public halt(actionName: string): void {
+    const haltAction = this._subject(actionName, this._haltAction);
+    EventBus.get().publish('animation', haltAction);
   }
 
   private _subject(actionName: string, callback: (a: AnimationAction, ...args: any[]) => void, ...args: any[]): Subject {
