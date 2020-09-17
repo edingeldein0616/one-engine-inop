@@ -51,7 +51,11 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public ngAfterViewInit() {
-    this.engineService.loadModel(environment.seminole);
+    this.engineService.loadSeminole(environment.seminole);
+    this.engineService.loadMarkings(environment.markings);
+
+    const markings = this.engineService.getModelReference(environment.markings);
+
   }
 
   public valueChanged(data: SelectionData) {

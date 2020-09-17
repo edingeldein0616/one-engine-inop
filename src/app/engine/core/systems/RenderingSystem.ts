@@ -1,6 +1,6 @@
 import { System, Engine, Entity, Family, FamilyBuilder, EngineEntityListener } from '@nova-engine/ecs';
 import { WebGLRenderer, PerspectiveCamera, Object3D, DataTexture, PMREMGenerator, sRGBEncoding, Mesh, SphereBufferGeometry, MeshBasicMaterial } from 'three';
-import { Sky } from 'three/examples/jsm/objects/Sky'
+import { Sky } from 'three/examples/jsm/objects/Sky';
 import { SceneComponent, RootComponent } from '../components';
 import { SceneEntity } from '../entities'
 import { Listener, EventBus, Subject } from '../events';

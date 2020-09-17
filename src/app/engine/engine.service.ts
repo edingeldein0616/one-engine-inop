@@ -7,6 +7,7 @@ import { AnimatorComponent } from './core/components/Animation';
 import { LoaderService } from '../services/loader.service';
 import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 
 @Injectable({
   providedIn: 'root'
@@ -46,7 +47,7 @@ export class EngineService implements OnDestroy {
     this._animate();
   }
 
-  public loadModel(assetName: string) {
+  public loadSeminole(assetName: string) {
 
     const gltf = this.loaderService.getAsset(assetName);
 
@@ -55,6 +56,21 @@ export class EngineService implements OnDestroy {
     me.getComponent(AnimatorComponent).configureAnimations(gltf);
 
     this._threeEngine.addEntity(me);
+  }
+
+  public loadMarkings(assetName: string) {
+
+    const gltf = this.loaderService.getAsset(assetName);
+
+    const me = EntityFactory.build(ModelEntity);
+    me.getComponent(RootComponent).obj = gltf.scene;
+    me.getComponent(AnimatorComponent).configureAnimations(gltf);
+
+    this._threeEngine.addEntity(me);
+  }
+
+  public getModelReference(assetName: string): GLTF {
+    return this.loaderService.getAsset(assetName);
   }
 
   public dispose() {

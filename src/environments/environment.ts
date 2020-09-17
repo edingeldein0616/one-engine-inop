@@ -8,6 +8,7 @@ export const environment = {
   skybox: 'skybox',
   envmap: 'envmap',
   seminole: 'seminole',
+  markings: 'markings',
   production: false
 };
 

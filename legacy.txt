@@ -1,0 +1,470 @@
+Directional Control/Vmca:
+Variables and equations extracted from script:
+Prop: 10, 5
+Bank: (Control Technique) = 1, 3
+Flaps: 0 thru 3
+Weight: 1 thru 5
+CG: 1 thru 5
+Airspeed: 1 thru 5
+Gear: 1, 3
+Power: 4, 8, 12, 16, 20
+Altitude (Density): 1 thru 5
+
+Vmca=((Power-Altitude+Prop-3)-(CG+3+Bank+Flaps+Gear-2)+40);
+
+stallspeed=(42-Flaps+Weight+CG-(Power/4)+Prop-Bank+Gear)
+
+YawScale.gotoAndStop(Power-Altitude+Prop-3+25);
+Rt / LtRollScale.gotoAndStop(Math.floor((Power-Altitude+Prop-3)/2))
+RtThrust / LtThrust.gotoAndStop((Power/4)+6-Altitude)
+RudderScale.gotoAndStop(Power-Altitude+Prop-3+19)
+RudderEffScale.gotoAndStop(Weight+CG+Airspeed+Bank+Flaps+Gear-1)
+
+Full scripts (minus scripts attached to UI):
+// loading movie
+ifFrameLoaded (2) {
+    _root.LoadingMovie._visible=false;
+}
+// set up lt eng inop/windmilling
+// zero sideslip, Vmc conditions
+LVLltF._visible = false;
+LVLltW._visible = false;
+LVLltR._visible = false;
+LVLrtF._visible = false;
+LVLrtW._visible = false;
+LVLrtR._visible = false;
+//
+BRltF._visible = true;
+BRltW._visible = false;
+BRltR._visible = false;
+BRrtF._visible = false;
+BRrtW._visible = false;
+BRrtR._visible = true;
+//
+BLltF._visible = false;
+BLltW._visible = false;
+BLltR._visible = false;
+BLrtF._visible = false;
+BLrtW._visible = false;
+BLrtR._visible = false;
+//
+YRltF._visible = false;
+YRltW._visible = false;
+YRltR._visible = false;
+YRrtF._visible = false;
+YRrtW._visible = false;
+YRrtR._visible = false;
+//
+YLltF._visible = false;
+YLltW._visible = false;
+YLltR._visible = false;
+YLrtF._visible = false;
+YLrtW._visible = false;
+YLrtR._visible = false;
+//
+// Right Bank A/C visible
+SLevel._visible = false;
+SBankRight._visible = true;
+SBankLeft._visible = false;
+SYawRight._visible = false;
+SYawLeft._visible = false;
+LvlEngine._visible = false;
+BREngine._visible = true;
+BLEngine._visible = false;
+YREngine._visible = false;
+YLEngine._visible = false;
+//
+//Set up flaps
+_root.LeftFlap.gotoAndStop(5);
+_root.RightFlap.gotoAndStop(5);
+//
+//Set up gear
+LVLGear._visible=false;
+YRGear._visible=false;
+YLGear._visible=false;
+BRGear._visible=false;
+BLGear._visible=false;
+//
+//Set up force scales
+_root.LtThrust.gotoAndStop(1);
+_root.RtThrust.gotoAndStop(8);
+_root.LtDrag.gotoAndStop(2);
+_root.RtDrag.gotoAndStop(1);
+_root.LtBankIndex.gotoAndStop(2);
+_root.RtBankIndex.gotoAndStop(3);
+_root.CGScale.gotoAndStop(3);
+_root.RudderArm.gotoAndStop(3);
+//
+// hide all extras
+_root.RudderArm._visible=false;
+//
+//Set variables
+InopEngine="left";
+Prop=0;
+Bank=0;
+PFlaps=0;
+Flaps=1;
+Weight=0;
+CG=0;
+Airspeed=0;
+Gear=1;
+PGear=0;
+Power=20;
+Altitude=0;
+Achange=false;
+
+Single-Engine Climb Performance
+Variables and equations extracted from script:
+
+Altitude (Density): 150, 75, 0 , -75, -150
+Prop: -200, 0
+Bank (Control Technique): -300, 0
+Airspeed: -50, -25, 0, -50, -100
+Weight: 68, 34, 0, -34, -68
+CG: 40, 20, 0 -20, -40
+Flaps: 1 thru 4
+PFlaps: 0, -20, -240, -275
+Gear: 1, 3
+PGear:  0, -250
+
+ROC=(170+Altitude+Prop+Bank+Airspeed+Weight+CG+PFlaps+PGear)
+    serviceceiling=5700+(Weight*20)+(Prop*22)+(Bank*21)+(CG*13)+(PFlaps*21)+(PGear*21)
+
+absoluteceiling=Math.floor(serviceceiling*1.102)
+
+excessTHP=Math.floor(ROC/8)
+
+Rt /LtThrust.gotoAndStop(8+(Altitude/75))
+Full scripts (minus scripts attached to UI):
+// loading movie
+ifFrameLoaded (2) {
+    _root.LoadingMovie._visible=false;
+}
+// set up lt eng inop/windmilling
+// zero sideslip, Vmc conditions
+LVLltF._visible = false;
+LVLltW._visible = false;
+LVLltR._visible = false;
+LVLrtF._visible = false;
+LVLrtW._visible = false;
+LVLrtR._visible = false;
+//
+BRltF._visible = true;
+BRltW._visible = false;
+BRltR._visible = false;
+BRrtF._visible = false;
+BRrtW._visible = false;
+BRrtR._visible = true;
+//
+BLltF._visible = false;
+BLltW._visible = false;
+BLltR._visible = false;
+BLrtF._visible = false;
+BLrtW._visible = false;
+BLrtR._visible = false;
+//
+YRltF._visible = false;
+YRltW._visible = false;
+YRltR._visible = false;
+YRrtF._visible = false;
+YRrtW._visible = false;
+YRrtR._visible = false;
+//
+YLltF._visible = false;
+YLltW._visible = false;
+YLltR._visible = false;
+YLrtF._visible = false;
+YLrtW._visible = false;
+YLrtR._visible = false;
+//
+// Right Bank A/C visible
+SLevel._visible = false;
+SBankRight._visible = true;
+SBankLeft._visible = false;
+SYawRight._visible = false;
+SYawLeft._visible = false;
+LvlEngine._visible = false;
+BREngine._visible = true;
+BLEngine._visible = false;
+YREngine._visible = false;
+YLEngine._visible = false;
+//
+//Set up flaps
+_root.LeftFlap.gotoAndStop(5);
+_root.RightFlap.gotoAndStop(5);
+//
+//Set up gear
+LVLGear._visible=false;
+YRGear._visible=false;
+YLGear._visible=false;
+BRGear._visible=false;
+BLGear._visible=false;
+//
+//Set up force scales
+_root.LtThrust.gotoAndStop(1);
+_root.RtThrust.gotoAndStop(8);
+_root.LtDrag.gotoAndStop(2);
+_root.RtDrag.gotoAndStop(1);
+_root.LtBankIndex.gotoAndStop(2);
+_root.RtBankIndex.gotoAndStop(3);
+_root.CGScale.gotoAndStop(3);
+_root.RudderArm.gotoAndStop(3);
+//
+// hide all extras
+_root.RudderArm._visible=false;
+//
+//Set variables
+InopEngine="left";
+Prop=0;
+Bank=0;
+PFlaps=0;
+Flaps=1;
+Weight=0;
+CG=0;
+Airspeed=0;
+Gear=1;
+PGear=0;
+Power=20;
+Altitude=0;
+Achange=false;
+
+
+// update all function
+function updateall () {
+    _root.hideall ();
+    // update data
+    _root.ROC=(170+_root.Altitude+_root.Prop+_root.Bank+_root.Airspeed+_root.Weight+_root.CG+_root.PFlaps+_root.PGear);
+    _root.serviceceiling=5700+(_root.Weight*20)+(_root.Prop*22)+(_root.Bank*21)+(_root.CG*13)+(_root.PFlaps*21)+(_root.PGear*21);
+
+if(_root.serviceceiling<0){
+        _root.absoluteceiling="N/A";
+        _root.serviceceiling="N/A";
+    }else{
+    _root.absoluteceiling=Math.floor(serviceceiling*1.102);
+    }
+    if(_root.Achange==true){
+        _root.Achange=false;
+    }else{
+        _root.excessTHP=Math.floor(_root.ROC/8);
+    }
+    //
+    if (_root.Power == 4) {
+        // set up level graphics
+        _root.SLevel._visible = true;
+        _root.LVLengine._visible = true;
+        _root.YawScale.gotoAndStop(1);
+        // set up props
+        if (_root.InopEngine=="left"){
+            _root.LVLrtW._visible=true;
+            _root.RtDrag.gotoAndStop(6);
+                if (_root.Prop==(0-200)){
+                    _root.LVLltW._visible=true;
+                    _root.LtDrag.gotoAndStop(6);
+                } else {
+                    _root.LVLltF._visible=true;
+                    _root.LtDrag.gotoAndStop(2);
+                    _root.YawScale.gotoAndStop(5);
+                }
+        } else {
+            _root.LVLltW._visible=true;
+            _root.LtDrag.gotoAndStop(6);
+                if (_root.Prop==(0-200)){
+                    _root.LVLrtW._visible=true;
+                    _root.RtDrag.gotoAndStop(6);
+                } else {
+                    _root.LVLrtF._visible=true;
+                    _root.RtDrag.gotoAndStop(2);
+                    _root.YawScale.gotoAndStop(30);
+                }
+        }
+        // set up flaps
+        _root.updateflaps(0);
+        // set up gear
+        if (_root.Gear==3){
+            _root.LVLgear._visible=true;
+        }
+        // set up scales
+        _root.YawIndex.gotoAndStop(1);
+        _root.LtBankIndex.gotoAndStop(1);
+        _root.RtBankIndex.gotoAndStop(1);
+        _root.RtThrust.gotoAndStop(1);
+        _root.LtThrust.gotoAndStop(1);
+    } else {
+        if (_root.InopEngine == "left") {
+            if (_root.Bank == 0) {
+                // set up zero-sideslip graphics
+                _root.SBankRight._visible = true;
+                _root.BRengine._visible = true;
+                // set up gear
+                if (_root.Gear==3){
+                    _root.BRgear._visible=true;
+                }
+                // set up props & prop drag
+                _root.BRrtR._visible=true;
+                _root.RtDrag.gotoAndStop(1);
+                if (_root.Prop==(0-200)){
+                    _root.BRltW._visible=true;
+                    _root.LtDrag.gotoAndStop(6);
+                } else {
+                    _root.BRltF._visible=true;
+                    _root.LtDrag.gotoAndStop(2);
+                }
+                // set up flaps
+                _root.updateflaps(4);
+                // set up scales
+                _root.YawIndex.gotoAndStop(1);
+                _root.LtBankIndex.gotoAndStop(2);
+                _root.RtBankIndex.gotoAndStop(3);
+                _root.RtThrust.gotoAndStop(8+(Altitude/75));
+                _root.LtThrust.gotoAndStop(1);
+            } else {
+                // set up wings-level graphics
+                _root.SYawRight._visible = true;
+                _root.YRengine._visible = true;
+                // set up gear
+                if (_root.Gear==3){
+                    _root.YRgear._visible=true;
+                }
+                // set up props & prop drag
+                _root.YRrtR._visible=true;
+                _root.RtDrag.gotoAndStop(1);
+                if (_root.Prop==(0-200)){
+                    _root.YRltW._visible=true;
+                    _root.LtDrag.gotoAndStop(6);
+                } else {
+                    _root.YRltF._visible=true;
+                    _root.LtDrag.gotoAndStop(2);
+                }
+                // set up flaps
+                _root.updateflaps(12);
+                // set up scales
+                _root.YawIndex.gotoAndStop(3);
+                _root.LtBankIndex.gotoAndStop(1);
+                _root.RtBankIndex.gotoAndStop(1);
+                _root.RtThrust.gotoAndStop(8+(Altitude/75));
+                _root.LtThrust.gotoAndStop(1);
+            }
+        } else {
+            if (_root.Bank == 0) {
+                // set up zero-sideslip graphics
+                _root.SBankLeft._visible = true;
+                _root.BLengine._visible = true;
+                // set up gear
+                if (_root.Gear==3){
+                    _root.BLgear._visible=true;
+                }
+                // set up props & prop drag
+                _root.BLltR._visible=true;
+                _root.LtDrag.gotoAndStop(1);
+                if (_root.Prop==(0-200)){
+                    _root.BLrtW._visible=true;
+                    _root.RtDrag.gotoAndStop(6);
+                } else {
+                    _root.BLrtF._visible=true;
+                    _root.RtDrag.gotoAndStop(2);
+                }
+                // set up flaps
+                _root.updateflaps(8);
+                // set up scales
+                _root.YawIndex.gotoAndStop(1);
+                _root.LtBankIndex.gotoAndStop(3);
+                _root.RtBankIndex.gotoAndStop(2);
+                _root.RtThrust.gotoAndStop(1);
+                _root.LtThrust.gotoAndStop(8+(Altitude/75));
+            } else {
+                // set up wings-level graphics
+                _root.SYawLeft._visible = true;
+                _root.YLengine._visible = true;
+                // set up gear
+                if (_root.Gear==3){
+                    _root.YLgear._visible=true;
+                }
+                // set up props & prop drag
+                _root.YLltR._visible=true;
+                _root.LtDrag.gotoAndStop(1);
+                if (_root.Prop==(0-200)){
+                    _root.YLrtW._visible=true;
+                    _root.RtDrag.gotoAndStop(6);
+                } else {
+                    _root.YLrtF._visible=true;
+                    _root.RtDrag.gotoAndStop(2);
+                }
+                // set up flaps
+                _root.updateflaps(16);
+                // set up scales
+                _root.YawIndex.gotoAndStop(2);
+                _root.LtBankIndex.gotoAndStop(1);
+                _root.RtBankIndex.gotoAndStop(1);
+                _root.RtThrust.gotoAndStop(1);
+                _root.LtThrust.gotoAndStop(8+(Altitude/75));
+            }
+        }
+    }
+}
+// hideall function
+function hideall (){
+    //hide aircraft
+    _root.SBankRight._visible = false;
+    _root.SBankLeft._visible = false;
+    _root.SYawRight._visible = false;
+    _root.SYawLeft._visible = false;
+    _root.SLevel._visible = false;
+    _root.BRengine._visible = false;
+    _root.BLengine._visible = false;
+    _root.YRengine._visible = false;
+    _root.YLengine._visible = false;
+    _root.LVLengine._visible = false;
+    //hide gear
+    _root.LVLgear._visible = false;
+    _root.BRgear._visible = false;
+    _root.BLgear._visible = false;
+    _root.YRgear._visible = false;
+    _root.YLgear._visible = false;
+    //hide props
+    LVLltF._visible = false;
+    LVLltW._visible = false;
+    LVLltR._visible = false;
+    LVLrtF._visible = false;
+    LVLrtW._visible = false;
+    LVLrtR._visible = false;
+    //
+    BRltF._visible = false;
+    BRltW._visible = false;
+    BRltR._visible = false;
+    BRrtF._visible = false;
+    BRrtW._visible = false;
+    BRrtR._visible = false;
+    //
+    BLltF._visible = false;
+    BLltW._visible = false;
+    BLltR._visible = false;
+    BLrtF._visible = false;
+    BLrtW._visible = false;
+    BLrtR._visible = false;
+    //
+    YRltF._visible = false;
+    YRltW._visible = false;
+    YRltR._visible = false;
+    YRrtF._visible = false;
+    YRrtW._visible = false;
+    YRrtR._visible = false;
+    //
+    YLltF._visible = false;
+    YLltW._visible = false;
+    YLltR._visible = false;
+    YLrtF._visible = false;
+    YLrtW._visible = false;
+    YLrtR._visible = false;
+    //
+}
+// update flaps
+function updateflaps (fpos){
+    _root.LeftFlap.gotoAndStop(_root.Flaps+fpos);
+    _root.RightFlap.gotoAndStop(_root.Flaps+fpos);
+}
+// hide extras
+function hideallextras(){
+    _root.RudderArm._visible=false
+}
+
+

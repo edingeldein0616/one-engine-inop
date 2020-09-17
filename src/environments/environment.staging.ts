@@ -3,5 +3,6 @@ export const environment = {
   skybox: 'skybox',
   envmap: 'envmap',
   seminole: 'seminole-master-2',
+  markings: 'seminole-master-markings',
   production: false
 };

@@ -15,7 +15,7 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.engineService.loadModel(environment.seminole);
+    this.engineService.loadSeminole(environment.seminole);
   }
 
   ngOnDestroy() {

@@ -19,5 +19,6 @@ export class AppComponent implements OnInit {
 
     this._loaderService.loadAsset(environment.seminole, 'gltf');
     this._loaderService.loadAsset(environment.envmap, 'hdr');
+    this._loaderService.loadAsset(environment.markings, 'gltf');
   }
 }
