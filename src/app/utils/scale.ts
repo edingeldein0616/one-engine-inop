@@ -10,6 +10,7 @@ export class Scale {
   constructor(mesh: Mesh) {
     this._mesh = mesh;
     this._material = this._mesh.material as MeshPhysicalMaterial;
+    if(this._material.map === null) return;
     this._material.map.offset.x = this._base;
   }
 
@@ -23,7 +24,7 @@ export class Scale {
   public set(p: number) {
     if(p > 1 || p < 0) return;
 
-    let pos = p - 0.5;
+    let pos = 0.5 - p;
     this._material.map.offset.x = pos;
   }
 }

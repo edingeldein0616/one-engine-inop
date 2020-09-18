@@ -3,9 +3,9 @@ import { EngineService } from 'src/app/engine/engine.service';
 import { environment } from 'src/environments/environment';
 import { AnimationDriver } from 'src/app/ui/views/AnimationDriver';
 import { SelectionData } from '../../controls/selector/selection-data';
-import { Subject, Subscription } from 'rxjs';
-import { SeminoleActionModel } from './seminole-action-model';
-import { withModule } from '@angular/core/testing';
+import { Subscription } from 'rxjs';
+import { SeminoleActionModel } from 'src/app/utils/seminole-action-model';
+import { DCVMarkingsModel } from 'src/app/utils/markings-model';
 
 @Component({
   selector: 'app-view-dcv',
@@ -16,6 +16,7 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private _animationDriver: AnimationDriver;
   private _sam: SeminoleActionModel;
+  private _dmm: DCVMarkingsModel;
 
   private _currentFlapsAction: string;
 
@@ -26,25 +27,26 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
   public ngOnInit() {
     this._animationDriver = new AnimationDriver();
     this._sam = new SeminoleActionModel();
+    this._dmm = new DCVMarkingsModel();
 
     this._disposables = [
 
-      this._sam.inopEngineObservable.subscribe(inopEngine => {
+      this._sam.inopEngine.subject.subscribe(inopEngine => {
         this.inopEngine(inopEngine);
         this.clearOrientation();
-        this.controlTechnique(this._sam.controlTechnique, inopEngine);
+        this.controlTechnique(this._sam.controlTechnique.property, inopEngine);
       }),
 
-      this._sam.controlTehcniqueObservable.subscribe(controlTechnique => {
+      this._sam.controlTechnique.subject.subscribe(controlTechnique => {
         this.clearOrientation()
-        this.controlTechnique(controlTechnique, this._sam.inopEngine);
+        this.controlTechnique(controlTechnique, this._sam.inopEngine.property);
       }),
 
-      this._sam.flapsObservable.subscribe(flaps => {
+      this._sam.flaps.subject.subscribe(flaps => {
         this.flaps(flaps);
       }),
 
-      this._sam.gearObservable.subscribe(gear => {
+      this._sam.gear.subject.subscribe(gear => {
         this.gear(gear === 'DOWN');
       })
     ];
@@ -52,28 +54,45 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public ngAfterViewInit() {
     this.engineService.loadSeminole(environment.seminole);
-    this.engineService.loadMarkings(environment.markings);
-
-    const markings = this.engineService.getModelReference(environment.markings);
-
+    this.engineService.loadMarkings(environment.markings, this._dmm);
   }
 
   public valueChanged(data: SelectionData) {
+    console.log(data);
     switch(data.label) {
       case 'INOP. ENGINE':
-        this._sam.inopEngine = data.value;
+        this._sam.inopEngine.property = data.value;
       break;
       case 'FLAPS':
-        this._sam.flaps = Number(data.percent);
+        this._sam.flaps.property = Number(data.percent);
       break;
       case 'LANDING GEAR':
-        this._sam.gear = data.value;
+        this._sam.gear.property = data.value;
       break;
       case 'CONTROL TECHNIQUE':
-        this._sam.controlTechnique = data.value;
+        this._sam.controlTechnique.property = data.value;
       break;
-
+      case 'PROPELLER':
+        this._sam.propeller.property = data.value;
+      break;
+      case 'POWER':
+        this._sam.power.property = data.percent;
+      break;
+      case 'AIRSPEED':
+        this._sam.airspeed.property = data.percent;
+      break;
+      case 'WEIGHT':
+        this._sam.weight.property = data.percent;
+      break;
+      case 'CENTER OF GRAVITY':
+        this._sam.cog.property = data.percent;
+      break;
+      case 'DENSITY ALTITUDE':
+        this._sam.densityAltitude.property = data.percent;
+      break;
     }
+
+    this._dmm.calculateMarkings(this._sam);
   }
 
   public controlTechnique(controlTechnique: string, inopEngine: string) {
