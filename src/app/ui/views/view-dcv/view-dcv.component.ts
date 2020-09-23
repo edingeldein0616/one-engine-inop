@@ -1,11 +1,11 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { EngineService } from 'src/app/engine/engine.service';
 import { environment } from 'src/environments/environment';
 import { AnimationDriver } from 'src/app/ui/views/AnimationDriver';
 import { SelectionData } from '../../controls/selector/selection-data';
 import { Subscription } from 'rxjs';
 import { SeminoleActionModel } from 'src/app/utils/seminole-action-model';
-import { DCVMarkingsModel } from 'src/app/utils/markings-model';
+import { DCVAerodynamicsModel } from 'src/app/utils/aerodynamics-model';
 
 @Component({
   selector: 'app-view-dcv',
@@ -16,18 +16,22 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private _animationDriver: AnimationDriver;
   private _sam: SeminoleActionModel;
-  private _dmm: DCVMarkingsModel;
+  private _aeroModel: DCVAerodynamicsModel;
+
+  public vmca: number;
+  public stallSpeed: number;
 
   private _currentFlapsAction: string;
 
   private _disposables: Subscription[] = [];
 
-  constructor(private engineService: EngineService) { }
+  constructor(private engineService: EngineService,
+    private cdr: ChangeDetectorRef) { }
 
   public ngOnInit() {
     this._animationDriver = new AnimationDriver();
     this._sam = new SeminoleActionModel();
-    this._dmm = new DCVMarkingsModel();
+    this._aeroModel = new DCVAerodynamicsModel();
 
     this._disposables = [
 
@@ -38,7 +42,7 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
       }),
 
       this._sam.controlTechnique.subject.subscribe(controlTechnique => {
-        this.clearOrientation()
+        this.clearOrientation();
         this.controlTechnique(controlTechnique, this._sam.inopEngine.property);
       }),
 
@@ -54,11 +58,12 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public ngAfterViewInit() {
     this.engineService.loadSeminole(environment.seminole);
-    this.engineService.loadMarkings(environment.markings, this._dmm);
+    this.engineService.loadMarkings(environment.markings, this._aeroModel);
+    this._aeroModel.calculateMarkings(this._sam);
+    this.cdr.detectChanges();
   }
 
   public valueChanged(data: SelectionData) {
-    console.log(data);
     switch(data.label) {
       case 'INOP. ENGINE':
         this._sam.inopEngine.property = data.value;
@@ -92,7 +97,9 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
       break;
     }
 
-    this._dmm.calculateMarkings(this._sam);
+    this._aeroModel.calculateMarkings(this._sam);
+    this.vmca = this._aeroModel.vmca(this._sam);
+    this.stallSpeed = this._aeroModel.stallSpeed(this._sam);
   }
 
   public controlTechnique(controlTechnique: string, inopEngine: string) {

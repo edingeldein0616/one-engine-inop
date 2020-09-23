@@ -8,9 +8,8 @@ import { LoaderService } from '../services/loader.service';
 import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
-import { SeminoleActionModel } from '../utils/seminole-action-model';
 import { Color } from 'three';
-import { MarkingsModel } from '../utils/markings-model';
+import { AerodynamicsModel } from '../utils/aerodynamics-model';
 
 @Injectable({
   providedIn: 'root'
@@ -61,11 +60,11 @@ export class EngineService implements OnDestroy {
     this._threeEngine.addEntity(me);
   }
 
-  public loadMarkings(assetName: string, dmm: MarkingsModel) {
+  public loadMarkings(assetName: string, aeroModel: AerodynamicsModel) {
 
     const gltf = this.loaderService.getAsset(assetName);
 
-    dmm.unpackMarkings(gltf, new Color(0xFF00FF));
+    aeroModel.unpackMarkings(gltf, new Color(0xFF0000));
 
     const me = EntityFactory.build(ModelEntity);
     me.getComponent(RootComponent).obj = gltf.scene;
