@@ -98,24 +98,27 @@ export class DCVAerodynamicsModel implements AerodynamicsModel {
     const power = this.power(sam.power.property);
     const altitude = this.altitude(sam.densityAltitude.property);
     const prop = this.prop(sam.propeller.property);
-    const cg = this.prop(sam.propeller.property);
-    const bank = this.controlTechnique(sam.controlTechnique.property);
-    const flaps = this.flaps(sam.flaps.property);
-    const gear = this.gear(sam.gear.property);
-    return ((power - altitude + prop - 3) - (cg + 3 + bank + flaps + gear - 2) + 40);
-  }
-
-  public stallSpeed(sam: SeminoleActionModel): number {
-    const power = this.power(sam.power.property);
-    const altitude = this.altitude(sam.densityAltitude.property);
-    const prop = this.prop(sam.propeller.property);
-    const cg = this.prop(sam.propeller.property);
+    const cg = this.cg(sam.cog.property);
     const bank = this.controlTechnique(sam.controlTechnique.property);
     const flaps = this.flaps(sam.flaps.property);
     const gear = this.gear(sam.gear.property);
     const weight = this.weight(sam.weight.property);
 
-    return (42- flaps + weight + cg - (power / 4) + prop - bank + gear);
+    if(power <= 4) return NaN;
+
+    return ((power - altitude + prop - 3) - (weight + cg + 3 + bank + flaps + gear - 2) + 40);
+  }
+
+  public stallSpeed(sam: SeminoleActionModel): number {
+    const power = this.power(sam.power.property);
+    const prop = this.prop(sam.propeller.property);
+    const cg = this.cg(sam.cog.property);
+    const bank = this.controlTechnique(sam.controlTechnique.property);
+    const flaps = this.flaps(sam.flaps.property);
+    const gear = this.gear(sam.gear.property);
+    const weight = this.weight(sam.weight.property);
+
+    return (42 - flaps + weight + cg - (power / 4) + prop - bank + gear);
   }
 
   private calculateYawRudderForce(sam: SeminoleActionModel): void {
