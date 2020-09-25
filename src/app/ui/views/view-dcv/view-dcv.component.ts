@@ -37,6 +37,7 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this._sam.inopEngine.subject.subscribe(inopEngine => {
         this.inopEngine(inopEngine);
+        this.opEngine(inopEngine);
         this.clearOrientation();
         this.controlTechnique(this._sam.controlTechnique.property, inopEngine);
       }),
@@ -117,6 +118,13 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
     const inopEngineAction = inopEngine === 'LEFT' ? 'propLAction' : 'propRAction';
     const otherEngineAction = inopEngine === 'LEFT' ? 'propRAction' : 'propLAction';
     this._animationDriver.play(inopEngineAction);
+    this._animationDriver.stop(otherEngineAction);
+  }
+
+  public opEngine(inopEngine: string) {
+    const opEngineAction = inopEngine === 'RIGHT' ? 'propLSpinAction' : 'propRSpinAction';
+    const otherEngineAction = inopEngine === 'RIGHT' ? 'propRSpinAction' : 'propLSpinAction';
+    this._animationDriver.play(opEngineAction);
     this._animationDriver.stop(otherEngineAction);
   }
 

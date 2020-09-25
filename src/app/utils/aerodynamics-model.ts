@@ -15,6 +15,7 @@ export class DCVAerodynamicsModel implements AerodynamicsModel {
     this.traverse(gltf.scene as Object3D, (o: Object3D) => {
       if(o instanceof Mesh) {
         this._scales.set(o.name, new Scale(o));
+        if(o.name[0] === 't') return;
         (o.material as any).color = color;
       }
     });

@@ -33,12 +33,9 @@ export class AnimationSystem extends System implements Listener {
       const ac = entity.getComponent(AnimatorComponent);
 
       while(this._animationQueue.length > 0) {
-        //let str = '';
-        //this._animationQueue.forEach(o => str += `${o.clipName} -- `);
         const ad = this._animationQueue.shift();
         const action  = ac.action(ad.clipName);
         ad.actionCallback(action, ad.args);
-        //console.log(str);
       }
 
       if(ac.animationMixer) {

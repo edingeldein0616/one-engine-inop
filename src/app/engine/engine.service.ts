@@ -17,7 +17,6 @@ import { AerodynamicsModel } from '../utils/aerodynamics-model';
 export class EngineService implements OnDestroy {
 
   private _threeEngine: ThreeEngine;
-  private _loadingSubscription: Subscription;
 
   constructor(private ngZone: NgZone,
     private loaderService: LoaderService) {
