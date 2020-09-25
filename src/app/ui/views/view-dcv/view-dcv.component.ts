@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { EngineService } from 'src/app/engine/engine.service';
 import { environment } from 'src/environments/environment';
-import { AnimationDriver } from 'src/app/ui/views/AnimationDriver';
-import { SelectionData } from '../../controls/selector/selection-data';
+import { AnimationDriver } from 'src/app/utils/animation-driver';
+import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { Subscription } from 'rxjs';
 import { SeminoleActionModel } from 'src/app/utils/seminole-action-model';
 import { DCVAerodynamicsModel } from 'src/app/utils/aerodynamics-model';
@@ -36,24 +36,20 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
     this._disposables = [
 
       this._sam.inopEngine.subject.subscribe(inopEngine => {
-        const idle = this._sam.power.property == 0;
+        const idle = this._sam.power.property < 1;
         this.propellers(this._sam.propeller.property, inopEngine, idle);
         this.opEngine(inopEngine, idle);
-        this.clearOrientation();
-        this.controlTechnique(this._sam.controlTechnique.property, inopEngine);
+        this.controlTechnique(this._sam.controlTechnique.property, inopEngine, idle);
       }),
 
       this._sam.propeller.subject.subscribe(propeller => {
-        const idle = this._sam.power.property == 0;
+        const idle = this._sam.power.property < 1;
         this.propellers(propeller, this._sam.inopEngine.property, idle);
       }),
 
       this._sam.controlTechnique.subject.subscribe(controlTechnique => {
-        const idle = this._sam.power.property == 0;
-        if(!idle) {
-          this.clearOrientation();
-          this.controlTechnique(controlTechnique, this._sam.inopEngine.property);
-        }
+        const idle = this._sam.power.property < 1;
+        this.controlTechnique(controlTechnique, this._sam.inopEngine.property, idle);
       }),
 
       this._sam.flaps.subject.subscribe(flaps => {
@@ -65,16 +61,11 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
       }),
 
       this._sam.power.subject.subscribe(power => {
-        const idle = power == 0;
-        console.log(`idle: ${idle}`);
+        const idle = power < 1;
         this.propellers(this._sam.propeller.property, this._sam.inopEngine.property, idle);
         this.opEngine(this._sam.inopEngine.property, idle);
 
-        if(idle) {
-          this.clearOrientation();
-        } else {
-          this.controlTechnique(this._sam.controlTechnique.property, this._sam.inopEngine.property);
-        }
+        this.controlTechnique(this._sam.controlTechnique.property, this._sam.inopEngine.property, idle);
       })
     ];
   }
@@ -125,19 +116,23 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
     this.stallSpeed = this._aeroModel.stallSpeed(this._sam);
   }
 
-  public controlTechnique(controlTechnique: string, inopEngine: string) {
+  public controlTechnique(controlTechnique: string, inopEngine: string, idle: boolean) {
+    this.clearOrientation();
     this.clearRudder();
-    this.rudder(controlTechnique, inopEngine);
 
-    if(controlTechnique === 'WINGS LEVEL') {
-      this.wingsLevel(inopEngine);
-    } else {
-      this.zeroSideSlip(inopEngine);
+    if(!idle) {
+      this.rudder(controlTechnique, inopEngine);
+
+      if(controlTechnique === 'WINGS LEVEL') {
+        this.wingsLevel(inopEngine);
+      } else {
+        this.zeroSideSlip(inopEngine);
+      }
     }
+
   }
 
   public propellers(propeller: string, inopEngine: string, idle: boolean) {
-    console.log(`propeller: ${propeller}`);
     const inopEngineAction = inopEngine === 'LEFT' ? 'propLAction' : 'propRAction';
     const otherEngineAction = inopEngine === 'LEFT' ? 'propRAction' : 'propLAction';
 
@@ -152,18 +147,6 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this._animationDriver.stop(otherEngineAction);
     }
-
-    // let inopEngineAction = '';
-    // let otherEngineAction = '';
-    // if (propeller === 'WINDMILL') {
-    //   inopEngineAction = inopEngine === 'LEFT' ? 'propLAction' : 'propRAction';
-    //   otherEngineAction = inopEngine === 'LEFT' ? 'propRAction' : 'propLAction';
-    //   this._animationDriver.play(inopEngineAction);
-    //   this._animationDriver.stop(otherEngineAction);
-    // } else {
-    //   this._animationDriver.stop('propLAction');
-    //   this._animationDriver.stop('propRAction');
-    // }
   }
 
   public opEngine(inopEngine: string, idle: boolean) {

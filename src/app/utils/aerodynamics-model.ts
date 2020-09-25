@@ -37,10 +37,15 @@ export class DCVAerodynamicsModel implements AerodynamicsModel {
   }
 
   public calculateMarkings(sam: SeminoleActionModel) {
-    this.calculateYawRudderForce(sam);
-    this.calculateThrustForce(sam);
-    this.calculateDragForce(sam);
-    this.calculateRollForce(sam);
+    const power = this.power(sam.power.property);
+    const altitude = this.altitude(sam.densityAltitude.property);
+    const prop = this.prop(sam.propeller.property);
+    const idle = sam.power.property < 1;
+
+    this.calculateYawRudderForce(sam, prop, power, altitude);
+    this.calculateThrustForce(sam, power, altitude);
+    this.calculateDragForce(sam, idle);
+    this.calculateRollForce(sam, power, altitude, prop, idle);
   }
 
   public leftThrust: ScaleValue = new ScaleValue('s-thrust-left', (n: string, p: number) => this.setScale(n,p));
@@ -122,13 +127,8 @@ export class DCVAerodynamicsModel implements AerodynamicsModel {
     return (42 - flaps + weight + cg - (power / 4) + prop - bank + gear);
   }
 
-  private calculateYawRudderForce(sam: SeminoleActionModel): void {
+  private calculateYawRudderForce(sam: SeminoleActionModel, prop: number, power: number, altitude: number): void {
     this.leftRudder.property = this.rightRudder.property = this.leftYaw.property = this.rightYaw.property = 0;
-
-    const inopEngine = sam.inopEngine.property;
-    const prop = this.prop(sam.propeller.property);
-    const power = this.power(sam.power.property);
-    const altitude = this.altitude(sam.densityAltitude.property);
 
     // Calculate yaw
     let yawValue = (power - altitude + prop - 3) / 26;
@@ -138,54 +138,54 @@ export class DCVAerodynamicsModel implements AerodynamicsModel {
       yawValue = 0;
       if(sam.propeller.property === 'FEATHER') {
         yawValue = 0.1;
-        if(inopEngine === 'LEFT') { this.rightRudder.property = this.rightYaw.property = yawValue; }
+        if(sam.inopEngine.property === 'LEFT') { this.rightRudder.property = this.rightYaw.property = yawValue; }
         else this.leftRudder.property = this.leftYaw.property = yawValue;
         return;
       }
     }
 
     // all other cases
-    if(inopEngine === 'LEFT') this.leftRudder.property = this.leftYaw.property = yawValue;
+    if(sam.inopEngine.property === 'LEFT') this.leftRudder.property = this.leftYaw.property = yawValue;
     else this.rightRudder.property = this.rightYaw.property = yawValue;
   }
 
-  private calculateThrustForce(sam: SeminoleActionModel): void {
+  private calculateThrustForce(sam: SeminoleActionModel, power: number, altitude: number): void {
     this.leftThrust.property = this.rightThrust.property = 0;
-
-    const inopEngine = sam.inopEngine.property;
-    const power = this.power(sam.power.property);
-    const altitude = this.altitude(sam.densityAltitude.property);
 
     if(power > 4)
     {
       const thrust = ((power / 4) + 6 - altitude) / 10;
-      if(inopEngine === 'LEFT') this.rightThrust.property = thrust;
+      if(sam.inopEngine.property === 'LEFT') this.rightThrust.property = thrust;
       else this.leftThrust.property = thrust;
     }
   }
 
-  private calculateDragForce(sam: SeminoleActionModel): void {
+  private calculateDragForce(sam: SeminoleActionModel, idle: boolean): void {
     this.leftDrag.property = this.rightDrag.property = 0;
 
     const inopEngine = sam.inopEngine.property;
     const propeller = sam.propeller.property;
 
     const drag = propeller === 'WINDMILL' ? 1 : 0.15;
-    if(inopEngine === 'LEFT') this.leftDrag.property = drag;
-    else this.rightDrag.property = drag;
+    if(inopEngine === 'LEFT') {
+      this.leftDrag.property = drag;
+      this.rightDrag.property = idle ? 1 : 0;
+    } else {
+      this.rightDrag.property = drag;
+      this.leftDrag.property = idle ? 1 : 0;
+    }
   }
 
-  private calculateRollForce(sam: SeminoleActionModel): void {
+  private calculateRollForce(sam: SeminoleActionModel, power: number, altitude: number, prop: number, idle: boolean): void {
     this.leftRoll.property = this.rightRoll.property = 0;
 
-    const inopEngine = sam.inopEngine.property;
-    const power = this.power(sam.power.property);
-    const altitude = this.altitude(sam.densityAltitude.property);
-    const prop = this.prop(sam.propeller.property);
+    if(!idle) {
+      const inopEngine = sam.inopEngine.property;
 
-    const roll = Math.floor((power - altitude + prop - 3) / 2) / 13;
-    if(inopEngine === 'LEFT') this.rightRoll.property = roll;
-    else this.leftRoll.property = roll;
+      const roll = Math.floor((power - altitude + prop - 3) / 2) / 13;
+      if(inopEngine === 'LEFT') this.rightRoll.property = roll;
+      else this.leftRoll.property = roll;
+    }
   }
 
 }

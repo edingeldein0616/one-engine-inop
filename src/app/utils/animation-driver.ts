@@ -9,7 +9,7 @@ export class AnimationDriver {
   private _stopAction: (a: AnimationAction) => void;
   private _pauseAction: (a: AnimationAction) => void;
   private _resetAction: (a: AnimationAction) => void;
-  private _jumpToAction: (a: AnimationAction, position: AnimationPosition) => void;
+  private _jumpToAction: (a: AnimationAction, position: number) => void;
   private _haltAction: (a: AnimationAction) => void;
 
   constructor() {
