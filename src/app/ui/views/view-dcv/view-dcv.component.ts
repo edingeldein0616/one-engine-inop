@@ -36,15 +36,24 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
     this._disposables = [
 
       this._sam.inopEngine.subject.subscribe(inopEngine => {
-        this.inopEngine(inopEngine);
-        this.opEngine(inopEngine);
+        const idle = this._sam.power.property == 0;
+        this.propellers(this._sam.propeller.property, inopEngine, idle);
+        this.opEngine(inopEngine, idle);
         this.clearOrientation();
         this.controlTechnique(this._sam.controlTechnique.property, inopEngine);
       }),
 
+      this._sam.propeller.subject.subscribe(propeller => {
+        const idle = this._sam.power.property == 0;
+        this.propellers(propeller, this._sam.inopEngine.property, idle);
+      }),
+
       this._sam.controlTechnique.subject.subscribe(controlTechnique => {
-        this.clearOrientation();
-        this.controlTechnique(controlTechnique, this._sam.inopEngine.property);
+        const idle = this._sam.power.property == 0;
+        if(!idle) {
+          this.clearOrientation();
+          this.controlTechnique(controlTechnique, this._sam.inopEngine.property);
+        }
       }),
 
       this._sam.flaps.subject.subscribe(flaps => {
@@ -53,6 +62,19 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this._sam.gear.subject.subscribe(gear => {
         this.gear(gear === 'DOWN');
+      }),
+
+      this._sam.power.subject.subscribe(power => {
+        const idle = power == 0;
+        console.log(`idle: ${idle}`);
+        this.propellers(this._sam.propeller.property, this._sam.inopEngine.property, idle);
+        this.opEngine(this._sam.inopEngine.property, idle);
+
+        if(idle) {
+          this.clearOrientation();
+        } else {
+          this.controlTechnique(this._sam.controlTechnique.property, this._sam.inopEngine.property);
+        }
       })
     ];
   }
@@ -114,18 +136,48 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  public inopEngine(inopEngine: string) {
+  public propellers(propeller: string, inopEngine: string, idle: boolean) {
+    console.log(`propeller: ${propeller}`);
     const inopEngineAction = inopEngine === 'LEFT' ? 'propLAction' : 'propRAction';
     const otherEngineAction = inopEngine === 'LEFT' ? 'propRAction' : 'propLAction';
-    this._animationDriver.play(inopEngineAction);
-    this._animationDriver.stop(otherEngineAction);
+
+    if(propeller === 'WINDMILL') {
+      this._animationDriver.play(inopEngineAction);
+    } else {
+      this._animationDriver.stop(inopEngineAction);
+    }
+
+    if(idle) {
+      this._animationDriver.play(otherEngineAction);
+    } else {
+      this._animationDriver.stop(otherEngineAction);
+    }
+
+    // let inopEngineAction = '';
+    // let otherEngineAction = '';
+    // if (propeller === 'WINDMILL') {
+    //   inopEngineAction = inopEngine === 'LEFT' ? 'propLAction' : 'propRAction';
+    //   otherEngineAction = inopEngine === 'LEFT' ? 'propRAction' : 'propLAction';
+    //   this._animationDriver.play(inopEngineAction);
+    //   this._animationDriver.stop(otherEngineAction);
+    // } else {
+    //   this._animationDriver.stop('propLAction');
+    //   this._animationDriver.stop('propRAction');
+    // }
   }
 
-  public opEngine(inopEngine: string) {
+  public opEngine(inopEngine: string, idle: boolean) {
     const opEngineAction = inopEngine === 'RIGHT' ? 'propLSpinAction' : 'propRSpinAction';
     const otherEngineAction = inopEngine === 'RIGHT' ? 'propRSpinAction' : 'propLSpinAction';
-    this._animationDriver.play(opEngineAction);
     this._animationDriver.stop(otherEngineAction);
+
+    if(!idle) {
+      this._animationDriver.play(opEngineAction);
+    } else {
+      this._animationDriver.stop(opEngineAction);
+    }
+
+
   }
 
   public rudder(controlTechnique: string, inopEngine: string) {
