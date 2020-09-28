@@ -1,5 +1,5 @@
 import { System, Engine, Entity, Family, FamilyBuilder, EngineEntityListener } from '@nova-engine/ecs';
-import { WebGLRenderer, PerspectiveCamera, Object3D, DataTexture, PMREMGenerator, sRGBEncoding, Mesh, SphereBufferGeometry, MeshBasicMaterial } from 'three';
+import { WebGLRenderer, PerspectiveCamera, Object3D, DataTexture, PMREMGenerator, sRGBEncoding, Mesh, SphereBufferGeometry, MeshBasicMaterial, Raycaster, Vector2 } from 'three';
 import { Sky } from 'three/examples/jsm/objects/Sky';
 import { SceneComponent, RootComponent, HideableComponent } from '../components';
 import { SceneEntity } from '../entities'
@@ -17,10 +17,16 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
   private _canvas: HTMLCanvasElement;
   private _renderer: WebGLRenderer;
   private _camera: PerspectiveCamera;
+
   private _family: Family;
   private _hideableFamily: Family;
   private _controls: OrbitControls;
   private _objects: Object3D[] = [];
+
+  // Raycasting data fields
+  private _raycaster: Raycaster;
+  private _mousePosition: Vector2;
+  private _positionUpdated: boolean;
 
   public get camera() { return this._camera};
 
@@ -33,8 +39,13 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     super();
     this._canvas = canvas;
     this._camera = camera;
+    this._raycaster = new Raycaster();
+    this._mousePosition = new Vector2(0, 0);
+    this._positionUpdated = false;
+    window.addEventListener('mousemove', event => { this.onMouseMove(event, this._mousePosition) }, false);
+    console.log('MOUSE POSITION INITIALIZED');
+    console.log(this._mousePosition);
   }
-
 
   /**
    * Called when an entity is added to the engine. Adds the entity to the underlying scene.
@@ -249,13 +260,6 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     });
   }
 
-  private _addToScene(...obj: Object3D[]): void {
-    this._family.entities.forEach(sceneEntiy => {
-      const scene = sceneEntiy.getComponent(SceneComponent).scene;
-      obj.forEach(o => scene.add(o));
-    });
-  }
-
   /**
    * Resizes the canvas to fill the browser window.
    */
@@ -291,6 +295,19 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     }
   }
 
+  public raycast() {
+    console.log(`Raycast: (${this._mousePosition.x}, ${this._mousePosition.y})`);
+    this._positionUpdated = false;
+  }
+
+  public onMouseMove(event: MouseEvent, mousePosition: Vector2): void {
+    // calculate mouse position in normalized device coordinates
+    // (-1 to +1) for both components
+    this._positionUpdated = true;
+    mousePosition.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mousePosition.y = (event.clientY / window.innerHeight) * 2 + 1;
+  }
+
   /**
    * The update loop for the RenderingSystem. Calls the WebGLRenderer's render() function. Extra system logic goes here.
    * @param engine The engine this system is running in.
@@ -300,6 +317,9 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
 
     // Update camera controls since damping is enabled.
     this._controls.update();
+
+    if(this._positionUpdated)
+      this.raycast();
 
     // Check if family is initialized
     if(this._family) {

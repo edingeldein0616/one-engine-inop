@@ -44,6 +44,7 @@ class ThreeEngine extends Engine {
     // initialize rendering system with the canvas and camera dependencies, bind resize event listener
     this._renderingSystem = new RenderingSystem(this._canvas, this._camera);
     window.addEventListener('resize', event => { this._renderingSystem.resizeToContainer(); });
+    //window.addEventListener('mousemove', this._renderingSystem.onMouseMove, false);
     // add rendering system to engine systems and add it to entity listener
     this.addSystem(this._renderingSystem);
     this.addEntityListener(this._renderingSystem);
@@ -81,6 +82,12 @@ class ThreeEngine extends Engine {
     var delta = Date.now() - this._time;
     this.update(delta);
     this._time = Date.now();
+  }
+
+  public print(): void {
+    console.log(this);
+    console.log(this._registeredSystems);
+    console.log(this._registeredEntities);
   }
 
   public disposeEngine() : void {
