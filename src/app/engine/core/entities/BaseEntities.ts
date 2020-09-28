@@ -1,5 +1,5 @@
 import { Entity } from '@nova-engine/ecs';
-import { SceneComponent, PerspectiveCameraComponent, LightComponent, RootComponent} from '../components';
+import { SceneComponent, PerspectiveCameraComponent, LightComponent, RootComponent, HideableComponent } from '../components';
 import { PerspectiveCamera, DirectionalLight, AmbientLight } from 'three';
 import { AnimatorComponent } from '../components/Animation';
 
@@ -46,6 +46,7 @@ class ModelEntity extends Entity {
     super();
     this.putComponent(RootComponent);
     this.putComponent(AnimatorComponent);
+    this.putComponent(HideableComponent);
     return this;
   }
 }

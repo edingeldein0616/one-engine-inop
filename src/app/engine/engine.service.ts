@@ -1,7 +1,7 @@
 import { Injectable, NgZone, ElementRef, OnDestroy } from '@angular/core';
 import { ThreeEngine } from './ThreeEngine';
 import { EntityFactory, CameraEntity, SceneEntity, ModelEntity } from './core/entities';
-import { RootComponent } from './core/components';
+import { HideableComponent, RootComponent } from './core/components';
 import { EventBus, Subject } from './core/events';
 import { AnimatorComponent } from './core/components/Animation';
 import { LoaderService } from '../services/loader.service';
@@ -55,6 +55,7 @@ export class EngineService implements OnDestroy {
     const me = EntityFactory.build(ModelEntity);
     me.getComponent(RootComponent).obj = gltf.scene;
     me.getComponent(AnimatorComponent).configureAnimations(gltf);
+    me.getComponent(HideableComponent).obj = gltf.scene;
 
     this._threeEngine.addEntity(me);
   }
@@ -74,6 +75,12 @@ export class EngineService implements OnDestroy {
 
   public getModelReference(assetName: string): GLTF {
     return this.loaderService.getAsset(assetName);
+  }
+
+  public hideObject(name: string, hide: boolean): void {
+    const subject = new Subject();
+    subject.data = { name: name, hide: hide};
+    EventBus.get().publish('hideObject', subject);
   }
 
   public dispose() {
