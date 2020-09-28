@@ -1,7 +1,6 @@
 import { Component } from '@nova-engine/ecs';
 import { AnimationMixer, AnimationAction, AnimationClip, AnimationUtils } from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
-import { Subject } from '../events';
 
 export class AnimatorComponent implements Component {
   static tag = 'AnimatorComponent'

@@ -45,6 +45,7 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
       this._sam.propeller.subject.subscribe(propeller => {
         const idle = this._sam.power.property < 1;
         this.propellers(propeller, this._sam.inopEngine.property, idle);
+        this.opEngine(this._sam.inopEngine.property, idle);
       }),
 
       this._sam.controlTechnique.subject.subscribe(controlTechnique => {
@@ -74,6 +75,7 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
     this.engineService.loadSeminole(environment.seminole);
     this.engineService.loadMarkings(environment.markings, this._aeroModel);
     this._aeroModel.calculateMarkings(this._sam);
+    this._sam.inopEngine.property = this._sam.inopEngine.property;
     this.cdr.detectChanges();
   }
 
@@ -151,12 +153,18 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public opEngine(inopEngine: string, idle: boolean) {
     const opEngineAction = inopEngine === 'RIGHT' ? 'propLSpinAction' : 'propRSpinAction';
+    const opEngineSpin = inopEngine === 'RIGHT' ? 'propLeftSpin' : 'propRightSpin';
     const otherEngineAction = inopEngine === 'RIGHT' ? 'propRSpinAction' : 'propLSpinAction';
+    const otherEngineSpin = inopEngine === 'RIGHT' ? 'propRightSpin' : 'propLeftSpin';
     this._animationDriver.stop(otherEngineAction);
 
     if(!idle) {
       this._animationDriver.play(opEngineAction);
+      this.engineService.hideObject(opEngineSpin, false)
+      this.engineService.hideObject(otherEngineSpin, true);
     } else {
+      this.engineService.hideObject(opEngineSpin, true);
+      this.engineService.hideObject(otherEngineSpin, true);
       this._animationDriver.stop(opEngineAction);
     }
 

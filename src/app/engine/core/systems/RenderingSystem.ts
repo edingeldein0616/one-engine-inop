@@ -1,7 +1,7 @@
 import { System, Engine, Entity, Family, FamilyBuilder, EngineEntityListener } from '@nova-engine/ecs';
 import { WebGLRenderer, PerspectiveCamera, Object3D, DataTexture, PMREMGenerator, sRGBEncoding, Mesh, SphereBufferGeometry, MeshBasicMaterial } from 'three';
 import { Sky } from 'three/examples/jsm/objects/Sky';
-import { SceneComponent, RootComponent } from '../components';
+import { SceneComponent, RootComponent, HideableComponent } from '../components';
 import { SceneEntity } from '../entities'
 import { Listener, EventBus, Subject } from '../events';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -18,6 +18,7 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
   private _renderer: WebGLRenderer;
   private _camera: PerspectiveCamera;
   private _family: Family;
+  private _hideableFamily: Family;
   private _controls: OrbitControls;
   private _objects: Object3D[] = [];
 
@@ -55,7 +56,7 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
           // Add THREE.Object3D to scene
           sceneEntity.getComponent(SceneComponent).scene
             .add(obj);
-          console.log('Object added to scene...', obj, sceneEntity.getComponent(SceneComponent).scene);
+          //console.log('Object added to scene...', obj, sceneEntity.getComponent(SceneComponent).scene);
           // Register in list of THREE.Object3D[]
           this._objects.push(obj);
         });
@@ -79,7 +80,7 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
           scene.remove(entity.getComponent(RootComponent).obj);
         });
       }
-      console.log(`Entity removed from RenderingSystem.`, entity);
+      //console.log(`Entity removed from RenderingSystem.`, entity);
     }
   }
 
@@ -92,6 +93,8 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
 
     // Builds a family of all entities that contain a SceneComponent.
     this._family = new FamilyBuilder(engine).include(SceneComponent).build();
+    // All entities with hideable components
+    this._hideableFamily = new FamilyBuilder(engine).include(HideableComponent).build();
     // Creates the WebGLRenderer that the rendring system will utilize.
     this._renderer = new WebGLRenderer({
       canvas: this._canvas,
@@ -111,9 +114,10 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     EventBus.get()
       .subscribe('state-check', this)
       .subscribe('envmap', this)
-      .subscribe('skybox', this);
+      .subscribe('skybox', this)
+      .subscribe('hideObject', this);
 
-    console.log('Rendering system attached to engine', this, engine);
+    //console.log('Rendering system attached to engine', this, engine);
   }
 
   /**
@@ -130,7 +134,7 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     this._family.entities.forEach(sceneEntity => {
       const scene = sceneEntity.getComponent(SceneComponent).scene;
       this._objects.forEach(obj => {
-        console.log('Object removed from scene', obj);
+        //console.log('Object removed from scene', obj);
         scene.remove(obj);
       });
       scene.dispose();
@@ -159,18 +163,21 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
   receive(topic: string, subject: Subject) {
     switch (topic) {
       case 'state-check':
-        console.log('STATE CHECK', this._renderer.state);
+        //console.log('STATE CHECK', this._renderer.state);
         break;
       case 'envmap':
-        console.log('HDRI ENVIRONMENT MAP', subject.data);
+        //console.log('HDRI ENVIRONMENT MAP', subject.data);
         this._environmentMap(subject.data);
         break;
       case 'skybox':
-        console.log('SKYBOX');
+        //console.log('SKYBOX');
         this._skybox();
         break;
+      case 'hideObject':
+        this.hide(subject.data.name, subject.data.hide);
+        break;
       default:
-        console.log(`Unknown event passed: ${topic}`, subject);
+        //console.log(`Unknown event passed: ${topic}`, subject);
         break;
     }
   }
@@ -236,6 +243,12 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     //this._addToScene(sky);
   }
 
+  private hide(name: string, hide: boolean) {
+    this._hideableFamily.entities.forEach(entity => {
+      entity.getComponent(HideableComponent).hide(name, hide);
+    });
+  }
+
   private _addToScene(...obj: Object3D[]): void {
     this._family.entities.forEach(sceneEntiy => {
       const scene = sceneEntiy.getComponent(SceneComponent).scene;
@@ -270,7 +283,7 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
    * @param height height to resize to in pixels.
    */
   public resize(width: number, height: number) : void {
-    console.log(`resize - (${width}, ${height})`);
+    //console.log(`resize - (${width}, ${height})`);
     if(width !== this._canvas.width || height !== this._canvas.height) {
       this._renderer.setSize(width, height, false);
       this._camera.aspect = width / height;
