@@ -116,12 +116,11 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
 
     // Subscribe to events.
     EventBus.get()
-      .subscribe('state-check', this)
-      .subscribe('envmap', this)
-      .subscribe('skybox', this)
-      .subscribe('hideObject', this);
+      .subscribe(ThreeEngineEvent.STATECHECK, this)
+      .subscribe(ThreeEngineEvent.ENVMAP, this)
+      .subscribe(ThreeEngineEvent.SKYBOX, this)
+      .subscribe(ThreeEngineEvent.HIDEOBJECT, this);
 
-    //console.log('Rendering system attached to engine', this, engine);
   }
 
   /**

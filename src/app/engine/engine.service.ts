@@ -11,6 +11,7 @@ import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Color } from 'three';
 import { AerodynamicsModel } from '../utils/aerodynamics-model';
 import { RaycastController } from '../utils/raycast-controller';
+import { ThreeEngineEvent } from '../utils/custom-events';
 
 @Injectable({
   providedIn: 'root'
@@ -43,8 +44,8 @@ export class EngineService implements OnDestroy {
     // Register hdri environment map
     const subject = new Subject();
     subject.data = this.loaderService.getAsset(environment.envmap);
-    EventBus.get().publish(environment.envmap, subject);
-    EventBus.get().publish(environment.skybox, null);
+    EventBus.get().publish(ThreeEngineEvent.ENVMAP, subject);
+    EventBus.get().publish(ThreeEngineEvent.SKYBOX, null);
 
     this._animate();
   }
@@ -82,7 +83,7 @@ export class EngineService implements OnDestroy {
   public hideObject(name: string, hide: boolean): void {
     const subject = new Subject();
     subject.data = { name: name, hide: hide};
-    EventBus.get().publish('hideObject', subject);
+    EventBus.get().publish(ThreeEngineEvent.SKYBOX, subject);
   }
 
   public attachRaycaster(raycastController: RaycastController) {

@@ -2,6 +2,7 @@ import { EventBus } from 'src/app/engine/core/events';
 import { AnimationAction } from 'three';
 import { Subject } from 'src/app/engine/core/events';
 import { AnimationData } from 'src/app/engine/core/systems';
+import { ThreeEngineEvent } from './custom-events';
 
 export class AnimationDriver {
 
@@ -45,32 +46,32 @@ export class AnimationDriver {
 
   public play(actionName: string): void {
     const playAction = this._subject(actionName, this._playAction);
-    EventBus.get().publish('animation', playAction);
+    EventBus.get().publish(ThreeEngineEvent.ANIMATION, playAction);
   }
 
   public stop(actionName: string): void {
     const stopAction = this._subject(actionName, this._stopAction);
-    EventBus.get().publish('animation', stopAction);
+    EventBus.get().publish(ThreeEngineEvent.ANIMATION, stopAction);
   }
 
   public pause(actionName: string): void {
     const pauseAction = this._subject(actionName, this._pauseAction);
-    EventBus.get().publish('animation', pauseAction);
+    EventBus.get().publish(ThreeEngineEvent.ANIMATION, pauseAction);
   }
 
   public jumpTo(actionName: string, position: number): void {
     const jumpToAction = this._subject(actionName, this._jumpToAction, position)
-    EventBus.get().publish('animation', jumpToAction);
+    EventBus.get().publish(ThreeEngineEvent.ANIMATION, jumpToAction);
   }
 
   public reset(actionName: string): void {
     const resetAction = this._subject(actionName, this._resetAction);
-    EventBus.get().publish('animation', resetAction);
+    EventBus.get().publish(ThreeEngineEvent.ANIMATION, resetAction);
   }
 
   public halt(actionName: string): void {
     const haltAction = this._subject(actionName, this._haltAction);
-    EventBus.get().publish('animation', haltAction);
+    EventBus.get().publish(ThreeEngineEvent.ANIMATION, haltAction);
   }
 
   private _subject(actionName: string, callback: (a: AnimationAction, ...args: any[]) => void, ...args: any[]): Subject {
