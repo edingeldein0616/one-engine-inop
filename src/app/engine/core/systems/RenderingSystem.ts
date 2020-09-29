@@ -1,10 +1,12 @@
 import { System, Engine, Entity, Family, FamilyBuilder, EngineEntityListener } from '@nova-engine/ecs';
-import { WebGLRenderer, PerspectiveCamera, Object3D, DataTexture, PMREMGenerator, sRGBEncoding, Mesh, SphereBufferGeometry, MeshBasicMaterial } from 'three';
+import { WebGLRenderer, PerspectiveCamera, Object3D, DataTexture, PMREMGenerator, sRGBEncoding, Mesh, SphereBufferGeometry, MeshBasicMaterial, Scene, Camera } from 'three';
 import { Sky } from 'three/examples/jsm/objects/Sky';
 import { SceneComponent, RootComponent, HideableComponent } from '../components';
 import { SceneEntity } from '../entities'
 import { Listener, EventBus, Subject } from '../events';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { RaycastController } from 'src/app/utils/raycast-controller';
+import { ThreeEngineEvent } from 'src/app/utils/custom-events';
 
 /**
  * @class RenderingSystem
@@ -17,10 +19,13 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
   private _canvas: HTMLCanvasElement;
   private _renderer: WebGLRenderer;
   private _camera: PerspectiveCamera;
+
   private _family: Family;
   private _hideableFamily: Family;
   private _controls: OrbitControls;
   private _objects: Object3D[] = [];
+  private _raycastController: RaycastController;
+  private _cast: boolean = false;
 
   public get camera() { return this._camera};
 
@@ -35,7 +40,6 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     this._camera = camera;
   }
 
-
   /**
    * Called when an entity is added to the engine. Adds the entity to the underlying scene.
    * @param entity The entity recently added to the engine.
@@ -43,8 +47,8 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
   public onEntityAdded(entity: Entity): void {
     // If the entity is an instance of a SceneEntity, attach the camera to the scene.
     if(entity instanceof SceneEntity) {
-      entity.getComponent(SceneComponent).scene
-        .add(this._camera);
+      var scene = entity.getComponent(SceneComponent).scene;
+      scene.add(this._camera);
     } else {
       // Entity is not of type SceneEntity
       // If the entity has a RootComponent (meaning it is an entity that contains a THREE.Object3D)
@@ -176,10 +180,14 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
       case 'hideObject':
         this.hide(subject.data.name, subject.data.hide);
         break;
+      case ThreeEngineEvent.MOUSECLICK:
+        this._cast = true;
+        break;
       default:
         //console.log(`Unknown event passed: ${topic}`, subject);
         break;
     }
+
   }
 
   private _environmentMap(dt: DataTexture): void {
@@ -249,13 +257,6 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     });
   }
 
-  private _addToScene(...obj: Object3D[]): void {
-    this._family.entities.forEach(sceneEntiy => {
-      const scene = sceneEntiy.getComponent(SceneComponent).scene;
-      obj.forEach(o => scene.add(o));
-    });
-  }
-
   /**
    * Resizes the canvas to fill the browser window.
    */
@@ -291,6 +292,18 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     }
   }
 
+  public attachRaycaster(raycastController: RaycastController) {
+    this._raycastController = raycastController;
+    this._raycastController.attachCamera(this._camera);
+    this._raycastController.attachCanvas(this._canvas);
+    EventBus.get().subscribe(ThreeEngineEvent.MOUSECLICK, this);
+  }
+
+  public detachRaycaster() {
+    this._raycastController = null;
+    EventBus.get().unsubscribe(ThreeEngineEvent.MOUSECLICK, this);
+  }
+
   /**
    * The update loop for the RenderingSystem. Calls the WebGLRenderer's render() function. Extra system logic goes here.
    * @param engine The engine this system is running in.
@@ -298,8 +311,20 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
    */
   public update(engine: Engine, delta: number): void {
 
-    // Update camera controls since damping is enabled.
+    // Update camera controls since damping is enabled.f
     this._controls.update();
+
+    if(this._cast && this._raycastController) {
+      var intersects = this._raycastController.raycast();
+      if(intersects) {
+        if(intersects.length > 0) {
+          var sub = new Subject();
+          sub.data = intersects
+          EventBus.get().publish(ThreeEngineEvent.INTERSECT, sub);
+        }
+      }
+      this._cast = false;
+    }
 
     // Check if family is initialized
     if(this._family) {

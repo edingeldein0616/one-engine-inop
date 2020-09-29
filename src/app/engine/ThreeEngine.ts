@@ -3,6 +3,7 @@ import { PerspectiveCamera } from 'three';
 import { CameraEntity, SceneEntity } from './core/entities';
 import { PerspectiveCameraComponent } from './core/components';
 import { RenderingSystem, AnimationSystem } from './core/systems';
+import { RaycastController } from '../utils/raycast-controller';
 
 class ThreeEngine extends Engine {
 
@@ -51,6 +52,14 @@ class ThreeEngine extends Engine {
     this._renderingSystem.resizeToContainer();
   }
 
+  public attachRaycaster(raycastController: RaycastController) {
+    this._renderingSystem?.attachRaycaster(raycastController);
+  }
+
+  public detachRaycaster() {
+    this._renderingSystem?.detachRaycaster();
+  }
+
   public addEntity(entity: Entity) {
     super.addEntity(entity);
     this._registeredEntities.push(entity);
@@ -81,6 +90,12 @@ class ThreeEngine extends Engine {
     var delta = Date.now() - this._time;
     this.update(delta);
     this._time = Date.now();
+  }
+
+  public print(): void {
+    console.log(this);
+    console.log(this._registeredSystems);
+    console.log(this._registeredEntities);
   }
 
   public disposeEngine() : void {
