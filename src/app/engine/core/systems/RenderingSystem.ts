@@ -1,10 +1,11 @@
 import { System, Engine, Entity, Family, FamilyBuilder, EngineEntityListener } from '@nova-engine/ecs';
-import { WebGLRenderer, PerspectiveCamera, Object3D, DataTexture, PMREMGenerator, sRGBEncoding, Mesh, SphereBufferGeometry, MeshBasicMaterial, Raycaster, Vector2 } from 'three';
+import { WebGLRenderer, PerspectiveCamera, Object3D, DataTexture, PMREMGenerator, sRGBEncoding, Mesh, SphereBufferGeometry, MeshBasicMaterial, Scene, Camera } from 'three';
 import { Sky } from 'three/examples/jsm/objects/Sky';
 import { SceneComponent, RootComponent, HideableComponent } from '../components';
 import { SceneEntity } from '../entities'
 import { Listener, EventBus, Subject } from '../events';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { RaycastController } from 'src/app/utils/raycast-controller';
 
 /**
  * @class RenderingSystem
@@ -23,10 +24,8 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
   private _controls: OrbitControls;
   private _objects: Object3D[] = [];
 
-  // Raycasting data fields
-  private _raycaster: Raycaster;
-  private _mousePosition: Vector2;
-  private _positionUpdated: boolean;
+  // Raycasting wrapper class
+  private _raycastController: RaycastController;
 
   public get camera() { return this._camera};
 
@@ -39,12 +38,8 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     super();
     this._canvas = canvas;
     this._camera = camera;
-    this._raycaster = new Raycaster();
-    this._mousePosition = new Vector2(0, 0);
-    this._positionUpdated = false;
-    window.addEventListener('mousemove', event => { this.onMouseMove(event, this._mousePosition) }, false);
-    console.log('MOUSE POSITION INITIALIZED');
-    console.log(this._mousePosition);
+    this._raycastController = new RaycastController(camera, this._objects, this._canvas);
+    window.addEventListener('mousemove', event => this._raycastController.onMouseMove(event), false);
   }
 
   /**
@@ -54,8 +49,9 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
   public onEntityAdded(entity: Entity): void {
     // If the entity is an instance of a SceneEntity, attach the camera to the scene.
     if(entity instanceof SceneEntity) {
-      entity.getComponent(SceneComponent).scene
-        .add(this._camera);
+      var scene = entity.getComponent(SceneComponent).scene;
+      scene.add(this._camera);
+
     } else {
       // Entity is not of type SceneEntity
       // If the entity has a RootComponent (meaning it is an entity that contains a THREE.Object3D)
@@ -295,17 +291,8 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     }
   }
 
-  public raycast() {
-    console.log(`Raycast: (${this._mousePosition.x}, ${this._mousePosition.y})`);
-    this._positionUpdated = false;
-  }
+  private _initRaycastController(camera: Camera, scene: Scene) {
 
-  public onMouseMove(event: MouseEvent, mousePosition: Vector2): void {
-    // calculate mouse position in normalized device coordinates
-    // (-1 to +1) for both components
-    this._positionUpdated = true;
-    mousePosition.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mousePosition.y = (event.clientY / window.innerHeight) * 2 + 1;
   }
 
   /**
@@ -318,8 +305,12 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     // Update camera controls since damping is enabled.
     this._controls.update();
 
-    if(this._positionUpdated)
-      this.raycast();
+
+    var intersects = this._raycastController.raycast();
+    if(intersects) {
+      if(intersects.length > 1)
+        console.log(intersects);
+    }
 
     // Check if family is initialized
     if(this._family) {

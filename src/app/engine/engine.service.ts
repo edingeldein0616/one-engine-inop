@@ -88,10 +88,6 @@ export class EngineService implements OnDestroy {
     this._threeEngine = null;
   }
 
-  public print() {
-    this._threeEngine.print();
-  }
-
   private _animate(): void {
     this.ngZone.runOutsideAngular(() => {
       if(this._threeEngine) {
