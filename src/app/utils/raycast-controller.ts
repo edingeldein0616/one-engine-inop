@@ -1,6 +1,8 @@
 import { Camera, Intersection, Object3D, Raycaster, Vector2 } from 'three';
 export class RaycastController {
 
+  public intersects: Intersection[];
+
   private _root: Object3D[];
   private _camera: Camera;
   private _canvas: HTMLCanvasElement;

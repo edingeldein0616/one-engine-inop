@@ -52,8 +52,12 @@ class ThreeEngine extends Engine {
     this._renderingSystem.resizeToContainer();
   }
 
-  public attachRaycasting(raycastController: RaycastController) {
+  public attachRaycaster(raycastController: RaycastController) {
     this._renderingSystem?.attachRaycaster(raycastController);
+  }
+
+  public detachRaycaster() {
+    this._renderingSystem?.detachRaycaster();
   }
 
   public addEntity(entity: Entity) {

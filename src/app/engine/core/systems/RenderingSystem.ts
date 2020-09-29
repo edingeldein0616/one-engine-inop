@@ -6,6 +6,7 @@ import { SceneEntity } from '../entities'
 import { Listener, EventBus, Subject } from '../events';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { RaycastController } from 'src/app/utils/raycast-controller';
+import { ThreeEngineEvent } from 'src/app/utils/custom-events';
 
 /**
  * @class RenderingSystem
@@ -24,6 +25,7 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
   private _controls: OrbitControls;
   private _objects: Object3D[] = [];
   private _raycastController: RaycastController;
+  private _cast: boolean = false;
 
   public get camera() { return this._camera};
 
@@ -178,10 +180,14 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
       case 'hideObject':
         this.hide(subject.data.name, subject.data.hide);
         break;
+      case ThreeEngineEvent.MOUSECLICK:
+        this._cast = true;
+        break;
       default:
         //console.log(`Unknown event passed: ${topic}`, subject);
         break;
     }
+
   }
 
   private _environmentMap(dt: DataTexture): void {
@@ -290,6 +296,12 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     this._raycastController = raycastController;
     this._raycastController.attachCamera(this._camera);
     this._raycastController.attachCanvas(this._canvas);
+    EventBus.get().subscribe(ThreeEngineEvent.MOUSECLICK, this);
+  }
+
+  public detachRaycaster() {
+    this._raycastController = null;
+    EventBus.get().unsubscribe(ThreeEngineEvent.MOUSECLICK, this);
   }
 
   /**
@@ -302,12 +314,16 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     // Update camera controls since damping is enabled.f
     this._controls.update();
 
-    if(this._raycastController) {
+    if(this._cast && this._raycastController) {
       var intersects = this._raycastController.raycast();
       if(intersects) {
-        if(intersects.length > 0)
-          console.log(intersects);
+        if(intersects.length > 0) {
+          var sub = new Subject();
+          sub.data = intersects
+          EventBus.get().publish(ThreeEngineEvent.INTERSECT, sub);
+        }
       }
+      this._cast = false;
     }
 
     // Check if family is initialized

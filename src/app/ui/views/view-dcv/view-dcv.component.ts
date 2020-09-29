@@ -7,21 +7,28 @@ import { Subscription } from 'rxjs';
 import { SeminoleActionModel } from 'src/app/utils/seminole-action-model';
 import { DCVAerodynamicsModel } from 'src/app/utils/aerodynamics-model';
 import { RaycastController } from 'src/app/utils/raycast-controller';
+import { EventBus, Listener, Subject } from 'src/app/engine/core/events';
+import { ThreeEngineEvent } from 'src/app/utils/custom-events';
+import { TextDictionary } from 'src/app/utils/text-dictionary';
+import { Intersection } from 'three';
 
 @Component({
   selector: 'app-view-dcv',
   templateUrl: './view-dcv.component.html',
   styleUrls: ['./view-dcv.component.scss']
 })
-export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Listener {
 
   private _animationDriver: AnimationDriver;
   private _sam: SeminoleActionModel;
   private _aeroModel: DCVAerodynamicsModel;
   private _raycastController: RaycastController;
+  private _rayClickListener = (event: MouseEvent) => { EventBus.get().publish(ThreeEngineEvent.MOUSECLICK, null)};
+  private _rayMouseMoveListener = (event: MouseEvent) => { this._raycastController.onMouseMove(event); };
 
   public vmca: number;
   public stallSpeed: number;
+  public content: string;
 
   private _currentFlapsAction: string;
 
@@ -29,6 +36,8 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private engineService: EngineService,
     private cdr: ChangeDetectorRef) { }
+
+
 
   public ngOnInit() {
     this._animationDriver = new AnimationDriver();
@@ -72,6 +81,8 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
         this.controlTechnique(this._sam.controlTechnique.property, this._sam.inopEngine.property, idle);
       })
     ];
+
+    EventBus.get().subscribe(ThreeEngineEvent.INTERSECT, this);
   }
 
   public ngAfterViewInit() {
@@ -80,7 +91,8 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
     this._aeroModel.calculateMarkings(this._sam);
     this._sam.inopEngine.property = this._sam.inopEngine.property;
     this._raycastController = new RaycastController(...gltf.scene.children);
-    window.addEventListener('mousemove', (event) => {this._raycastController.onMouseMove(event); }, false);
+    window.addEventListener('mousemove', this._rayMouseMoveListener, false);
+    window.addEventListener('click', this._rayClickListener, false);
     this.engineService.attachRaycaster(this._raycastController);
     this.cdr.detectChanges();
   }
@@ -233,7 +245,24 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  receive(topic: string, subject: Subject) {
+    switch(topic) {
+      case ThreeEngineEvent.INTERSECT: {
+        console.log('intersect');
+        var firstIntersect = subject.data.shift() as Intersection;
+        var content = TextDictionary.getContent(firstIntersect.object.name);
+        this.content = content;
+        this.cdr.detectChanges();
+      }
+    }
+  }
+
   public ngOnDestroy() {
+    window.removeEventListener('mousemove', this._rayMouseMoveListener, false);
+    window.removeEventListener('click', this._rayClickListener, false);
+
+    EventBus.get().unsubscribe(ThreeEngineEvent.INTERSECT, this);
+    this.engineService.detachRaycaster();
     this.engineService.dispose();
     while(this._disposables.length > 0) {
       this._disposables.pop().unsubscribe();
