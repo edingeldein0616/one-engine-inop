@@ -1,4 +1,4 @@
-import { Camera, Intersection, Object3D, Raycaster, Scene, Vector2 } from 'three';
+import { Camera, Intersection, Object3D, Raycaster, Vector2 } from 'three';
 export class RaycastController {
 
   private _root: Object3D[];
@@ -8,15 +8,21 @@ export class RaycastController {
   private _mousePosition: Vector2;
   private _positionUpdated: boolean;
 
-  constructor(camera: Camera, root: Object3D[], canvas: HTMLCanvasElement) {
-    this._camera = camera;
+  constructor(... root: Object3D[]) {
     this._root = root;
-    this._canvas = canvas;
-    console.log(`Canvas position: (${this._canvas.offsetLeft}, ${this._canvas.offsetTop})`);
+    console.log(root);
     this._raycaster = new Raycaster();
     this._raycaster.far = 50;
     this._mousePosition = new Vector2(0, 0);
     this._positionUpdated = false;
+  }
+
+  public attachCamera(camera: Camera) {
+    this._camera = camera;
+  }
+
+  public attachCanvas(canvas: HTMLCanvasElement) {
+    this._canvas = canvas;
   }
 
   public raycast(): Intersection[] {

@@ -3,6 +3,7 @@ import { PerspectiveCamera } from 'three';
 import { CameraEntity, SceneEntity } from './core/entities';
 import { PerspectiveCameraComponent } from './core/components';
 import { RenderingSystem, AnimationSystem } from './core/systems';
+import { RaycastController } from '../utils/raycast-controller';
 
 class ThreeEngine extends Engine {
 
@@ -44,12 +45,15 @@ class ThreeEngine extends Engine {
     // initialize rendering system with the canvas and camera dependencies, bind resize event listener
     this._renderingSystem = new RenderingSystem(this._canvas, this._camera);
     window.addEventListener('resize', event => { this._renderingSystem.resizeToContainer(); });
-    //window.addEventListener('mousemove', this._renderingSystem.onMouseMove, false);
     // add rendering system to engine systems and add it to entity listener
     this.addSystem(this._renderingSystem);
     this.addEntityListener(this._renderingSystem);
     // run resize to container to fit the renderer to the canvas dimensions
     this._renderingSystem.resizeToContainer();
+  }
+
+  public attachRaycasting(raycastController: RaycastController) {
+    this._renderingSystem?.attachRaycaster(raycastController);
   }
 
   public addEntity(entity: Entity) {

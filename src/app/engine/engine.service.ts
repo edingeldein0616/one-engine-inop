@@ -10,6 +10,7 @@ import { environment } from 'src/environments/environment';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Color } from 'three';
 import { AerodynamicsModel } from '../utils/aerodynamics-model';
+import { RaycastController } from '../utils/raycast-controller';
 
 @Injectable({
   providedIn: 'root'
@@ -60,7 +61,7 @@ export class EngineService implements OnDestroy {
     this._threeEngine.addEntity(me);
   }
 
-  public loadMarkings(assetName: string, aeroModel: AerodynamicsModel) {
+  public loadMarkings(assetName: string, aeroModel: AerodynamicsModel): GLTF {
 
     const gltf = this.loaderService.getAsset(assetName);
 
@@ -71,6 +72,7 @@ export class EngineService implements OnDestroy {
     me.getComponent(AnimatorComponent).configureAnimations(gltf);
 
     this._threeEngine.addEntity(me);
+    return gltf;
   }
 
   public getModelReference(assetName: string): GLTF {
@@ -81,6 +83,10 @@ export class EngineService implements OnDestroy {
     const subject = new Subject();
     subject.data = { name: name, hide: hide};
     EventBus.get().publish('hideObject', subject);
+  }
+
+  public attachRaycaster(raycastController: RaycastController) {
+    this._threeEngine.attachRaycasting(raycastController);
   }
 
   public dispose() {

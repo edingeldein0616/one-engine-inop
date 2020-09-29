@@ -6,6 +6,7 @@ import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { Subscription } from 'rxjs';
 import { SeminoleActionModel } from 'src/app/utils/seminole-action-model';
 import { DCVAerodynamicsModel } from 'src/app/utils/aerodynamics-model';
+import { RaycastController } from 'src/app/utils/raycast-controller';
 
 @Component({
   selector: 'app-view-dcv',
@@ -17,6 +18,7 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
   private _animationDriver: AnimationDriver;
   private _sam: SeminoleActionModel;
   private _aeroModel: DCVAerodynamicsModel;
+  private _raycastController: RaycastController;
 
   public vmca: number;
   public stallSpeed: number;
@@ -32,6 +34,7 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
     this._animationDriver = new AnimationDriver();
     this._sam = new SeminoleActionModel();
     this._aeroModel = new DCVAerodynamicsModel();
+    this._raycastController = new RaycastController();
 
     this._disposables = [
 
@@ -73,9 +76,12 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public ngAfterViewInit() {
     this.engineService.loadSeminole(environment.seminole);
-    this.engineService.loadMarkings(environment.markings, this._aeroModel);
+    var gltf = this.engineService.loadMarkings(environment.markings, this._aeroModel);
     this._aeroModel.calculateMarkings(this._sam);
     this._sam.inopEngine.property = this._sam.inopEngine.property;
+    this._raycastController = new RaycastController(...gltf.scene.children);
+    window.addEventListener('mousemove', (event) => {this._raycastController.onMouseMove(event); }, false);
+    this.engineService.attachRaycaster(this._raycastController);
     this.cdr.detectChanges();
   }
 

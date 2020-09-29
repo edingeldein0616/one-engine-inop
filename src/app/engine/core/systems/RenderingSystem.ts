@@ -23,8 +23,6 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
   private _hideableFamily: Family;
   private _controls: OrbitControls;
   private _objects: Object3D[] = [];
-
-  // Raycasting wrapper class
   private _raycastController: RaycastController;
 
   public get camera() { return this._camera};
@@ -38,8 +36,6 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     super();
     this._canvas = canvas;
     this._camera = camera;
-    this._raycastController = new RaycastController(camera, this._objects, this._canvas);
-    window.addEventListener('mousemove', event => this._raycastController.onMouseMove(event), false);
   }
 
   /**
@@ -51,7 +47,6 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     if(entity instanceof SceneEntity) {
       var scene = entity.getComponent(SceneComponent).scene;
       scene.add(this._camera);
-
     } else {
       // Entity is not of type SceneEntity
       // If the entity has a RootComponent (meaning it is an entity that contains a THREE.Object3D)
@@ -291,8 +286,10 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     }
   }
 
-  private _initRaycastController(camera: Camera, scene: Scene) {
-
+  public attachRaycaster(raycastController: RaycastController) {
+    this._raycastController = raycastController;
+    this._raycastController.attachCamera(this._camera);
+    this._raycastController.attachCanvas(this._canvas);
   }
 
   /**
@@ -302,14 +299,15 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
    */
   public update(engine: Engine, delta: number): void {
 
-    // Update camera controls since damping is enabled.
+    // Update camera controls since damping is enabled.f
     this._controls.update();
 
-
-    var intersects = this._raycastController.raycast();
-    if(intersects) {
-      if(intersects.length > 1)
-        console.log(intersects);
+    if(this._raycastController) {
+      var intersects = this._raycastController.raycast();
+      if(intersects) {
+        if(intersects.length > 0)
+          console.log(intersects);
+      }
     }
 
     // Check if family is initialized
