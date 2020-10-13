@@ -136,6 +136,11 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     this.stallSpeed = this._aeroModel.stallSpeed(this._sam);
   }
 
+  public labelSelected(lookup: string) {
+    this.content = this.lookupContent(lookup);
+    this.cdr.detectChanges();
+  }
+
   public controlTechnique(controlTechnique: string, inopEngine: string, idle: boolean) {
     this.clearOrientation();
     this.clearRudder();
@@ -245,16 +250,18 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     }
   }
 
-  receive(topic: string, subject: Subject) {
+  public receive(topic: string, subject: Subject) {
     switch(topic) {
       case ThreeEngineEvent.INTERSECT: {
-        console.log('intersect');
         var firstIntersect = subject.data.shift() as Intersection;
-        var content = TextDictionary.getContent(firstIntersect.object.name);
-        this.content = content;
+        this.content = this.lookupContent(firstIntersect.object.name);
         this.cdr.detectChanges();
       }
     }
+  }
+
+  public lookupContent(lookup: string): string {
+    return TextDictionary.getContent(lookup);
   }
 
   public ngOnDestroy() {

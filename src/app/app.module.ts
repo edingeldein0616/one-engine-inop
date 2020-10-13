@@ -27,7 +27,7 @@ import { ControlFactorsComponent } from './ui/views/view-dcv/control-factors/con
     ViewZstComponent,
     ViewMenuComponent,
     EngineComponent,
-    ControlFactorsComponent
+    ControlFactorsComponent,
   ],
   imports: [
     BrowserModule,

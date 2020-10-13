@@ -116,12 +116,11 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
 
     // Subscribe to events.
     EventBus.get()
-      .subscribe('state-check', this)
-      .subscribe('envmap', this)
-      .subscribe('skybox', this)
-      .subscribe('hideObject', this);
+      .subscribe(ThreeEngineEvent.STATECHECK, this)
+      .subscribe(ThreeEngineEvent.ENVMAP, this)
+      .subscribe(ThreeEngineEvent.SKYBOX, this)
+      .subscribe(ThreeEngineEvent.HIDEOBJECT, this);
 
-    //console.log('Rendering system attached to engine', this, engine);
   }
 
   /**
@@ -166,18 +165,18 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
    */
   receive(topic: string, subject: Subject) {
     switch (topic) {
-      case 'state-check':
+      case ThreeEngineEvent.STATECHECK:
         //console.log('STATE CHECK', this._renderer.state);
         break;
-      case 'envmap':
+      case ThreeEngineEvent.ENVMAP:
         //console.log('HDRI ENVIRONMENT MAP', subject.data);
         this._environmentMap(subject.data);
         break;
-      case 'skybox':
+      case ThreeEngineEvent.SKYBOX:
         //console.log('SKYBOX');
         this._skybox();
         break;
-      case 'hideObject':
+      case ThreeEngineEvent.HIDEOBJECT:
         this.hide(subject.data.name, subject.data.hide);
         break;
       case ThreeEngineEvent.MOUSECLICK:

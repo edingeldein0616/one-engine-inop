@@ -3,6 +3,8 @@ import { Listener, Subject, EventBus } from 'src/app/engine/core/events';
 import { AnimatorComponent } from '../components/Animation';
 import { ModelEntity } from '../entities';
 import { AnimationAction, Clock } from 'three';
+import { ThreeEngineEvent } from 'src/app/utils/custom-events';
+import { ThreeEngine } from '../../ThreeEngine';
 
 export class AnimationSystem extends System implements Listener {
 
@@ -16,13 +18,13 @@ export class AnimationSystem extends System implements Listener {
 
     this._family = new FamilyBuilder(engine).include(AnimatorComponent).build();
 
-    EventBus.get().subscribe('animation', this);
+    EventBus.get().subscribe(ThreeEngineEvent.ANIMATION, this);
 
   }
 
   public onDetach(engine: Engine) {
 
-    EventBus.get().unsubscribe('animation', this);
+    EventBus.get().unsubscribe(ThreeEngineEvent.ANIMATION, this);
 
   }
 
