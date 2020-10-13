@@ -7,12 +7,12 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col">
-        <h3 class="text-center">DATA</h3>
+        <h1 class="text-center">DATA</h1>
       </div>
     </div>
     <div class="row">
       <div class="col">
-        <h4>STALL SPEED</h4>
+        <app-selectable-label label="STALL SPEED" lookupValue="stall-speed" (contentClicked)="labelSelected($event)" size="large"></app-selectable-label>
       </div>
     </div>
     <div class="row">
@@ -22,7 +22,7 @@
     </div>
     <div class="row">
       <div class="col">
-        <h4>VMCA</h4>
+        <app-selectable-label label="VMCA" lookupValue="vmca" (contentClicked)="labelSelected($event)" size="large"></app-selectable-label>
       </div>
     </div>
     <div class="row">
@@ -48,7 +48,7 @@
 <!--    CONTROL        -->
 <!-- ----------------  -->
 <div class="panel control">
-  <app-control-factors title="CONTROL FACTORS" [disablePower]="false" (controlOutput)="valueChanged($event)"></app-control-factors>
+  <app-control-factors title="CONTROL FACTORS" [disablePower]="false" (controlOutput)="valueChanged($event)" (labelOutput)="labelSelected($event)"></app-control-factors>
 </div>
 
 <!-- ----------------  -->
@@ -56,12 +56,7 @@
 <!-- ----------------  -->
 <div class="panel description">
 
-  <p>
-    {{content}}
-    This section covers single-engine directional conrol and Vmca. Change the factor settings on the right to see the resulting effects
-    on the aircraft. Click on the "Data" and "Control Factors" text labels to read descriptive text here. Clicking on the graphics above
-     whenever the cursor changes to a pointing hand will also display additional text here.
-  </p>
+  <div [innerHTML]="content"></div>
 
 </div>
 

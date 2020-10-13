@@ -14,6 +14,7 @@ export class ControlFactorsComponent implements OnInit {
   @Input() title: string;
 
   @Output() controlOutput = new EventEmitter<SelectionData>();
+  @Output() labelOutput = new EventEmitter<string>();
 
   constructor() { }
 
@@ -22,6 +23,10 @@ export class ControlFactorsComponent implements OnInit {
 
   public selected(eventData: any) {
     this.controlOutput.emit(eventData);
+  }
+
+  public labelSelected(content: string) {
+    this.labelOutput.emit(content);
   }
 
 }

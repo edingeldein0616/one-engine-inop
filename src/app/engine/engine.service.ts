@@ -83,7 +83,7 @@ export class EngineService implements OnDestroy {
   public hideObject(name: string, hide: boolean): void {
     const subject = new Subject();
     subject.data = { name: name, hide: hide};
-    EventBus.get().publish(ThreeEngineEvent.SKYBOX, subject);
+    EventBus.get().publish(ThreeEngineEvent.HIDEOBJECT, subject);
   }
 
   public attachRaycaster(raycastController: RaycastController) {
