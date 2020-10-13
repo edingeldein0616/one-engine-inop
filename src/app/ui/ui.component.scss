@@ -14,29 +14,30 @@
 }
 
 .panel.control {
-  border-style: none none none solid;
+  // border-style: none none none solid;
   width: 25%;
   height: 78%;
   right: 0em;
 }
 
 .panel.description {
-  border-style: solid none none none;
+  // border-style: solid none none none;
   width: 75%;
   height: 15%;
   bottom: 0em;
   padding: 10px;
+  overflow-y: scroll;
 }
 
 .panel.data {
-  border-style: none solid none none;
+  // border-style: none solid none none;
   width: 17%;
   height: 78%;
   padding: 10px;
 }
 
 .panel.logo {
-  border-style: solid none none solid;
+  // border-style: solid none none solid;
   width: 25%;
   height: 15%;
   bottom: 0em;

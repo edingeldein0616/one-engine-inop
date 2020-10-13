@@ -28,7 +28,7 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
 
   public vmca: number;
   public stallSpeed: number;
-  public content: string;
+  public content: string = `<h3>This section covers single-engine directional control and Vmca. Change the factor settings on the right to see the resulting effects on the aircraft. Click on the "Data" and "Control Factors" text labels to read descriptive text here. Clicking on the arrows marking aerodynamic and control forces around the aircraft will display additional text here.</h3>`;
 
   private _currentFlapsAction: string;
 
