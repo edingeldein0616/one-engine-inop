@@ -24,6 +24,15 @@ export class AnimatorComponent implements Component {
       this.subClip(flapsClip, 'flapsTo40Action', 100, 150);
     }
 
+    const cgClip = this._animationClips.find(clip => clip.name == 'cgAction');
+    if(cgClip) {
+      this.subClip(cgClip, 'cg0Action', 0, 1);
+      this.subClip(cgClip, 'cg1Action', 0, 25);
+      this.subClip(cgClip, 'cg2Action', 25, 50);
+      this.subClip(cgClip, 'cg3Action', 50, 75);
+      this.subClip(cgClip, 'cg4Action', 75, 100);
+    }
+
     for(let clip of this._animationClips) {
       const action = this._animationMixer.clipAction(clip);
       this._animationActions.set(clip.name, action);

@@ -3,19 +3,20 @@ import { Scale } from 'src/app/utils/scale';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Object3D, Color, Mesh } from 'three';
 import { SeminoleActionModel } from './seminole-action-model';
+import { ControlFactorsComponent } from '../ui/views/view-dcv/control-factors/control-factors.component';
 
 export interface AerodynamicsModel {
-  unpackMarkings(gltf: GLTF, color: Color);
+  unpackMarkings(gltf: GLTF, colorOne: Color, colorTwo: Color);
 }
 
 export class DCVAerodynamicsModel implements AerodynamicsModel {
 
   private _scales: Map<string, Scale> = new Map<string, Scale>();
-  public unpackMarkings(gltf: GLTF, color: Color) {
+  public unpackMarkings(gltf: GLTF, colorOne: Color, colorTwo: Color) {
     this.traverse(gltf.scene as Object3D, (o: Object3D) => {
       if(o instanceof Mesh) {
         this._scales.set(o.name, new Scale(o));
-        if(o.name[0] === 't') return;
+        var color = o.name[0] === 't' ? colorTwo : colorOne;
         (o.material as any).color = color;
       }
     });
