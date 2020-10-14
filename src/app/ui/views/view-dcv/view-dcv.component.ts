@@ -28,16 +28,15 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
 
   public vmca: number;
   public stallSpeed: number;
-  public content: string;
+  public content: string = `<h3>This section covers single-engine directional control and Vmca. Change the factor settings on the right to see the resulting effects on the aircraft. Click on the "Data" and "Control Factors" text labels to read descriptive text here. Clicking on the arrows marking aerodynamic and control forces around the aircraft will display additional text here.</h3>`;
 
   private _currentFlapsAction: string;
+  private _currentCgAction: string;
 
   private _disposables: Subscription[] = [];
 
   constructor(private engineService: EngineService,
     private cdr: ChangeDetectorRef) { }
-
-
 
   public ngOnInit() {
     this._animationDriver = new AnimationDriver();
@@ -79,6 +78,10 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
         this.opEngine(this._sam.inopEngine.property, idle);
 
         this.controlTechnique(this._sam.controlTechnique.property, this._sam.inopEngine.property, idle);
+      }),
+
+      this._sam.cog.subject.subscribe(cog => {
+        this.centerOfGravity(cog);
       })
     ];
 
@@ -247,6 +250,29 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     } else if(notch == (3/3) * 100) {
       this._currentFlapsAction = 'flapsTo40Action';
       this._animationDriver.jumpTo(this._currentFlapsAction, 100);
+    }
+  }
+
+  public centerOfGravity(position: number): void {
+    if(this._currentCgAction) {
+      this._animationDriver.stop(this._currentCgAction);
+    }
+
+    if(position == (0/4) * 100) {
+      this._currentCgAction = 'cg0Action';
+      this._animationDriver.jumpTo(this._currentCgAction, 0);
+    } else if(position == (1/4) * 100) {
+      this._currentCgAction = 'cg1Action';
+      this._animationDriver.jumpTo(this._currentCgAction, 100);
+    } else if(position == (2/4) * 100) {
+      this._currentCgAction = 'cg2Action';
+      this._animationDriver.jumpTo(this._currentCgAction, 100);
+    } else if(position == (3/4) * 100) {
+      this._currentCgAction = 'cg3Action';
+      this._animationDriver.jumpTo(this._currentCgAction, 100);
+    } else if(position == (4/4) * 100) {
+      this._currentCgAction = 'cg4Action';
+      this._animationDriver.jumpTo(this._currentCgAction, 100);
     }
   }
 

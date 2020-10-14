@@ -47,7 +47,9 @@ export class TextDictionary {
      <h3>Much of the text in this section will refer to "lowering Vmca" and "raising Vmca". From the definition above, "lowering Vmca" means reducing the speed at which directional control can be maintained and "raising Vmca" means raising that speed. A lower Vmca speed is safer, of course, but many of the factors which
      can lower the Vmca also reduce single-engine performance. See "Performance Factors" section for more details.</h3>`},
     { title: 'stall-speed', content: `<h3>The stall speed will vary with changes in many of the control factors listed. In a light twin like the seminole, it is possible for the stall speed to be higher than Vmca. In this condition, a stall with an inoperative engine may result in a spin and/or an unrecoverable loss of
-      directional control.</h3>`}
+      directional control.</h3>`},
+    { title: 't-nose-deflection', content: `<h3> The deflection of the nose from the flight path is shown by this index. In this simulation, the aircraft is assumed to be maintaining a constant heading. Therefore, the aircraft is either flying wings-level in a sideslip (nose NOT aligned with the flight path) or in a zero sideslip condition (nose ALIGNED with the flight path).</h3>
+      <h3>With an inoperative engine, the only way that the aircraft can maintain heading and fly wings-level with the nose aligned with the flight path is if the operating engine is at idle power.</h3>` }
   ];
 
   public static getContent(title: string): string {

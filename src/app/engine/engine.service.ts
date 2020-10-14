@@ -66,7 +66,7 @@ export class EngineService implements OnDestroy {
 
     const gltf = this.loaderService.getAsset(assetName);
 
-    aeroModel.unpackMarkings(gltf, new Color(0xFF0000));
+    aeroModel.unpackMarkings(gltf, new Color(0xFF0000), new Color(0x00FFFF));
 
     const me = EntityFactory.build(ModelEntity);
     me.getComponent(RootComponent).obj = gltf.scene;
