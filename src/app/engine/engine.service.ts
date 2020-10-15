@@ -56,13 +56,23 @@ export class EngineService implements OnDestroy {
 
     const me = EntityFactory.build(ModelEntity);
     me.getComponent(RootComponent).obj = gltf.scene;
-    me.getComponent(AnimatorComponent).configureAnimations(gltf);
+
+    const anim = me.getComponent(AnimatorComponent);
+    anim.configureAnimations(gltf);
+    const flapsClip = anim.clip('FlapsAction') //this._animationClips.find(clip => clip.name === 'FlapsAction');
+    if(flapsClip) {
+      anim.subClip(flapsClip, 'flapsTo0Action', 0, 1);
+      anim.subClip(flapsClip, 'flapsTo10Action', 0, 50);
+      anim.subClip(flapsClip, 'flapsTo25Action', 50, 100);
+      anim.subClip(flapsClip, 'flapsTo40Action', 100, 150);
+    }
+
     me.getComponent(HideableComponent).obj = gltf.scene;
 
     this._threeEngine.addEntity(me);
   }
 
-  public loadMarkings(assetName: string, aeroModel: AerodynamicsModel): GLTF {
+  public loadStaticMarkings(assetName: string, aeroModel: AerodynamicsModel): GLTF {
 
     const gltf = this.loaderService.getAsset(assetName);
 
@@ -71,6 +81,26 @@ export class EngineService implements OnDestroy {
     const me = EntityFactory.build(ModelEntity);
     me.getComponent(RootComponent).obj = gltf.scene;
     me.getComponent(AnimatorComponent).configureAnimations(gltf);
+
+    this._threeEngine.addEntity(me);
+    return gltf;
+  }
+
+  public loadAttachedMarkings(assetName: string): GLTF {
+    const gltf = this.loaderService.getAsset(assetName);
+
+    const me = EntityFactory.build(ModelEntity);
+    me.getComponent(RootComponent).obj = gltf.scene;
+    const anim = me.getComponent(AnimatorComponent);
+    anim.configureAnimations(gltf);
+    const cgClip = anim.clip('cgAction'); //this._animationClips.find(clip => clip.name == 'cgAction');
+    if(cgClip) {
+      anim.subClip(cgClip, 'cg0Action', 0, 1);
+      anim.subClip(cgClip, 'cg1Action', 0, 25);
+      anim.subClip(cgClip, 'cg2Action', 25, 50);
+      anim.subClip(cgClip, 'cg3Action', 50, 75);
+      anim.subClip(cgClip, 'cg4Action', 75, 100);
+    }
 
     this._threeEngine.addEntity(me);
     return gltf;

@@ -16,23 +16,6 @@ export class AnimatorComponent implements Component {
     this._animationClips = gltf.animations;
     this._animationActions = new Map<string, AnimationAction>();
 
-    const flapsClip = this._animationClips.find(clip => clip.name === 'FlapsAction');
-    if(flapsClip) {
-      this.subClip(flapsClip, 'flapsTo0Action', 0, 1);
-      this.subClip(flapsClip, 'flapsTo10Action', 0, 50);
-      this.subClip(flapsClip, 'flapsTo25Action', 50, 100);
-      this.subClip(flapsClip, 'flapsTo40Action', 100, 150);
-    }
-
-    const cgClip = this._animationClips.find(clip => clip.name == 'cgAction');
-    if(cgClip) {
-      this.subClip(cgClip, 'cg0Action', 0, 1);
-      this.subClip(cgClip, 'cg1Action', 0, 25);
-      this.subClip(cgClip, 'cg2Action', 25, 50);
-      this.subClip(cgClip, 'cg3Action', 50, 75);
-      this.subClip(cgClip, 'cg4Action', 75, 100);
-    }
-
     for(let clip of this._animationClips) {
       const action = this._animationMixer.clipAction(clip);
       this._animationActions.set(clip.name, action);
@@ -52,12 +35,19 @@ export class AnimatorComponent implements Component {
 
   public action(clipName: string): AnimationAction {
     var clip = this.clip(clipName);
-    return this.clipAction(clip);
+
+    var action: AnimationAction;
+    try {
+      action = this.clipAction(clip);
+    } catch (ex) {}
+    return action;
   }
 
   public subClip(sourceClip: AnimationClip, newClipName: string, from: number, to: number): AnimationClip {
     var subClip = AnimationUtils.subclip(sourceClip, newClipName, from, to);
     this._animationClips.push(subClip);
+    const action = this._animationMixer.clipAction(subClip);
+    this._animationActions.set(subClip.name, action);
     return subClip;
   }
 }

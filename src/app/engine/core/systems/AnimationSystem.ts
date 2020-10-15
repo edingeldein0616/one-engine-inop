@@ -34,17 +34,25 @@ export class AnimationSystem extends System implements Listener {
 
       const ac = entity.getComponent(AnimatorComponent);
 
-      while(this._animationQueue.length > 0) {
-        const ad = this._animationQueue.shift();
-        const action  = ac.action(ad.clipName);
-        ad.actionCallback(action, ad.args);
-      }
+      this._animationQueue.forEach(ad => {
+        const action = ac.action(ad.clipName);
+        if(action) {
+          ad.actionCallback(action, ad.args);
+        }
+      });
+      // while(this._animationQueue.length > 0) {
+      //   const ad = this._animationQueue.shift();
+      //   const action  = ac.action(ad.clipName);
+      //   ad.actionCallback(action, ad.args);
+      // }
 
       if(ac.animationMixer) {
         ac.animationMixer.update(this._clock.getDelta());
       }
 
     });
+
+    this._animationQueue = [];
 
   }
 

@@ -90,13 +90,18 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
 
   public ngAfterViewInit() {
     this.engineService.loadSeminole(environment.seminole);
-    var gltf = this.engineService.loadMarkings(environment.markings, this._aeroModel);
+    console.log(this.engineService.loadAttachedMarkings(environment.attachedMarkings));
+
+    var staticMarkings = this.engineService.loadStaticMarkings(environment.staticMarkings, this._aeroModel);
+    this._raycastController = new RaycastController(...staticMarkings.scene.children);
+    this.engineService.attachRaycaster(this._raycastController);
+
     this._aeroModel.calculateMarkings(this._sam);
     this._sam.inopEngine.property = this._sam.inopEngine.property;
-    this._raycastController = new RaycastController(...gltf.scene.children);
+
     window.addEventListener('mousemove', this._rayMouseMoveListener, false);
     window.addEventListener('click', this._rayClickListener, false);
-    this.engineService.attachRaycaster(this._raycastController);
+
     this.cdr.detectChanges();
   }
 
