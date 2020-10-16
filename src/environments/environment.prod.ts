@@ -3,7 +3,8 @@ export const environment = {
   skybox: 'skybox',
   envmap: 'envmap',
   seminole: 'seminole',
-  staticMarkings: 'static-markings',
+  dcvStaticMarkings: 'dcv-static-markings',
+  sepStaticMarkings: 'sep-static-markings',
   attachedMarkings: 'attached-markings',
   production: true
 };

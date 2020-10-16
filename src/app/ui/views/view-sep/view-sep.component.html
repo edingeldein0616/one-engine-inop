@@ -12,7 +12,7 @@
     </div>
     <div class="row">
       <div class="col">
-        <h4>VYSE</h4>
+        <app-selectable-label label="VYSE" lookupValue="vyse" (contentClicked)="onLabelSelected($event)" size="large"></app-selectable-label>
       </div>
     </div>
     <div class="row">
@@ -23,7 +23,7 @@
 
     <div class="row">
       <div class="col">
-        <h4>EXCESS THP</h4>
+        <app-selectable-label label="EXCESS THP" lookupValue="excess-thp" (contentClicked)="onLabelSelected($event)" size="large"></app-selectable-label>
       </div>
     </div>
     <div class="row">
@@ -34,7 +34,7 @@
 
     <div class="row">
       <div class="col">
-        <h4>RATE OF CLIMB</h4>
+        <app-selectable-label label="RATE OF CLIMB" lookupValue="rate-of-climb" (contentClicked)="onLabelSelected($event)" size="large"></app-selectable-label>
       </div>
     </div>
     <div class="row">
@@ -45,7 +45,7 @@
 
     <div class="row">
       <div class="col">
-        <h4>SERVICE CEILING</h4>
+        <app-selectable-label label="SERVICE CEILING" lookupValue="service-ceiling" (contentClicked)="onLabelSelected($event)" size="large"></app-selectable-label>
       </div>
     </div>
     <div class="row">
@@ -56,7 +56,7 @@
 
     <div class="row">
       <div class="col">
-        <h4>ABSOLUTE CEILING</h4>
+        <app-selectable-label label="ABSOLUTE CEILING" lookupValue="absolute-ceiling" (contentClicked)="onLabelSelected($event)" size="large"></app-selectable-label>
       </div>
     </div>
     <div class="row">
@@ -83,21 +83,13 @@
 <!--  CONTROL         -->
 <!-- ---------------- -->
 <div class="panel control">
-  <app-control-factors title="PERFORMANCE FACTORS" [disablePower]="true"></app-control-factors>
+  <app-sep-control-factors title="PERFORMANCE FACTORS" [disablePower]="true" (controlOutput)="onValueChanged($event)" (labelOutput)="onLabelSelected($event)"></app-sep-control-factors>
 </div>
 
 <!-- ---------------- -->
 <!--  DESCRIPTION     -->
 <!-- ---------------- -->
-<div class="panel description">
-
-  <p>
-    This section covers single-engine performance. Change the factor settings on the right to see the resulting effects
-    on the aircraft. Click on the "Data" and "Control Factors" text labels to read descriptive text here. Clicking on the graphics above
-     whenever the cursor changes to a pointing hand will also display additional text here.
-  </p>
-
-</div>
+<div class="panel description" [innerHTML]="content"></div>
 
 <!-- ---------------- -->
 <!--    LOGO          -->

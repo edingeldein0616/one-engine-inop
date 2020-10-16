@@ -1,0 +1,128 @@
+<div class="container-fluid">
+
+  <!-- Title -->
+  <div class="row mb-auto align-items-center">
+    <div class="col">
+      <h2 class="text-center">{{ title }}</h2>
+      <hr>
+    </div>
+  </div>
+
+  <!-- INOP ENGINE -->
+  <div class="row mb-auto align-items-center">
+    <div class="col-4">
+      <app-selectable-label label="INOP. ENGINE" lookupValue="inop-engine" (contentClicked)="labelSelected($event)"></app-selectable-label>
+      <!-- <h5 class="text-center" (click)="contentSelected($event)">INOP. ENGINE</h5> -->
+    </div>
+    <div class="col-8">
+      <app-selector label="INOP. ENGINE" [useValue]="true" [toggleOptions]="['LEFT','RIGHT']" [initialValue]="0"
+        (valueOutput)="selected($event)"></app-selector>
+    </div>
+  </div>
+
+  <!-- POWER -->
+  <div class="row align-items-center">
+    <div class="col-4">
+      <app-selectable-label label="POWER" lookupValue="sep-power" (contentClicked)="labelSelected($event)"></app-selectable-label>
+    </div>
+    <div class="col-8">
+      <div *ngIf="!disablePower; else disable">
+        <app-selector label="POWER" [useValue]="false" [toggleOptions]="['IDLE','-','-','-','FULL']" [initialValue]="4"
+          (valueOutput)="selected($event)"></app-selector>
+      </div>
+      <ng-template #disable>
+        <app-selector label="POWER" [useValue]="false" [toggleOptions]="['IDLE','-','-','-','FULL']" [initialValue]="4"
+          [disableGroup]="true"></app-selector>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- DENSITY ALTITUDE -->
+  <div class="row align-items-center">
+    <div class="col-4">
+      <app-selectable-label label="DENSITY ALTITUDE" lookupValue="sep-density-altitude" (contentClicked)="labelSelected($event)"></app-selectable-label>
+    </div>
+    <div class="col-8">
+      <app-selector label="DENSITY ALTITUDE" [useValue]="false" [toggleOptions]="['0','1500','3000','4500','6000']"
+        [initialValue]="2" (valueOutput)="selected($event)"></app-selector>
+    </div>
+  </div>
+
+  <!-- PROPELLER -->
+  <div class="row align-items-center">
+    <div class="col-4">
+      <app-selectable-label label="PROPELLER" lookupValue="sep-propeller" (contentClicked)="labelSelected($event)"></app-selectable-label>
+    </div>
+    <div class="col-8">
+      <app-selector label="PROPELLER" [useValue]="true" [toggleOptions]="['WINDMILL','FEATHER']" [initialValue]="1"
+        (valueOutput)="selected($event)"></app-selector>
+    </div>
+  </div>
+
+  <!-- CONTROL TECHNIQUE -->
+  <div class="row align-items-center">
+    <div class="col-4">
+      <app-selectable-label label="CONTROL TECHNIQUE" lookupValue="sep-control-technique" (contentClicked)="labelSelected($event)"></app-selectable-label>
+    </div>
+    <div class="col-8">
+      <app-selector label="CONTROL TECHNIQUE" [useValue]="true" [toggleOptions]="['WINGS LEVEL','ZERO SIDE SLIP']"
+        [initialValue]="1" (valueOutput)="selected($event)"></app-selector>
+    </div>
+  </div>
+
+  <!-- AIRSPEED (KIAS) -->
+  <div class="row align-items-center">
+    <div class="col-4">
+      <app-selectable-label label="AIRSPEED (KIAS)" lookupValue="sep-airspeed" (contentClicked)="labelSelected($event)"></app-selectable-label>
+    </div>
+    <div class="col-8">
+      <app-selector label="AIRSPEED (KIAS)" [useValue]="false" [toggleOptions]="['83','-','88','-','93']"
+        [initialValue]="2" (valueOutput)="selected($event)"></app-selector>
+    </div>
+  </div>
+
+  <!-- WEIGHT -->
+  <div class="row align-items-center">
+    <div class="col-4">
+      <app-selectable-label label="WEIGHT" lookupValue="sep-weight" (contentClicked)="labelSelected($event)"></app-selectable-label>
+    </div>
+    <div class="col-8">
+      <app-selector label="WEIGHT" [useValue]="false" [toggleOptions]="['MIN','-','-','-','MAX']" [initialValue]="0"
+        (valueOutput)="selected($event)"></app-selector>
+    </div>
+  </div>
+
+  <!-- CENTER OF GRAVTY -->
+  <div class="row align-items-center">
+    <div class="col-4">
+      <app-selectable-label label="CENTER OF GRAVITY" lookupValue="sep-cog" (contentClicked)="labelSelected($event)"></app-selectable-label>
+    </div>
+    <div class="col-8">
+      <app-selector label="CENTER OF GRAVITY" [useValue]="false" [toggleOptions]="['AFT','-','-','-','FORE']"
+        [initialValue]="0" (valueOutput)="selected($event)"></app-selector>
+    </div>
+  </div>
+
+  <!-- FLAPS -->
+  <div class="row align-items-center">
+    <div class="col-4">
+      <app-selectable-label label="FLAPS" lookupValue="sep-flaps" (contentClicked)="labelSelected($event)"></app-selectable-label>
+    </div>
+    <div class="col-8">
+      <app-selector label="FLAPS" [useValue]="false" [toggleOptions]="['0','10','25','40']" [initialValue]="0"
+        (valueOutput)="selected($event)"></app-selector>
+    </div>
+  </div>
+
+  <!-- LANDING GEAR -->
+  <div class="row align-items-center">
+    <div class="col-4">
+      <app-selectable-label label="LANDING GEAR" lookupValue="sep-gear" (contentClicked)="labelSelected($event)"></app-selectable-label>
+    </div>
+    <div class="col-8">
+      <app-selector label="LANDING GEAR" [useValue]="true" [toggleOptions]="['UP','DOWN']" [initialValue]="0"
+        (valueOutput)="selected($event)"></app-selector>
+    </div>
+  </div>
+
+</div>
