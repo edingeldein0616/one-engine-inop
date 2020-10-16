@@ -3,13 +3,20 @@ import { Scale } from 'src/app/utils/scale';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Object3D, Color, Mesh } from 'three';
 import { SeminoleActionModel } from './seminole-action-model';
-import { ControlFactorsComponent } from '../ui/views/view-dcv/control-factors/control-factors.component';
 
-export interface AerodynamicsModel {
-  unpackMarkings(gltf: GLTF, colorOne: Color, colorTwo: Color);
+export abstract class AerodynamicsModel {
+
+  public abstract unpackMarkings(gltf: GLTF, colorOne: Color, colorTwo: Color);
+
+  protected traverse(object: Object3D, callback: (o: Object3D) => void ) {
+    for(let obj of object.children) {
+      this.traverse(obj, callback);
+    }
+    callback(object);
+  }
 }
 
-export class DCVAerodynamicsModel implements AerodynamicsModel {
+export class DCVAerodynamicsModel extends AerodynamicsModel {
 
   private _scales: Map<string, Scale> = new Map<string, Scale>();
   public unpackMarkings(gltf: GLTF, colorOne: Color, colorTwo: Color) {
@@ -20,13 +27,6 @@ export class DCVAerodynamicsModel implements AerodynamicsModel {
         (o.material as any).color = color;
       }
     });
-  }
-
-  private traverse(object: Object3D, callback: (o: Object3D) => void ) {
-    for(let obj of object.children) {
-      this.traverse(obj, callback);
-    }
-    callback(object);
   }
 
   public moveScale(name: string, increment: number) {
@@ -186,6 +186,81 @@ export class DCVAerodynamicsModel implements AerodynamicsModel {
       const roll = Math.floor((power - altitude + prop - 3) / 2) / 13;
       if(inopEngine === 'LEFT') this.rightRoll.property = roll;
       else this.leftRoll.property = roll;
+    }
+  }
+
+}
+
+export class SEPAerodynamicsModel extends AerodynamicsModel {
+
+  public leftThrust: ScaleValue = new ScaleValue('s-thrust-left', (n: string, p: number) => this.setScale(n,p));
+  public leftDrag: ScaleValue = new ScaleValue('s-drag-left', (n: string, p: number) => this.setScale(n,p));
+
+  public rightThrust: ScaleValue = new ScaleValue('s-thrust-right', (n: string, p: number) => this.setScale(n,p));
+  public rightDrag: ScaleValue = new ScaleValue('s-drag-right', (n: string, p: number) => this.setScale(n,p));
+
+  private _scales: Map<string, Scale> = new Map<string, Scale>();
+  public unpackMarkings(gltf: GLTF, colorOne: Color, colorTwo: Color) {
+    this.traverse(gltf.scene as Object3D, (o: Object3D) => {
+      if(o instanceof Mesh) {
+        this._scales.set(o.name, new Scale(o));
+        var color = o.name[0] === 't' ? colorTwo : colorOne;
+        (o.material as any).color = color;
+      }
+    });
+  }
+
+  public moveScale(name: string, increment: number) {
+    this._scales.get(name).move(increment);
+  }
+
+  public setScale(name: string, percent: number) {
+    this._scales.get(name)?.set(percent);
+  }
+
+  public calculateMarkings(sam: SeminoleActionModel) {
+    const power = this.power(sam.power.property);
+    const altitude = this.altitude(sam.densityAltitude.property);
+    const idle = sam.power.property < 1;
+
+    this.calculateThrustForce(sam, power, altitude);
+    this.calculateDragForce(sam, idle);
+  }
+
+  // 4, 8, 12, 16, 20
+  private power(value: number): number {
+    return (value / 25 + 1) * 4;
+  }
+
+  // 1 - 5
+  private altitude(value: number): number {
+    return (value / 25) + 1;
+  }
+
+  private calculateDragForce(sam: SeminoleActionModel, idle: boolean): void {
+    this.leftDrag.property = this.rightDrag.property = 0;
+
+    const inopEngine = sam.inopEngine.property;
+    const propeller = sam.propeller.property;
+
+    const drag = propeller === 'WINDMILL' ? 1 : 0.15;
+    if(inopEngine === 'LEFT') {
+      this.leftDrag.property = drag;
+      this.rightDrag.property = idle ? 1 : 0;
+    } else {
+      this.rightDrag.property = drag;
+      this.leftDrag.property = idle ? 1 : 0;
+    }
+  }
+
+  private calculateThrustForce(sam: SeminoleActionModel, power: number, altitude: number): void {
+    this.leftThrust.property = this.rightThrust.property = 0;
+
+    if(power > 4)
+    {
+      const thrust = ((power / 4) + 6 - altitude) / 10;
+      if(sam.inopEngine.property === 'LEFT') this.rightThrust.property = thrust;
+      else this.leftThrust.property = thrust;
     }
   }
 
