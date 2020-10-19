@@ -1,7 +1,7 @@
 import { AnimationDriver } from 'src/app/utils/animation-driver';
 import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { EventBus } from 'src/app/engine/core/events';
+import { EventBus, Listener, Subject } from 'src/app/engine/core/events';
 import { EngineService } from 'src/app/engine/engine.service';
 import { ThreeEngineEvent } from 'src/app/utils/custom-events';
 import { RaycastController } from 'src/app/utils/raycast-controller';
@@ -10,13 +10,14 @@ import { environment } from 'src/environments/environment';
 import { SEPAerodynamicsModel } from 'src/app/utils/aerodynamics-model';
 import { SelectionData } from '../../controls/selector/selection-data';
 import { TextDictionary } from 'src/app/utils/text-dictionary';
+import { Intersection } from 'three';
 
 @Component({
   selector: 'app-view-sep',
   templateUrl: './view-sep.component.html',
   styleUrls: ['./view-sep.component.scss']
 })
-export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Listener {
 
   public content: string = `<h3>This section covers single-engine directional control and Vmca. Change the factor settings on the right to see the resulting effects on the aircraft. Click on the "Data" and "Control Factors" text labels to read descriptive text here. Clicking on the arrows marking aerodynamic and control forces around the aircraft will display additional text here.</h3>`;
   public vyse: number = 21;
@@ -72,18 +73,12 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy {
         this._gear(gear === 'DOWN');
       }),
 
-      // this._sam.power.subject.subscribe(power => {
-      //   const idle = power < 1;
-      //   this.propellers(this._sam.propeller.property, this._sam.inopEngine.property, idle);
-      //   this.opEngine(this._sam.inopEngine.property, idle);
-
-      //   this.controlTechnique(this._sam.controlTechnique.property, this._sam.inopEngine.property, idle);
-      // }),
-
       this._sam.cog.subject.subscribe(cog => {
         this._centerOfGravity(cog);
       })
     ];
+
+    EventBus.get().subscribe(ThreeEngineEvent.INTERSECT, this);
   }
 
   public ngAfterViewInit() {
@@ -148,6 +143,17 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy {
   public onLabelSelected(lookup: string) {
     this.content = TextDictionary.getContent(lookup);
     this.cdr.detectChanges();
+  }
+
+  public receive(topic: string, subject: Subject) {
+    switch(topic) {
+      case ThreeEngineEvent.INTERSECT: {
+        var firstIntersect = subject.data.shift() as Intersection;
+        console.log(firstIntersect);
+        this.content = TextDictionary.getContent(firstIntersect.object.name);
+        this.cdr.detectChanges();
+      }
+    }
   }
 
   private _propellers(propeller: string, inopEngine: string, idle: boolean) {
