@@ -42,6 +42,7 @@ class AmbientLightEntity extends Entity {
 }
 
 class ModelEntity extends Entity {
+  public name: string;
   constructor() {
     super();
     this.putComponent(RootComponent);

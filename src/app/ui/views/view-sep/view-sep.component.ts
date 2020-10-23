@@ -85,7 +85,7 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     this.engineService.loadSeminole(environment.seminole);
     this.engineService.loadAttachedMarkings(environment.attachedMarkings);
 
-    var staticMarkings = this.engineService.loadStaticMarkings(environment.sepStaticMarkings, this._aeroModel);
+    var staticMarkings = this.engineService.loadMarkings(environment.sepStaticMarkings, this._aeroModel);
     this._raycastController = new RaycastController(...staticMarkings.scene.children);
     this.engineService.attachRaycaster(this._raycastController);
 
@@ -100,6 +100,9 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   }
 
   public ngOnDestroy() {
+    this._clearOrientation();
+    this._clearRudder();
+
     while(this._disposables.length > 0) {
       this._disposables.pop().unsubscribe();
     }
@@ -161,15 +164,15 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     const otherEngineAction = inopEngine === 'LEFT' ? 'propRAction' : 'propLAction';
 
     if(propeller === 'WINDMILL') {
-      this._animationDriver.play(inopEngineAction);
+      this._animationDriver.play(environment.seminole, inopEngineAction);
     } else {
-      this._animationDriver.stop(inopEngineAction);
+      this._animationDriver.stop(environment.seminole, inopEngineAction);
     }
 
     if(idle) {
-      this._animationDriver.play(otherEngineAction);
+      this._animationDriver.play(environment.seminole, otherEngineAction);
     } else {
-      this._animationDriver.stop(otherEngineAction);
+      this._animationDriver.stop(environment.seminole, otherEngineAction);
     }
   }
 
@@ -178,16 +181,16 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     const opEngineSpin = inopEngine === 'RIGHT' ? 'propLeftSpin' : 'propRightSpin';
     const otherEngineAction = inopEngine === 'RIGHT' ? 'propRSpinAction' : 'propLSpinAction';
     const otherEngineSpin = inopEngine === 'RIGHT' ? 'propRightSpin' : 'propLeftSpin';
-    this._animationDriver.stop(otherEngineAction);
+    this._animationDriver.stop(environment.seminole, otherEngineAction);
 
     if(!idle) {
-      this._animationDriver.play(opEngineAction);
+      this._animationDriver.play(environment.seminole, opEngineAction);
       this.engineService.hideObject(opEngineSpin, false)
       this.engineService.hideObject(otherEngineSpin, true);
     } else {
       this.engineService.hideObject(opEngineSpin, true);
       this.engineService.hideObject(otherEngineSpin, true);
-      this._animationDriver.stop(opEngineAction);
+      this._animationDriver.stop(environment.seminole, opEngineAction);
     }
   }
 
@@ -209,80 +212,80 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   private _rudder(controlTechnique: string, inopEngine: string) {
     if(controlTechnique === 'WINGS LEVEL') {
       const rudderAction = inopEngine === 'LEFT' ? 'rudderRightAction' : 'rudderLeftAction';
-      this._animationDriver.jumpTo(rudderAction, 100);
+      this._animationDriver.jumpTo(environment.seminole, rudderAction, 100);
     } else {
-      this._animationDriver.jumpTo('rudderLeftAction', 0);
+      this._animationDriver.jumpTo(environment.seminole, 'rudderLeftAction', 0);
     }
   }
 
   private _wingsLevel(inopEngine: string) {
     const yawAction = inopEngine === 'LEFT' ? 'yawRightAction' : 'yawLeftAction';
-    this._animationDriver.jumpTo(yawAction, 100);
+    this._animationDriver.jumpTo(environment.seminole, yawAction, 100);
   }
 
   private _zeroSideSlip(inopEngine: string) {
     const rollAction = inopEngine === 'LEFT' ? 'rollRightAction' : 'rollLeftAction';
-    this._animationDriver.jumpTo(rollAction, 100);
+    this._animationDriver.jumpTo(environment.seminole, rollAction, 100);
   }
 
   private _gear(down: boolean): void {
-    this._animationDriver.jumpTo('GearAction', down ? 0 : 100);
+    this._animationDriver.jumpTo(environment.seminole, 'GearAction', down ? 0 : 100);
   }
 
   private _flaps(notch: number): void {
 
     if(this._currentFlapsAction) {
-      this._animationDriver.stop(this._currentFlapsAction);
+      this._animationDriver.stop(environment.seminole, this._currentFlapsAction);
     }
 
     if(notch == (0/3) * 100) {
       this._currentFlapsAction = 'flapsTo0Action';
-      this._animationDriver.jumpTo(this._currentFlapsAction, 0);
+      this._animationDriver.jumpTo(environment.seminole, this._currentFlapsAction, 0);
     } else if(notch == (1/3) * 100) {
       this._currentFlapsAction = 'flapsTo10Action';
-      this._animationDriver.jumpTo(this._currentFlapsAction, 100);
+      this._animationDriver.jumpTo(environment.seminole, this._currentFlapsAction, 100);
     } else if(notch == (2/3) * 100) {
       this._currentFlapsAction = 'flapsTo25Action';
-      this._animationDriver.jumpTo(this._currentFlapsAction, 100);
+      this._animationDriver.jumpTo(environment.seminole, this._currentFlapsAction, 100);
     } else if(notch == (3/3) * 100) {
       this._currentFlapsAction = 'flapsTo40Action';
-      this._animationDriver.jumpTo(this._currentFlapsAction, 100);
+      this._animationDriver.jumpTo(environment.seminole, this._currentFlapsAction, 100);
     }
   }
 
   public _centerOfGravity(position: number): void {
     if(this._currentCgAction) {
-      this._animationDriver.stop(this._currentCgAction);
+      this._animationDriver.stop(environment.seminole, this._currentCgAction);
     }
 
     if(position == (0/4) * 100) {
       this._currentCgAction = 'cg0Action';
-      this._animationDriver.jumpTo(this._currentCgAction, 0);
+      this._animationDriver.jumpTo(environment.seminole, this._currentCgAction, 0);
     } else if(position == (1/4) * 100) {
       this._currentCgAction = 'cg1Action';
-      this._animationDriver.jumpTo(this._currentCgAction, 100);
+      this._animationDriver.jumpTo(environment.seminole, this._currentCgAction, 100);
     } else if(position == (2/4) * 100) {
       this._currentCgAction = 'cg2Action';
-      this._animationDriver.jumpTo(this._currentCgAction, 100);
+      this._animationDriver.jumpTo(environment.seminole, this._currentCgAction, 100);
     } else if(position == (3/4) * 100) {
       this._currentCgAction = 'cg3Action';
-      this._animationDriver.jumpTo(this._currentCgAction, 100);
+      this._animationDriver.jumpTo(environment.seminole, this._currentCgAction, 100);
     } else if(position == (4/4) * 100) {
       this._currentCgAction = 'cg4Action';
-      this._animationDriver.jumpTo(this._currentCgAction, 100);
+      this._animationDriver.jumpTo(environment.seminole, this._currentCgAction, 100);
     }
   }
 
   private _clearOrientation() {
-    this._animationDriver.stop('yawRightAction');
-    this._animationDriver.stop('yawLeftAction');
-    this._animationDriver.stop('rollRightAction');
-    this._animationDriver.stop('rollLeftAction');
+    this._animationDriver.stop(environment.seminole, 'yawRightAction');
+    this._animationDriver.stop(environment.seminole, 'yawLeftAction');
+    this._animationDriver.stop(environment.seminole, 'rollRightAction');
+    this._animationDriver.stop(environment.seminole, 'rollLeftAction');
   }
 
   private _clearRudder() {
-    this._animationDriver.stop('rudderRightAction');
-    this._animationDriver.stop('rudderLeftAction');
+    this._animationDriver.stop(environment.seminole, 'rudderRightAction');
+    this._animationDriver.stop(environment.seminole, 'rudderLeftAction');
   }
 
 }

@@ -14,6 +14,7 @@ export class SeminoleActionModel {
   public airspeed: SubjectValue<number> = new SubjectValue<number>('AIRSPEED', this._validatePercent, 0);
   public weight: SubjectValue<number> = new SubjectValue<number>('WEIGHT', this._validatePercent, 0);
   public cog: SubjectValue<number> = new SubjectValue<number>('CENTER OF GRAVITY', this._validatePercent, 0);
+  public engineConfig: SubjectValue<string> = new SubjectValue<string>('ENGINE CONFIG', (v: string) => { return v === 'CONVENTIONAL' || v === 'COUNTER ROT.' }, 'CONVENTIONAL');
 
   public dispose(): void {
   }

@@ -7,10 +7,12 @@ export const environment = {
   assetUrl: 'http://localhost:50001/assets/',
   skybox: 'skybox',
   envmap: 'envmap',
-  seminole: 'seminole',
+  seminole: 'seminole-master',
   dcvStaticMarkings: 'dcv-static-markings',
   sepStaticMarkings: 'sep-static-markings',
   attachedMarkings: 'attached-markings',
+  slipstreamMarkings: 'slipstream-markings',
+  pfactorMarkings: 'pfactor-markings',
   production: false
 };
 

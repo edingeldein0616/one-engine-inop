@@ -7,6 +7,7 @@ import { AppRoutingModule } from 'src/app/app-routing.module';
 import { ToggleComponent } from './toggle/toggle.component';
 import { CardButtonComponent } from './card-button/card-button.component';
 import { SelectableLabelComponent } from './selectable-label/selectable-label.component';
+import { SelectorVerticalComponent } from './selector-vertical/selector-vertical.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { SelectableLabelComponent } from './selectable-label/selectable-label.co
     //ControlFactorsComponent,
     ToggleComponent,
     CardButtonComponent,
-    SelectableLabelComponent
+    SelectableLabelComponent,
+    SelectorVerticalComponent
   ],
   imports: [
     CommonModule,
@@ -27,7 +29,8 @@ import { SelectableLabelComponent } from './selectable-label/selectable-label.co
     ToggleComponent,
     MaterialModule,
     CardButtonComponent,
-    SelectableLabelComponent
+    SelectableLabelComponent,
+    SelectorVerticalComponent
   ]
 })
 export class OeiControlsModule { }

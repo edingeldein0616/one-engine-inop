@@ -1,0 +1,3 @@
+<mat-button-toggle-group class="expand-vert" vertical="true" [(value)]="initialValue" #group="matButtonToggleGroup">
+  <mat-button-toggle #selector (change)="valueChanged($event)" *ngFor="let item of toggleOptions; let i = index;" [value]="i">{{item}}</mat-button-toggle>
+</mat-button-toggle-group>

@@ -13,23 +13,28 @@
 
     <div class="row control">
       <div class="col-4">
-        <h5 class="text-center">INOP. ENGINE</h5>
+        <app-selectable-label label="INOP. ENGINE" lookup-value="inop-engine" (contentClicked)="labelSelected($event)"></app-selectable-label>
       </div>
       <div class="col-8">
-        <app-selector label="INOP. ENGINE" [useValue]="true" [toggleOptions]="['LEFT','RIGHT']" [initialValue]="0"></app-selector>
+        <app-selector label="INOP. ENGINE" [useValue]="true" [toggleOptions]="['LEFT','RIGHT']" [initialValue]="0" (valueOutput)="onValueChanged($event)"></app-selector>
       </div>
     </div>
 
     <div class="row control">
       <div class="col-4">
-        <h5 class="text-center">ENGINE CONFIG.</h5>
+        <app-selectable-label label="ENGINE CONFIGURATION" lookup-value="engine-configuration" (contentClicked)="labelSelected($event)"></app-selectable-label>
       </div>
       <div class="col-8">
-        <app-selector label="ENGIN CONFIG." [useValue]="true" [toggleOptions]="['CONVENTIONAL', 'COUNTER ROT.']" [initialValue]="0"></app-selector>
+        <app-selector label="ENGINE CONFIG." [useValue]="true" [toggleOptions]="['CONVENTIONAL', 'COUNTER ROT.']" [initialValue]="0" (valueOutput)="onValueChanged($event)"></app-selector>
       </div>
     </div>
 
     <div class="row control">
+      <div class="col text-center">
+        <app-selector-vertical label="FACTORS" [useValue]="true" [toggleOptions]="['P-FACTOR','SPIRALING SLIPSTREAM','ACCELERATED SLIPSTREAM','TORQUE']" [initialValue]="0" (valueOutput)="onValueChanged($event)"></app-selector-vertical>
+      </div>
+    </div>
+    <!-- <div class="row control">
       <div class="col text-center">
         <app-toggle [value]="'P-FACTOR'" [selected]="true"></app-toggle>
       </div>
@@ -51,7 +56,7 @@
       <div class="col text-center">
         <app-toggle [value]="'TORQUE'" [selected]="false"></app-toggle>
       </div>
-    </div>
+    </div> -->
 
   </div>
 

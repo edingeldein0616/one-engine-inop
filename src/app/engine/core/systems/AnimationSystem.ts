@@ -1,10 +1,9 @@
-import { System, Engine, Entity, Family, FamilyBuilder } from '@nova-engine/ecs';
+import { System, Engine, Family, FamilyBuilder } from '@nova-engine/ecs';
 import { Listener, Subject, EventBus } from 'src/app/engine/core/events';
 import { AnimatorComponent } from '../components/Animation';
 import { ModelEntity } from '../entities';
 import { AnimationAction, Clock } from 'three';
 import { ThreeEngineEvent } from 'src/app/utils/custom-events';
-import { ThreeEngine } from '../../ThreeEngine';
 
 export class AnimationSystem extends System implements Listener {
 
@@ -23,31 +22,28 @@ export class AnimationSystem extends System implements Listener {
   }
 
   public onDetach(engine: Engine) {
-
     EventBus.get().unsubscribe(ThreeEngineEvent.ANIMATION, this);
-
   }
 
   update(engine: Engine, delta: number): void {
 
-    this._family.entities.forEach(entity => {
+    const dt = this._clock.getDelta();
 
-      const ac = entity.getComponent(AnimatorComponent);
+    this._family.entities.forEach(entity => {
+      var me = entity as ModelEntity;
+      const ac = me.getComponent(AnimatorComponent);
 
       this._animationQueue.forEach(ad => {
-        const action = ac.action(ad.clipName);
-        if(action) {
-          ad.actionCallback(action, ad.args);
+        if(ad.targetName === me.name) {
+          const action = ac.action(ad.clipName);
+          if(action) {
+            ad.actionCallback(action, ad.args);
+          }
         }
       });
-      // while(this._animationQueue.length > 0) {
-      //   const ad = this._animationQueue.shift();
-      //   const action  = ac.action(ad.clipName);
-      //   ad.actionCallback(action, ad.args);
-      // }
 
       if(ac.animationMixer) {
-        ac.animationMixer.update(this._clock.getDelta());
+        ac.animationMixer.update(dt);
       }
 
     });
@@ -70,11 +66,13 @@ export class AnimationSystem extends System implements Listener {
 
 export class AnimationData {
 
+  public readonly targetName: string
   public readonly clipName: string;
   public actionCallback: (action: AnimationAction, ...args: any[]) => void;
   public args: any[];
 
-  constructor(clipName: string, actionCallback: (action: AnimationAction, ...args: any[]) => void, ...args: any[]) {
+  constructor(targetName: string, clipName: string, actionCallback: (action: AnimationAction, ...args: any[]) => void, ...args: any[]) {
+    this.targetName = targetName;
     this.clipName = clipName;
     this.actionCallback = actionCallback;
     this.args = args;

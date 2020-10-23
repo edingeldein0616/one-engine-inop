@@ -3,6 +3,7 @@ import { Scale } from 'src/app/utils/scale';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Object3D, Color, Mesh } from 'three';
 import { SeminoleActionModel } from './seminole-action-model';
+import { Action } from 'rxjs/internal/scheduler/Action';
 
 export abstract class AerodynamicsModel {
 
@@ -281,5 +282,4 @@ class ScaleValue {
     this._callback(this._name, value);
   }
   private _callback: (name: string, value: number) => void;
-
 }

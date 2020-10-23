@@ -6,5 +6,7 @@ export const environment = {
   dcvStaticMarkings: 'dcv-static-markings',
   sepStaticMarkings: 'sep-static-markings',
   attachedMarkings: 'attached-markings',
+  slipstreamMarkings: 'slipstream-markings',
+  pfactorMarkings: 'pfactor-markings',
   production: false
 };

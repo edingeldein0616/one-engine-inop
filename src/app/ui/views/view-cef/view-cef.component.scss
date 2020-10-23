@@ -1,7 +1,11 @@
 @import "src/app/ui/ui.component.scss";
 
 .renderer {
-  top: 4em;
+  top: 3.5em;
   width: 75%;
   height: 79%;
+}
+
+.row {
+  margin-top: 1.5vh;
 }
