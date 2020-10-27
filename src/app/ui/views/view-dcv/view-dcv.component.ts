@@ -213,13 +213,13 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
 
   public clearOrientation() {
     this._animationDriver.stop(environment.seminole, 'yawRightAction');
-    this._animationDriver.stop(environment.attachedMarkings, 'yawRightAction');
+    this._animationDriver.stop(environment.attachedMarkings, 'attached-yaw-action-right');
     this._animationDriver.stop(environment.seminole, 'yawLeftAction');
-    this._animationDriver.stop(environment.attachedMarkings, 'yawLeftAction');
+    this._animationDriver.stop(environment.attachedMarkings, 'attached-yaw-action-left');
     this._animationDriver.stop(environment.seminole, 'rollRightAction');
-    this._animationDriver.stop(environment.attachedMarkings, 'rollRightAction');
+    this._animationDriver.stop(environment.attachedMarkings, 'attached-roll-action-right');
     this._animationDriver.stop(environment.seminole, 'rollLeftAction');
-    this._animationDriver.stop(environment.attachedMarkings, 'rollLeftAction');
+    this._animationDriver.stop(environment.attachedMarkings, 'attached-roll-action-left');
   }
 
   public clearRudder() {
@@ -229,14 +229,16 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
 
   public wingsLevel(inopEngine: string) {
     const yawAction = inopEngine === 'LEFT' ? 'yawRightAction' : 'yawLeftAction';
+    const attachedAction = inopEngine === 'LEFT' ? 'attached-yaw-action-right' : 'attached-yaw-action-left';
     this._animationDriver.jumpTo(environment.seminole, yawAction, 100);
-    this._animationDriver.jumpTo(environment.attachedMarkings, yawAction, 100);
+    this._animationDriver.jumpTo(environment.attachedMarkings, attachedAction, 100);
   }
 
   public zeroSideSlip(inopEngine: string) {
     const rollAction = inopEngine === 'LEFT' ? 'rollRightAction' : 'rollLeftAction';
+    const attachedAction = inopEngine === 'LEFT' ? 'attached-roll-action-right' : 'attached-roll-action-left';
     this._animationDriver.jumpTo(environment.seminole, rollAction, 100);
-    this._animationDriver.jumpTo(environment.attachedMarkings, rollAction, 100);
+    this._animationDriver.jumpTo(environment.attachedMarkings, attachedAction, 100);
   }
 
   public gear(down: boolean): void {
@@ -266,24 +268,24 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
 
   public centerOfGravity(position: number): void {
     if(this._currentCgAction) {
-      this._animationDriver.stop(environment.seminole, this._currentCgAction);
+      this._animationDriver.stop(environment.attachedMarkings, this._currentCgAction);
     }
 
     if(position == (0/4) * 100) {
       this._currentCgAction = 'cg0Action';
-      this._animationDriver.jumpTo(environment.seminole, this._currentCgAction, 0);
+      this._animationDriver.jumpTo(environment.attachedMarkings, this._currentCgAction, 0);
     } else if(position == (1/4) * 100) {
       this._currentCgAction = 'cg1Action';
-      this._animationDriver.jumpTo(environment.seminole, this._currentCgAction, 100);
+      this._animationDriver.jumpTo(environment.attachedMarkings, this._currentCgAction, 100);
     } else if(position == (2/4) * 100) {
       this._currentCgAction = 'cg2Action';
-      this._animationDriver.jumpTo(environment.seminole, this._currentCgAction, 100);
+      this._animationDriver.jumpTo(environment.attachedMarkings, this._currentCgAction, 100);
     } else if(position == (3/4) * 100) {
       this._currentCgAction = 'cg3Action';
-      this._animationDriver.jumpTo(environment.seminole, this._currentCgAction, 100);
+      this._animationDriver.jumpTo(environment.attachedMarkings, this._currentCgAction, 100);
     } else if(position == (4/4) * 100) {
       this._currentCgAction = 'cg4Action';
-      this._animationDriver.jumpTo(environment.seminole, this._currentCgAction, 100);
+      this._animationDriver.jumpTo(environment.attachedMarkings, this._currentCgAction, 100);
     }
   }
 

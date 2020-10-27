@@ -13,7 +13,7 @@
 
     <div class="row control">
       <div class="col-4">
-        <app-selectable-label label="INOP. ENGINE" lookup-value="inop-engine" (contentClicked)="labelSelected($event)"></app-selectable-label>
+        <app-selectable-label label="INOP. ENGINE" lookupValue="cef-inop-engine" (contentClicked)="labelSelected($event)"></app-selectable-label>
       </div>
       <div class="col-8">
         <app-selector label="INOP. ENGINE" [useValue]="true" [toggleOptions]="['LEFT','RIGHT']" [initialValue]="0" (valueOutput)="onValueChanged($event)"></app-selector>
@@ -22,7 +22,7 @@
 
     <div class="row control">
       <div class="col-4">
-        <app-selectable-label label="ENGINE CONFIGURATION" lookup-value="engine-configuration" (contentClicked)="labelSelected($event)"></app-selectable-label>
+        <app-selectable-label label="ENGINE CONFIGURATION" lookupValue="cef-engine-configuration" (contentClicked)="labelSelected($event)"></app-selectable-label>
       </div>
       <div class="col-8">
         <app-selector label="ENGINE CONFIG." [useValue]="true" [toggleOptions]="['CONVENTIONAL', 'COUNTER ROT.']" [initialValue]="0" (valueOutput)="onValueChanged($event)"></app-selector>
@@ -34,29 +34,6 @@
         <app-selector-vertical label="FACTORS" [useValue]="true" [toggleOptions]="['P-FACTOR','SPIRALING SLIPSTREAM','ACCELERATED SLIPSTREAM','TORQUE']" [initialValue]="0" (valueOutput)="onValueChanged($event)"></app-selector-vertical>
       </div>
     </div>
-    <!-- <div class="row control">
-      <div class="col text-center">
-        <app-toggle [value]="'P-FACTOR'" [selected]="true"></app-toggle>
-      </div>
-    </div>
-
-    <div class="row control">
-      <div class="col text-center">
-        <app-toggle [value]="'SPIRALING SLIPSTREAM'" [selected]="false"></app-toggle>
-      </div>
-    </div>
-
-    <div class="row control">
-      <div class="col text-center">
-        <app-toggle [value]="'ACCELERATED SLIPSTREAM'" [selected]="false"></app-toggle>
-      </div>
-    </div>
-
-    <div class="row control">
-      <div class="col text-center">
-        <app-toggle [value]="'TORQUE'" [selected]="false"></app-toggle>
-      </div>
-    </div> -->
 
   </div>
 
@@ -72,17 +49,7 @@
 <!-- ----------------  -->
 <!--    DESCRIPTION    -->
 <!-- ----------------  -->
-<div class="panel description">
-
-  <p>
-    This section covers single-engine performance. Change the factor settings on the right to see the resulting
-    effects
-    on the aircraft. Click on the "Data" and "Control Factors" text labels to read descriptive text here. Clicking on
-    the graphics above
-    whenever the cursor changes to a pointing hand will also display additional text here.
-  </p>
-
-</div>
+<div class="panel description" [innerHTML]="this.content"></div>
 
 <!-- ----------------  -->
 <!--    LOGO           -->

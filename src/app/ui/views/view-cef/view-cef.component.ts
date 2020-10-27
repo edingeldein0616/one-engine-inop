@@ -4,6 +4,7 @@ import { Action } from 'rxjs/internal/scheduler/Action';
 import { EngineService } from 'src/app/engine/engine.service';
 import { AnimationDriver } from 'src/app/utils/animation-driver';
 import { SeminoleActionModel } from 'src/app/utils/seminole-action-model';
+import { TextDictionary } from 'src/app/utils/text-dictionary';
 import { environment } from 'src/environments/environment';
 import { SelectionData } from '../../controls/selector/selection-data';
 
@@ -16,8 +17,15 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private engineService: EngineService) { }
 
+  public content: string = `<h3>This section covers critical engine factors that affect multiengine aircraft without counterrotating propellers.
+    In most US-designed multiengine aircraft, both engines rotate to the right (clockwise) when viewed from the rear. Select a critical engine
+    factor to see how each one makes the left engine the critical engine. The critical engine is the engine whose failure will most adversely affect
+    the performance and handling characterstics of the aircraft. The "Counter-Rotating" option can be used to compare a conventional vs.
+    counter-rotating configuration.</h3>`;
+
   private _animationDriver: AnimationDriver;
   private _sam: SeminoleActionModel;
+  private _loaded = false;
 
   private _disposables: Subscription[] =[];
 
@@ -55,6 +63,8 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     ];
 
     this.gear();
+
+    this._loaded = true;
   }
 
   ngOnDestroy() {
@@ -62,7 +72,11 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public labelSelected(lookup: string) {
-    console.log(`labelSelected: ${lookup}`);
+    this.content = TextDictionary.getContent(lookup);
+  }
+
+  public onClick(something: any) {
+    console.log(something);
   }
 
   public onValueChanged(data: SelectionData) {
@@ -81,19 +95,28 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public factors(factor: string, inopEngine: string, engConfig: string) {
     this.hide();
+    let contentLookup: string;
     switch(factor) {
       case 'P-FACTOR':
+        contentLookup = 'cef-pfactor';
         this.pfactor(inopEngine, engConfig);
       break;
       case 'SPIRALING SLIPSTREAM':
+        contentLookup = 'cef-slipstream';
         this.slipstream(inopEngine, engConfig);
       break;
       case 'ACCELERATED SLIPSTREAM':
+        contentLookup = 'cef-accelerated';
         this.accelerated(inopEngine, engConfig);
       break;
       case 'TORQUE':
+        contentLookup = 'cef-torque';
         this.torque(inopEngine, engConfig);
       break;
+    }
+
+    if(this._loaded) {
+      this.content = TextDictionary.getContent(contentLookup);
     }
   }
 
