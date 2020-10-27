@@ -101,19 +101,23 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     let direction: ActionPair;
     let force: ActionPair;
     let lift: ActionPair;
+    let scale: ActionPair;
     if(inopEngine === 'LEFT') {
       force = Pfactor.forceRight;
       direction = engConfig === 'CONVENTIONAL' ? Pfactor.directionConvRight : Pfactor.directionCrRight;
       lift = engConfig === 'CONVENTIONAL' ? Pfactor.liftConvRight : Pfactor.liftCrRight;
+      scale = engConfig === 'CONVENTIONAL' ? Pfactor.scaleConvRight : Pfactor.scaleCrRight;
     } else {
       force = Pfactor.forceLeft;
       direction = Pfactor.directionLeft;
       lift = Pfactor.liftLeft;
+      scale = Pfactor.scaleLeft;
     }
 
     this.engineService.hideObject(direction.obj, false);
     this.engineService.hideObject(force.obj, false);
     this.engineService.hideObject(lift.obj, false);
+    this.engineService.hideObject(scale.obj, false);
     this._animationDriver.play(environment.pfactorMarkings, lift.action);
     this._animationDriver.play(environment.pfactorMarkings, direction.action);
     this._animationDriver.play(environment.pfactorMarkings, force.action);
@@ -154,21 +158,25 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     let roll: ActionPair;
     let yaw: ActionPair;
     let rudder: ActionPair;
+    let scale: ActionPair;
     if(inopEngine === 'LEFT') {
       flow = engConfig === 'CONVENTIONAL' ? Accelerated.flowConvRight : Accelerated.flowCrRight;
       roll = engConfig === 'CONVENTIONAL' ? Accelerated.rollConvRight : Accelerated.rollCrRight;
       yaw = engConfig === 'CONVENTIONAL' ? Accelerated.yawConvRight : Accelerated.yawCrRight;
       rudder = Accelerated.rudderLeft;
+      scale = engConfig === 'CONVENTIONAL' ? Accelerated.scaleConvRight : Accelerated.scaleCrRight;
     } else {
       flow = Accelerated.flowLeft;
       roll = Accelerated.rollLeft;
       yaw = Accelerated.yawLeft;
       rudder = Accelerated.rudderRight;
+      scale = Accelerated.scaleLeft;
     }
 
     this.engineService.hideObject(flow.obj, false);
     this.engineService.hideObject(roll.obj, false);
     this.engineService.hideObject(yaw.obj, false);
+    this.engineService.hideObject(scale.obj, false);
     this._animationDriver.play(environment.acceleratedMarkings, flow.action);
     this._animationDriver.play(environment.acceleratedMarkings, roll.action);
     this._animationDriver.play(environment.acceleratedMarkings, yaw.action);
@@ -261,6 +269,9 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     this.engineService.hideObject(Pfactor.liftConvRight.obj, true);
     this.engineService.hideObject(Pfactor.liftCrRight.obj, true);
     this.engineService.hideObject(Pfactor.liftLeft.obj, true);
+    this.engineService.hideObject(Pfactor.scaleConvRight.obj, true);
+    this.engineService.hideObject(Pfactor.scaleCrRight.obj, true);
+    this.engineService.hideObject(Pfactor.scaleLeft.obj, true);
 
     this._animationDriver.stop(environment.pfactorMarkings, Pfactor.directionConvRight.action);
     this._animationDriver.stop(environment.pfactorMarkings, Pfactor.directionCrRight.action);
@@ -308,6 +319,9 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     this.engineService.hideObject(Accelerated.yawLeft.obj, true);
     this.engineService.hideObject(Accelerated.rudderLeft.obj, true);
     this.engineService.hideObject(Accelerated.rudderRight.obj, true);
+    this.engineService.hideObject(Accelerated.scaleConvRight.obj, true);
+    this.engineService.hideObject(Accelerated.scaleCrRight.obj, true);
+    this.engineService.hideObject(Accelerated.scaleLeft.obj, true);
 
     this._animationDriver.stop(environment.acceleratedMarkings, Accelerated.flowConvRight.action);
     this._animationDriver.stop(environment.acceleratedMarkings, Accelerated.flowCrRight.action);
@@ -353,14 +367,17 @@ class ActionPair {
 }
 
 class Pfactor {
-  public static readonly directionConvRight = new ActionPair('pfactor-direction-conv-right-arrow', 'pfactor-direction-conv-right-action');
-  public static readonly directionCrRight = new ActionPair('pfactor-direction-cr-right-arrow', 'pfactor-direction-cr-right-action');
-  public static readonly directionLeft = new ActionPair('pfactor-direction-left-arrow', 'pfactor-direction-left-action');
-  public static readonly forceLeft = new ActionPair('pfactor-force-left-arrow', 'pfactor-force-left-action');
-  public static readonly forceRight = new ActionPair('pfactor-force-right-arrow', 'pfactor-force-right-action');
-  public static readonly liftConvRight = new ActionPair('pfactor-lift-conv-right-arrow', 'pfactor-lift-conv-right-action');
-  public static readonly liftCrRight = new ActionPair('pfactor-lift-cr-right-arrow', 'pfactor-lift-cr-right-action');
-  public static readonly liftLeft = new ActionPair('pfactor-lift-left-arrow', 'pfactor-lift-left-action');
+  public static readonly directionConvRight = new ActionPair('pfactor-direction-arrow-conv-right', 'pfactor-direction-action-conv-right');
+  public static readonly directionCrRight = new ActionPair('pfactor-direction-arrow-cr-right', 'pfactor-direction-action-cr-right');
+  public static readonly directionLeft = new ActionPair('pfactor-direction-arrow-left', 'pfactor-direction-action-left');
+  public static readonly forceLeft = new ActionPair('pfactor-force-arrow-left', 'pfactor-force-action-left');
+  public static readonly forceRight = new ActionPair('pfactor-force-arrow-right', 'pfactor-force-action-right');
+  public static readonly liftConvRight = new ActionPair('pfactor-lift-arrow-conv-right', 'pfactor-lift-action-conv-right');
+  public static readonly liftCrRight = new ActionPair('pfactor-lift-arrow-cr-right', 'pfactor-lift-action-cr-right');
+  public static readonly liftLeft = new ActionPair('pfactor-lift-arrow-left', 'pfactor-lift-action-left');
+  public static readonly scaleConvRight = new ActionPair('pfactor-scale-conv-right', '');
+  public static readonly scaleCrRight = new ActionPair('pfactor-scale-cr-right', '');
+  public static readonly scaleLeft = new ActionPair('pfactor-scale-left', '');
 }
 
 class Slipstream {
@@ -388,6 +405,9 @@ class Accelerated {
   public static readonly yawLeft = new ActionPair('accelerated-yaw-arrow-left', 'accelerated-yaw-action-left');
   public static readonly rudderLeft = new ActionPair('accelerated-rudder-arrow-left', 'accelerated-rudder-action-left');
   public static readonly rudderRight = new ActionPair('accelerated-rudder-arrow-right', 'accelerated-rudder-action-right');
+  public static readonly scaleConvRight = new ActionPair('accelerated-scale-conv-right', '');
+  public static readonly scaleCrRight = new ActionPair('accelerated-scale-cr-right', '');
+  public static readonly scaleLeft = new ActionPair('accelerated-scale-left', '');
 }
 
 class Torque {
