@@ -23,6 +23,8 @@ export class AppComponent implements OnInit {
     this._loaderService.loadAsset(environment.dcvStaticMarkings, 'gltf');
     this._loaderService.loadAsset(environment.slipstreamMarkings, 'gltf');
     this._loaderService.loadAsset(environment.pfactorMarkings, 'gltf');
+    this._loaderService.loadAsset(environment.acceleratedMarkings, 'gltf');
+    this._loaderService.loadAsset(environment.torqueMarkings, 'gltf');
     this._loaderService.loadAsset(environment.envmap, 'hdr');
   }
 }

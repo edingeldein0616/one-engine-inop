@@ -15,6 +15,7 @@ export class SeminoleActionModel {
   public weight: SubjectValue<number> = new SubjectValue<number>('WEIGHT', this._validatePercent, 0);
   public cog: SubjectValue<number> = new SubjectValue<number>('CENTER OF GRAVITY', this._validatePercent, 0);
   public engineConfig: SubjectValue<string> = new SubjectValue<string>('ENGINE CONFIG', (v: string) => { return v === 'CONVENTIONAL' || v === 'COUNTER ROT.' }, 'CONVENTIONAL');
+  public factors: SubjectValue<string> = new SubjectValue<string>('FACTORS', (v: string) => { return true }, 'P-FACTOR');
 
   public dispose(): void {
   }
