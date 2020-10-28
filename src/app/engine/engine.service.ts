@@ -55,6 +55,7 @@ export class EngineService implements OnDestroy {
     const gltf = this.loaderService.getAsset(assetName);
 
     const me = EntityFactory.build(ModelEntity);
+    me.name = environment.seminole;
     me.getComponent(RootComponent).obj = gltf.scene;
 
     const anim = me.getComponent(AnimatorComponent);
@@ -72,24 +73,38 @@ export class EngineService implements OnDestroy {
     this._threeEngine.addEntity(me);
   }
 
-  public loadStaticMarkings(assetName: string, aeroModel: AerodynamicsModel): GLTF {
+  public loadMarkings(assetName: string, aeroModel?: AerodynamicsModel): GLTF {
 
     const gltf = this.loaderService.getAsset(assetName);
 
-    aeroModel.unpackMarkings(gltf, new Color(0xFF0000), new Color(0x00FFFF));
+    if(aeroModel) {
+      aeroModel.unpackMarkings(gltf, new Color(0xFF0000), new Color(0x00FFFF));
+    }
 
     const me = EntityFactory.build(ModelEntity);
+    me.name = assetName;
     me.getComponent(RootComponent).obj = gltf.scene;
     me.getComponent(AnimatorComponent).configureAnimations(gltf);
+    me.getComponent(HideableComponent).obj = gltf.scene;
 
     this._threeEngine.addEntity(me);
     return gltf;
+  }
+
+  public loadAnimatedMarkings(assetName: string) {
+    const gltf = this.loaderService.getAsset(assetName);
+
+    const me = EntityFactory.build(ModelEntity);
+    me.name = assetName;
+    me.getComponent(RootComponent).obj = gltf.scene;
+    me.getComponent(AnimatorComponent).configureAnimations(gltf);
   }
 
   public loadAttachedMarkings(assetName: string): GLTF {
     const gltf = this.loaderService.getAsset(assetName);
 
     const me = EntityFactory.build(ModelEntity);
+    me.name = assetName;
     me.getComponent(RootComponent).obj = gltf.scene;
     const anim = me.getComponent(AnimatorComponent);
     anim.configureAnimations(gltf);

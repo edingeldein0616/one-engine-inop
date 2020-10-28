@@ -69,8 +69,6 @@ class HideableComponent extends RootComponent {
     const objectToHide = this.find(this._obj, objectName);
     if(objectToHide != null) {
       objectToHide.visible = !hide;
-    } else {
-      console.error(`No object named ${objectName} found in ${this._obj.name}`);
     }
   }
 

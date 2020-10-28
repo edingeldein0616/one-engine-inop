@@ -28,7 +28,7 @@ import { DcvControlFactorsComponent, SepControlFactorsComponent } from './ui/vie
     ViewMenuComponent,
     EngineComponent,
     DcvControlFactorsComponent,
-    SepControlFactorsComponent
+    SepControlFactorsComponent,
   ],
   imports: [
     BrowserModule,

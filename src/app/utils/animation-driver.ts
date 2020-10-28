@@ -44,39 +44,39 @@ export class AnimationDriver {
     }
   }
 
-  public play(actionName: string): void {
-    const playAction = this._subject(actionName, this._playAction);
+  public play(modelName: string, actionName: string): void {
+    const playAction = this._subject(modelName, actionName, this._playAction, modelName);
     EventBus.get().publish(ThreeEngineEvent.ANIMATION, playAction);
   }
 
-  public stop(actionName: string): void {
-    const stopAction = this._subject(actionName, this._stopAction);
+  public stop(modelName: string, actionName: string): void {
+    const stopAction = this._subject(modelName, actionName, this._stopAction, modelName);
     EventBus.get().publish(ThreeEngineEvent.ANIMATION, stopAction);
   }
 
-  public pause(actionName: string): void {
-    const pauseAction = this._subject(actionName, this._pauseAction);
+  public pause(modelName: string, actionName: string): void {
+    const pauseAction = this._subject(modelName, actionName, this._pauseAction, modelName);
     EventBus.get().publish(ThreeEngineEvent.ANIMATION, pauseAction);
   }
 
-  public jumpTo(actionName: string, position: number): void {
-    const jumpToAction = this._subject(actionName, this._jumpToAction, position)
+  public jumpTo(modelName:string, actionName: string, position: number): void {
+    const jumpToAction = this._subject(modelName, actionName, this._jumpToAction, modelName, position)
     EventBus.get().publish(ThreeEngineEvent.ANIMATION, jumpToAction);
   }
 
-  public reset(actionName: string): void {
-    const resetAction = this._subject(actionName, this._resetAction);
+  public reset(modelName: string, actionName: string): void {
+    const resetAction = this._subject(modelName, actionName, this._resetAction, modelName);
     EventBus.get().publish(ThreeEngineEvent.ANIMATION, resetAction);
   }
 
-  public halt(actionName: string): void {
-    const haltAction = this._subject(actionName, this._haltAction);
+  public halt(modelName: string, actionName: string): void {
+    const haltAction = this._subject(modelName, actionName, this._haltAction, modelName);
     EventBus.get().publish(ThreeEngineEvent.ANIMATION, haltAction);
   }
 
-  private _subject(actionName: string, callback: (a: AnimationAction, ...args: any[]) => void, ...args: any[]): Subject {
+  private _subject(targetName: string, actionName: string, callback: (a: AnimationAction, ...args: any[]) => void, ...args: any[]): Subject {
     const subject = new Subject();
-    subject.data = new AnimationData(actionName, callback, args);
+    subject.data = new AnimationData(targetName, actionName, callback, args);
     return subject;
   }
 
