@@ -10,5 +10,7 @@ export const environment = {
   pfactorMarkings: 'pfactor-markings',
   acceleratedMarkings: 'accelerated-markings',
   torqueMarkings: 'torque-markings',
+  zerosideslipMarkings: 'zerosideslip-markings',
+  windplane: 'windplane',
   production: true
 };
