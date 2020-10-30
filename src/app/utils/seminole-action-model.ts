@@ -5,7 +5,7 @@ export class SeminoleActionModel {
   private _validatePercent = (v: number) => { return v >= 0 && v <= 100; }
 
   public inopEngine: SubjectValue<string> = new SubjectValue<string>('INOP ENGINE', (v: string) => { return v === 'LEFT' || v === 'RIGHT'}, 'LEFT');
-  public controlTechnique: SubjectValue<string> = new SubjectValue<string>('CONTROL TECHNIQUE', (v: string) => {return v === 'ZERO SIDE SLIP' || v === 'WINGS LEVEL'}, 'ZERO SIDE SLIP');
+  public controlTechnique: SubjectValue<string> = new SubjectValue<string>('CONTROL TECHNIQUE', (v: string) => {return v === 'ZERO SIDESLIP' || v === 'WINGS LEVEL'}, 'ZERO SIDESLIP');
   public flaps: SubjectValue<number> = new SubjectValue<number>('FLAPS', (v: number) => { return v >= 0 && v <= 100 }, 0);
   public gear: SubjectValue<string> = new SubjectValue<string>('GEAR', (v: string) => { return v === 'UP' || v === 'DOWN' }, 'UP');
   public propeller: SubjectValue<string> = new SubjectValue<string>('PROPELLER', (v: string) => { return v === 'WINDMILL' || v === 'FEATHER' }, 'WINDMILL');

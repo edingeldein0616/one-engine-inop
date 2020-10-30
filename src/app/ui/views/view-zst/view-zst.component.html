@@ -16,7 +16,7 @@
         <h5 class="text-center">INOP. ENGINE</h5>
       </div>
       <div class="col-8">
-        <app-selector label="INOP. ENGINE" [useValue]="true" [toggleOptions]="['LEFT','RIGHT']" [initialValue]="0"></app-selector>
+        <app-selector label="INOP. ENGINE" [useValue]="true" [toggleOptions]="['LEFT','RIGHT']" [initialValue]="0" (valueOutput)="onValueSelected($event)"></app-selector>
       </div>
     </div>
 
@@ -25,19 +25,19 @@
         <h5 class="text-center">CONTROL TECHNIQUE</h5>
       </div>
       <div class="col-8">
-        <app-selector label="CONTROL TECHNIQUE" [useValue]="true" [toggleOptions]="['WINGS LEVEL', 'ZERO SIDESLIP']" [initialValue]="0"></app-selector>
+        <app-selector label="CONTROL TECHNIQUE" [useValue]="true" [toggleOptions]="['WINGS LEVEL', 'ZERO SIDESLIP']" [initialValue]="0" (valueOutput)="onValueSelected($event)"></app-selector>
       </div>
     </div>
 
     <div class="row control">
       <div class="col">
-        <h3 class="text-center">INCLINOMETER</h3>
+        <h2 class="text-center">INCLINOMETER</h2>
       </div>
     </div>
 
-    <div class="row control">
-      <div class="col">
-        <h5>Inclinometer animation or something.....</h5>
+    <div class="row">
+      <div class="col text-center">
+        <img [src]=image/>
       </div>
     </div>
 
