@@ -1,6 +1,6 @@
 import { System, Engine, Family, FamilyBuilder } from '@nova-engine/ecs';
 import { Listener, Subject, EventBus } from 'src/app/engine/core/events';
-import { AnimatorComponent } from '../components/Animation';
+import { AnimatorComponent, MaterialAnimationComponent } from '../components/Animation';
 import { ModelEntity } from '../entities';
 import { AnimationAction, Clock } from 'three';
 import { ThreeEngineEvent } from 'src/app/utils/custom-events';
@@ -8,6 +8,7 @@ import { ThreeEngineEvent } from 'src/app/utils/custom-events';
 export class AnimationSystem extends System implements Listener {
 
   private _family: Family;
+  private _macFamily: Family;
   private _clock: Clock = new Clock();
 
   private _animationQueue: AnimationData[] = [];
@@ -16,6 +17,7 @@ export class AnimationSystem extends System implements Listener {
     super.onAttach(engine);
 
     this._family = new FamilyBuilder(engine).include(AnimatorComponent).build();
+    this._macFamily = new FamilyBuilder(engine).include(MaterialAnimationComponent).build();
 
     EventBus.get().subscribe(ThreeEngineEvent.ANIMATION, this);
 
@@ -47,6 +49,25 @@ export class AnimationSystem extends System implements Listener {
       }
 
     });
+
+    this._macFamily.entities.forEach(entity => {
+      var me = entity as ModelEntity;
+      const mac = me.getComponent(MaterialAnimationComponent);
+
+      this._animationQueue.forEach(ad => {
+        if(ad.targetName === me.name) {
+          const action = mac.action(ad.clipName);
+          if(action) {
+            ad.actionCallback(action, ad.args);
+          }
+        }
+      });
+
+      if(mac.animationMixer) {
+        mac.animationMixer.update(dt);
+      }
+
+    })
 
     this._animationQueue = [];
 

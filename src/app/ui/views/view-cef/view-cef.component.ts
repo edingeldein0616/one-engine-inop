@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { Action } from 'rxjs/internal/scheduler/Action';
+import { ActionPair } from 'src/app/utils/action-pair';
 import { EngineService } from 'src/app/engine/engine.service';
 import { AnimationDriver } from 'src/app/utils/animation-driver';
 import { SeminoleActionModel } from 'src/app/utils/seminole-action-model';
@@ -377,15 +377,6 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     this._animationDriver.stop(environment.torqueMarkings, Torque.counterLeft.obj)
     this._animationDriver.stop(environment.torqueMarkings, Torque.rollRight.obj)
     this._animationDriver.stop(environment.torqueMarkings, Torque.rollLeft.obj)
-  }
-}
-
-class ActionPair {
-  public readonly obj: string;
-  public readonly action: string;
-  constructor(obj: string, action: string) {
-    this.obj = obj;
-    this.action = action;
   }
 }
 
