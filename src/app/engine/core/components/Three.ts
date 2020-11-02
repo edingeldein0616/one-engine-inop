@@ -22,6 +22,20 @@ class RootComponent implements Component {
       this._obj = v;
     }
   }
+
+  public find(obj: Object3D, name: string): Object3D {
+
+    if(obj == null) return null;
+    if(obj.name === name) return obj;
+    var node = null;
+    if(obj.children.length > 0) {
+      for(let child of obj.children) {
+         node = this.find(child, name);
+         if(node != null) break;
+      }
+    }
+    return node;
+  }
 }
 
 class MeshComponent extends RootComponent {
@@ -71,22 +85,6 @@ class HideableComponent extends RootComponent {
       objectToHide.visible = !hide;
     }
   }
-
-  private find(obj: Object3D, name: string): Object3D {
-
-    if(obj == null) return null;
-    if(obj.name === name) return obj;
-    var node = null;
-    if(obj.children.length > 0) {
-      for(let child of obj.children) {
-         node = this.find(child, name);
-         if(node != null) break;
-      }
-    }
-    return node;
-  }
-
-
 }
 
 export { SceneComponent, RootComponent, MeshComponent, LightComponent, PerspectiveCameraComponent, HideableComponent };
