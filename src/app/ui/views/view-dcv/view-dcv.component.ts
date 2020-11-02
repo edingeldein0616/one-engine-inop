@@ -151,10 +151,8 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
 
   public controlTechnique(controlTechnique: string, inopEngine: string, idle: boolean) {
     this.clearOrientation();
-    this.clearRudder();
-
     if(!idle) {
-      this.rudder(controlTechnique, inopEngine);
+      this.rudder(inopEngine);
 
       if(controlTechnique === 'WINGS LEVEL') {
         this.wingsLevel(inopEngine);
@@ -202,13 +200,10 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
 
   }
 
-  public rudder(controlTechnique: string, inopEngine: string) {
-    if(controlTechnique === 'WINGS LEVEL') {
-      const rudderAction = inopEngine === 'LEFT' ? 'rudderRightAction' : 'rudderLeftAction';
-      this._animationDriver.jumpTo(environment.seminole, rudderAction, 100);
-    } else {
-      this._animationDriver.jumpTo(environment.seminole, 'rudderLeftAction', 0);
-    }
+  public rudder(inopEngine: string) {
+    this.clearRudder();
+    const rudderAction = inopEngine === 'LEFT' ? 'rudderRightAction' : 'rudderLeftAction';
+    this._animationDriver.jumpTo(environment.seminole, rudderAction, 100);
   }
 
   public clearOrientation() {

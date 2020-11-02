@@ -196,10 +196,8 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
 
   private _controlTechnique(controlTechnique: string, inopEngine: string, idle: boolean) {
     this._clearOrientation();
-    this._clearRudder();
-
     if(!idle) {
-      this._rudder(controlTechnique, inopEngine);
+      this._rudder(inopEngine);
 
       if(controlTechnique === 'WINGS LEVEL') {
         this._wingsLevel(inopEngine);
@@ -209,13 +207,10 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     }
   }
 
-  private _rudder(controlTechnique: string, inopEngine: string) {
-    if(controlTechnique === 'WINGS LEVEL') {
-      const rudderAction = inopEngine === 'LEFT' ? 'rudderRightAction' : 'rudderLeftAction';
-      this._animationDriver.jumpTo(environment.seminole, rudderAction, 100);
-    } else {
-      this._animationDriver.jumpTo(environment.seminole, 'rudderLeftAction', 0);
-    }
+  private _rudder(inopEngine: string) {
+    this._clearRudder();
+    const rudderAction = inopEngine === 'LEFT' ? 'rudderRightAction' : 'rudderLeftAction';
+    this._animationDriver.jumpTo(environment.seminole, rudderAction, 100);
   }
 
   private _wingsLevel(inopEngine: string) {
