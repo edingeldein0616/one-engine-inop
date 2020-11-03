@@ -74,7 +74,9 @@ export class TextDictionary {
       <h3>The effects of an inoperative left engine are much worse.</h3>`},
     {title: 'cef-torque', content: `<h3>"For every action there is an equal and opposite reaction." -- Because of this, as an engine turns its propeller in one direction, the engine tends to rotate in the opposite direction. Since the propellers turn to the right (clockwise), the engines (and the aircraft they are attached to) will tend to roll to the left.</h3>
       <h3> If the left engine is operating, this engine torque will actually help counteract the aircraft's tendency to roll to the right (into the inoperative engine).</h3>
-      <h3>If the right engine is operating, the engine torque adds to the left-rolling tendency into the inoperative engine. The rolling tendency is worse if the left engine is inoperative.</h3>`}
+      <h3>If the right engine is operating, the engine torque adds to the left-rolling tendency into the inoperative engine. The rolling tendency is worse if the left engine is inoperative.</h3>`},
+    {title: 'rudder-effectiveness', content: `<h3>This scale represents rudder effectiveness, showing the rudder's ability to counteract the yawing and rolling forces caused by an inoperative engine.</h3>
+      <h3>Any factors that increase directional stability or enhance the rudder's ability to do its job make the rudder more effective. An increase in rudder effectiveness allows the aircraft to maintain directional control at lower airspeeds, lowering Vmca.</h3>`}
 
   ];
 
