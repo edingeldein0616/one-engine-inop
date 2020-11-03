@@ -9,6 +9,7 @@ import { SelectionData } from '../../controls/selector/selection-data';
 import { Action } from 'rxjs/internal/scheduler/Action';
 import { ZeroSlopeEnding } from 'three';
 import { ViewManagerService } from 'src/app/services/view-manager.service';
+import { TextDictionary } from 'src/app/utils/text-dictionary';
 
 @Component({
   selector: 'app-view-zst',
@@ -24,9 +25,12 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
   ];
   public image = this.inclinometerImages[1];
 
+  public content = `<h3>This section Covers zero sideslip control technique.</h3>`
+
   private _sam: SeminoleActionModel;
   private _animationDriver: AnimationDriver;
   private _disposables: Subscription[];
+  private _loading: boolean = true;
 
   constructor(private engineService: EngineService,
     private vms: ViewManagerService) { }
@@ -52,6 +56,9 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
         this.controlTechnique(inopEngine, controlTechnique);
         this.markings(inopEngine, controlTechnique);
         this.setImage(inopEngine, controlTechnique);
+
+        const contentLookup = inopEngine === 'LEFT' ? 'zst-inopEngine-left' : 'zst-inopEngine-right';
+        if(!this._loading) this.content = TextDictionary.getContent(contentLookup);
       }),
       this._sam.controlTechnique.subject.subscribe(controlTechnique => {
         var inopEngine = this._sam.inopEngine.property;
@@ -59,11 +66,16 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
         this.controlTechnique(inopEngine, controlTechnique);
         this.markings(inopEngine, controlTechnique);
         this.setImage(inopEngine, controlTechnique);
+
+        const contentLookup = controlTechnique === 'WINGS LEVEL' ? 'zst-wingsLevel' : 'zst-zeroSideslip';
+        if(!this._loading) this.content = TextDictionary.getContent(contentLookup);
       })
     ];
 
     this._animationDriver.play(environment.windplane, 'windplane-action');
     this.gear();
+
+    this._loading = false;
   }
 
   public ngOnDestroy() {
@@ -80,6 +92,10 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
         this._sam.controlTechnique.property = data.value;
       break
     }
+  }
+
+  public lookupContent(lookup: string) {
+    this.content = TextDictionary.getContent(lookup);
   }
 
   private inopEngine(inopEngine: string) {

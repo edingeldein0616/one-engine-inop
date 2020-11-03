@@ -76,8 +76,25 @@ export class TextDictionary {
       <h3> If the left engine is operating, this engine torque will actually help counteract the aircraft's tendency to roll to the right (into the inoperative engine).</h3>
       <h3>If the right engine is operating, the engine torque adds to the left-rolling tendency into the inoperative engine. The rolling tendency is worse if the left engine is inoperative.</h3>`},
     {title: 'rudder-effectiveness', content: `<h3>This scale represents rudder effectiveness, showing the rudder's ability to counteract the yawing and rolling forces caused by an inoperative engine.</h3>
-      <h3>Any factors that increase directional stability or enhance the rudder's ability to do its job make the rudder more effective. An increase in rudder effectiveness allows the aircraft to maintain directional control at lower airspeeds, lowering Vmca.</h3>`}
-
+      <h3>Any factors that increase directional stability or enhance the rudder's ability to do its job make the rudder more effective. An increase in rudder effectiveness allows the aircraft to maintain directional control at lower airspeeds, lowering Vmca.</h3>`},
+    {title: 'zst-inopEngine-left', content: `<h3>With the left engine inoperative, the aircraft will tend to roll and yaw to the left. Right rudder deflection creates lateral lift on the tail to counteract this tendency. If the aircraft is flown wings level, the combination of lateral lift and operating engine thrust will result in a sideslip into the inoperative engine.</h3>`},
+    {title: 'zst-inopEngine-right', content: `<h3>With the right engine inoperative, the aircraft will tend to roll and yaw to the right. Left rudder deflection creates lateral lift on the tail to counteract this tendency. If the aircraft is flown wings level, the combination of lateral lift and operating engine thrust will result in a sideslip into the inoperative engine.</h3>`},
+    {title: 'zst-wingsLevel', content: `<h3>If the aircraft is flown wings level, a sideslip into the inoperative engine will result. The vertical fin produces an unbalanced lateral lift force due to the large rudder deflection required to counteract the asymmetric thrust. This side force causes the aircraft to accelerate sideways until the lateral drag caused by the sideslip equals the rudder force. There are four major disadvantages to sideslipping:</h3>
+      <ol>
+        <li>The relative wind striking the tail on the inoperative engine side increases the yawing moment.</li>
+        <li>Stall characteristics are degraded due to the fuselage blocking some airflow to the wing on the operating engine side.</li>
+        <li>Extra drag is produced by both the fuselage and the rudder deflection, decreasing performance. The rudder must be deflected further because of the greater yawing moment and because of the angle of the relative wind. Since the relative wind in the sideslip tends to parallel the rudder, int must be deflected even further to get the same results.</li>
+        <li>Rudder effectiveness is decreased, resulting in a higher Vmca speed.</li>
+      </ol>`},
+    {title: 'zst-zeroSideslip', content: `<h3>By banking into the operating engine, a horizontal component of lift is created that balances the lateral lift force of athe rudder and vertical stabilizer. With the lateral forces balanced, the aircraft flies with its longitudinal axis aligned with the relative wind (zero sideslip). The exact angle of the bank required to maintain zero sideslip varies for each aircraft. The major advantages of using a zero sideslip instead of flying wings level are:</h3>
+      <ol>
+        <li>The yawing moment is reduced since the relative wind no longer strikes the inoperative engine side of the tail.</li>
+        <li>Uniform airflow over both wings improves stall characteristics.</li>
+        <li>Less rudder deflection is required due to the decreased yawing moment. This decreased rudder deflection and the lack of relative wind striking the side of the fuselage reduces overall drag and improves performance.</li>
+        <li>Rudder effectiveness is increased resulting in a lower Vmca speed.</li>
+      </ol>`},
+    {title: 'zst-inclinometer', content: `<h3>The inclinometer, or "ball" can be used to establish a zero sideslip condition. Using a yaw string, a zero sideslip can be established, noting the position of the ball. This ball position can then be used to help establish a zero sideslip for future single-engine conditions when a yaw string is not available.</h3>
+      <h3>In the Seminole, a zero sideslip is established with about 1/2 ball deflection towards the operating engine. In a zero sideslip condition, there are no rolling or yawing forces present - the ball merely sits at the lowest point in the inclinometer tube, which is slightly off center due to the aircraft's bank angle.</h3>`},
   ];
 
   public static getContent(title: string): string {

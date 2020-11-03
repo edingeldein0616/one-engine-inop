@@ -31,13 +31,13 @@
 
     <div class="row control">
       <div class="col">
-        <h2 class="text-center">INCLINOMETER</h2>
+        <app-selectable-label label="INCLINOMETER" lookupValue="zst-inclinometer" (contentClicked)="lookupContent($event)"></app-selectable-label>
       </div>
     </div>
 
     <div class="row">
       <div class="col text-center">
-        <img [src]=image/>
+        <img [src]="image" (click)="lookupContent('zst-inclinometer')"/>
       </div>
     </div>
 
@@ -63,14 +63,7 @@
 <!-- ----------------  -->
 <!--    DESCRIPTION    -->
 <!-- ----------------  -->
-<div class="panel description">
-
-  <p>
-    This section covers the zero sideslip control technique. Change the factor settings on the right to see the resulting effects
-    on the aircraft. Click on the "Zero Sideslip Factors" text labels to read descriptive text here.
-  </p>
-
-</div>
+<div class="panel description zst" [innerHTML]="this.content"></div>
 
 <!-- ----------------  -->
 <!--    LOGO           -->
