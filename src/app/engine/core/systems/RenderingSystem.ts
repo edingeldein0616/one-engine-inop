@@ -60,7 +60,6 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
           // Add THREE.Object3D to scene
           sceneEntity.getComponent(SceneComponent).scene
             .add(obj);
-          //console.log('Object added to scene...', obj, sceneEntity.getComponent(SceneComponent).scene);
           // Register in list of THREE.Object3D[]
           this._objects.push(obj);
         });
@@ -139,7 +138,6 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     this._family.entities.forEach(sceneEntity => {
       const scene = sceneEntity.getComponent(SceneComponent).scene;
       this._objects.forEach(obj => {
-        //console.log('Object removed from scene', obj);
         scene.remove(obj);
       });
       scene.dispose();
@@ -168,14 +166,11 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
   receive(topic: string, subject: Subject) {
     switch (topic) {
       case ThreeEngineEvent.STATECHECK:
-        //console.log('STATE CHECK', this._renderer.state);
         break;
       case ThreeEngineEvent.ENVMAP:
-        //console.log('HDRI ENVIRONMENT MAP', subject.data);
         this._environmentMap(subject.data);
         break;
       case ThreeEngineEvent.SKYBOX:
-        //console.log('SKYBOX');
         this._skybox();
         break;
       case ThreeEngineEvent.HIDEOBJECT:
@@ -185,7 +180,6 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
         this._cast = true;
         break;
       default:
-        //console.log(`Unknown event passed: ${topic}`, subject);
         break;
     }
 
@@ -285,7 +279,6 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
    * @param height height to resize to in pixels.
    */
   public resize(width: number, height: number) : void {
-    //console.log(`resize - (${width}, ${height})`);
     if(width !== this._canvas.width || height !== this._canvas.height) {
       this._renderer.setSize(width, height, false);
       this._camera.aspect = width / height;

@@ -12,7 +12,6 @@ export class RaycastController {
 
   constructor(... root: Object3D[]) {
     this._root = root;
-    console.log(root);
     this._raycaster = new Raycaster();
     this._raycaster.far = 50;
     this._mousePosition = new Vector2(0, 0);
