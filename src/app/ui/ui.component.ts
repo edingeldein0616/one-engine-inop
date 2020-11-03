@@ -13,9 +13,6 @@ export class UiComponent implements OnInit, OnDestroy {
 
   private _loadingSub: Subscription;
 
-  /**
-   *
-   */
   constructor(private _loaderService: LoaderService) {
   }
 

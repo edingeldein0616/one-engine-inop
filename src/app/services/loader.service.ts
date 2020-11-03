@@ -22,8 +22,26 @@ export class LoaderService implements OnDestroy {
     return this._onLoadedSubject.asObservable();
   }
 
-  private _assets: Map<string, any> = new Map<string, any>();
+  private _loadingSemiphore: number = 0;
+  public set loadingSemiphore(v : number) {
+    if(v >= 0) this._loadingSemiphore = v;
+  }
+  public get loadingSemiphore() : number {
+    return this._loadingSemiphore;
+  }
 
+  public incSemiphore() {
+    this.loadingSemiphore = this.loadingSemiphore + 1;
+    if(this._loadingSemiphore > 0) this._isLoadingSubject.next(true);
+    else this._isLoadingSubject.next(false);
+  }
+  public decSemiphore() {
+    this.loadingSemiphore = this.loadingSemiphore - 1;
+    if(this._loadingSemiphore > 0) this._isLoadingSubject.next(true);
+    else this._isLoadingSubject.next(false);
+  }
+
+  private _assets: Map<string, any> = new Map<string, any>();
   public getAsset(name: string): any {
     const asset = this._assets.get(name);
     if(!asset) {
@@ -39,8 +57,7 @@ export class LoaderService implements OnDestroy {
       return;
     }
 
-    this._isLoadingSubject.next(true);
-
+    this.incSemiphore();
     switch (extension) {
       case 'gltf':
         this.loadGltf(name);
@@ -52,7 +69,7 @@ export class LoaderService implements OnDestroy {
         this.loadTexture(name, extension);
         break;
       default:
-        this._isLoadingSubject.next(false);
+        this.decSemiphore();
         break;
     }
 
@@ -66,11 +83,11 @@ export class LoaderService implements OnDestroy {
         console.log(gltf);
         this._assets.set(name, gltf);
         this._onLoadedSubject.next(gltf);
-        this._isLoadingSubject.next(false);
+        this.decSemiphore();
       },
       null,
       err => {
-        this._isLoadingSubject.next(false);
+        this.decSemiphore();
         throw new Error(`Error loading asset ${name} -- ${err.message}`);
       });
   }
@@ -82,11 +99,11 @@ export class LoaderService implements OnDestroy {
       hdr => {
         this._assets.set(name, hdr);
         this._onLoadedSubject.next(hdr);
-        this._isLoadingSubject.next(false);
+        this.decSemiphore();
       },
       null,
       err => {
-        this._isLoadingSubject.next(false);
+        this.decSemiphore();
         throw new Error(`Error loading asset ${name} -- ${err.message}`);
       });
   }
@@ -95,12 +112,12 @@ export class LoaderService implements OnDestroy {
     const loader = new TextureLoader();
     loader.load(this.url + name + `.${ext}`, texture => {
         this._assets.set(name, texture);
-        this._isLoadingSubject.next(false);
+        this.decSemiphore();
         this._onLoadedSubject.next(texture);
       },
       () => {},
       err => {
-        this._isLoadingSubject.next(false);
+        this.decSemiphore();
         throw new Error(`Error loading asset ${name} -- ${err.message}`);
       });
   }
