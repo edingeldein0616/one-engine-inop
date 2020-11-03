@@ -2,7 +2,7 @@ export const environment = {
   assetUrl: 'http://staging.aero.und.edu/edingeldein/assets/',
   skybox: 'skybox',
   envmap: 'envmap',
-  seminole: 'seminole',
+  seminole: 'seminole-master',
   dcvStaticMarkings: 'dcv-static-markings',
   sepStaticMarkings: 'sep-static-markings',
   attachedMarkings: 'attached-markings',
