@@ -102,6 +102,11 @@ export class DCVAerodynamicsModel extends AerodynamicsModel {
     return (value / 25) + 1;
   }
 
+  // 1 - 5
+  private airspeed(value: number): number {
+    return (value / 25) + 1;
+  }
+
   public vmca(sam: SeminoleActionModel): number {
     const power = this.power(sam.power.property);
     const altitude = this.altitude(sam.densityAltitude.property);
@@ -127,6 +132,17 @@ export class DCVAerodynamicsModel extends AerodynamicsModel {
     const weight = this.weight(sam.weight.property);
 
     return (42 - flaps + weight + cg - (power / 4) + prop - bank + gear);
+  }
+
+  public rudderEffectiveness(sam: SeminoleActionModel): number {
+    const weight = this.weight(sam.weight.property);
+    const cg = this.cg(sam.cog.property);
+    const bank = this.controlTechnique(sam.controlTechnique.property);
+    const flaps = this.flaps(sam.flaps.property);
+    const gear = this.gear(sam.gear.property);
+    const airspeed = this.airspeed(sam.airspeed.property);
+
+    return weight + cg + airspeed + bank + flaps + gear - 1;
   }
 
   private calculateYawRudderForce(sam: SeminoleActionModel, prop: number, power: number, altitude: number): void {

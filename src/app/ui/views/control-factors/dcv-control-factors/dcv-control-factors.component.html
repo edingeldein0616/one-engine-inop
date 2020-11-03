@@ -76,7 +76,7 @@
       <app-selectable-label label="AIRSPEED (KIAS)" lookupValue="dcv-airspeed" (contentClicked)="labelSelected($event)"></app-selectable-label>
     </div>
     <div class="col-8">
-      <app-selector label="AIRSPEED (KIAS)" [useValue]="false" [toggleOptions]="['83','-','88','-','93']"
+      <app-selector label="AIRSPEED" [useValue]="false" [toggleOptions]="['83','-','88','-','93']"
         [initialValue]="2" (valueOutput)="selected($event)"></app-selector>
     </div>
   </div>

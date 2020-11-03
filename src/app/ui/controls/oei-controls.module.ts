@@ -8,6 +8,7 @@ import { ToggleComponent } from './toggle/toggle.component';
 import { CardButtonComponent } from './card-button/card-button.component';
 import { SelectableLabelComponent } from './selectable-label/selectable-label.component';
 import { SelectorVerticalComponent } from './selector-vertical/selector-vertical.component';
+import { RudderEffectivenessComponent } from './rudder-effectiveness/rudder-effectiveness.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { SelectorVerticalComponent } from './selector-vertical/selector-vertical
     ToggleComponent,
     CardButtonComponent,
     SelectableLabelComponent,
-    SelectorVerticalComponent
+    SelectorVerticalComponent,
+    RudderEffectivenessComponent
   ],
   imports: [
     CommonModule,
@@ -30,7 +32,8 @@ import { SelectorVerticalComponent } from './selector-vertical/selector-vertical
     MaterialModule,
     CardButtonComponent,
     SelectableLabelComponent,
-    SelectorVerticalComponent
+    SelectorVerticalComponent,
+    RudderEffectivenessComponent
   ]
 })
 export class OeiControlsModule { }
