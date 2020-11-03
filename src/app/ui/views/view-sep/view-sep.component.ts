@@ -21,6 +21,7 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
 
   public content: string = `<h3>This section covers single-engine directional control and Vmca. Change the factor settings on the right to see the resulting effects on the aircraft. Click on the "Data" and "Control Factors" text labels to read descriptive text here. Clicking on the arrows marking aerodynamic and control forces around the aircraft will display additional text here.</h3>`;
   public vyse: number = 21;
+  public roc: number;
   public excessThp: number = 170;
   public serviceCeiling: number;
   public absoluteCeiling: number;
@@ -45,6 +46,15 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     this._sam = new SeminoleActionModel();
     this._aeroModel = new SEPAerodynamicsModel();
     this._raycastController = new RaycastController();
+
+
+
+    EventBus.get().subscribe(ThreeEngineEvent.INTERSECT, this);
+  }
+
+  public ngAfterViewInit() {
+    this.engineService.loadSeminole(environment.seminole);
+    this.engineService.loadAttachedMarkings(environment.attachedMarkings);
 
     this._disposables = [
       this._sam.inopEngine.subject.subscribe(inopEngine => {
@@ -78,13 +88,6 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
       })
     ];
 
-    EventBus.get().subscribe(ThreeEngineEvent.INTERSECT, this);
-  }
-
-  public ngAfterViewInit() {
-    this.engineService.loadSeminole(environment.seminole);
-    this.engineService.loadAttachedMarkings(environment.attachedMarkings);
-
     var staticMarkings = this.engineService.loadMarkings(environment.sepStaticMarkings, this._aeroModel);
     this._raycastController = new RaycastController(...staticMarkings.scene.children);
     this.engineService.attachRaycaster(this._raycastController);
@@ -111,6 +114,7 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   }
 
   public onValueChanged(data: SelectionData) {
+    console.log(data);
     switch(data.label) {
       case 'INOP. ENGINE':
         this._sam.inopEngine.property = data.value;
@@ -140,7 +144,12 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
         this._sam.densityAltitude.property = data.percent;
       break;
     }
+
     this._aeroModel.calculateMarkings(this._sam);
+    this.roc = this._aeroModel.roc(this._sam);
+    this.excessThp = this._aeroModel.excessTHP(this.roc);
+    this.serviceCeiling = this._aeroModel.serviceCeiling(this._sam);
+    this.absoluteCeiling = this._aeroModel.absoluteCeiling(this.serviceCeiling);
   }
 
   public onLabelSelected(lookup: string) {
@@ -228,6 +237,7 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   }
 
   private _gear(down: boolean): void {
+    this._animationDriver.stop(environment.seminole, 'GearAction');
     this._animationDriver.jumpTo(environment.seminole, 'GearAction', down ? 0 : 100);
   }
 

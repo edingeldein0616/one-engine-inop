@@ -4,6 +4,7 @@ import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Object3D, Color, Mesh } from 'three';
 import { SeminoleActionModel } from './seminole-action-model';
 import { Action } from 'rxjs/internal/scheduler/Action';
+import { MatHeaderRowDef } from '@angular/material';
 
 export abstract class AerodynamicsModel {
 
@@ -220,22 +221,12 @@ export class SEPAerodynamicsModel extends AerodynamicsModel {
   }
 
   public calculateMarkings(sam: SeminoleActionModel) {
-    const power = this.power(sam.power.property);
-    const altitude = this.altitude(sam.densityAltitude.property);
+    const power = this.scalePower(sam.power.property);
+    const altitude = this.scaleAltitude(sam.densityAltitude.property);
     const idle = sam.power.property < 1;
 
     this.calculateThrustForce(sam, power, altitude);
     this.calculateDragForce(sam, idle);
-  }
-
-  // 4, 8, 12, 16, 20
-  private power(value: number): number {
-    return (value / 25 + 1) * 4;
-  }
-
-  // 1 - 5
-  private altitude(value: number): number {
-    return (value / 25) + 1;
   }
 
   private calculateDragForce(sam: SeminoleActionModel, idle: boolean): void {
@@ -263,6 +254,114 @@ export class SEPAerodynamicsModel extends AerodynamicsModel {
       if(sam.inopEngine.property === 'LEFT') this.rightThrust.property = thrust;
       else this.leftThrust.property = thrust;
     }
+  }
+
+  // 4, 8, 12, 16, 20
+  private scalePower(value: number): number {
+    return (value / 25 + 1) * 4;
+  }
+
+  // 1 - 5
+  private scaleAltitude(value: number): number {
+    return (value / 25) + 1;
+  }
+
+  // 150, 75, 0, -75, -150
+  private altitude(value: number) {
+    return 150 - (value * 3);
+  }
+
+  // -200, 0
+  private prop(value: string): number {
+    return value === 'WINDMILL' ? -200 : 0;
+  }
+
+  // -300, 0 (bank)
+  private controlTechnique(value: string): number {
+    return value === 'WINGS LEVEL' ? -300 : 0;
+  }
+
+  // -50, -25, 0, -50, -100
+  private airspeed(value: number): number {
+    if(value === 0) { return -50; }
+    else if(value <= 25) { return -25; }
+    else if(value <= 50) { return 0; }
+    else if(value <= 75) { return -50; }
+    else { return -100; }
+  }
+
+  // 68, 34, 0, -34, -68
+  private weight(value: number): number {
+    return 68 - (value / 25) * 34;
+  }
+
+  // 40, 20, 0, -20, -40
+  private cog(value: number): number {
+    return 40 - (value / 25) * 20;
+  }
+
+  // 1 - 4
+  private flaps(value: number): number {
+    return Math.floor(value / 33) + 1;
+  }
+
+  // 0, -20, -240, -275
+  private pflaps(value: number): number {
+    value /= 100;
+    if(value === 0) {
+      return 0;
+    } else if (value <= 34 / 100) {
+      return -20;
+    } else if (value <= 67 / 100) {
+      return -240;
+    } else {
+      return -275;
+    }
+  }
+
+  // 1 , 3
+  private gear(value: string): number {
+    return value === 'UP' ? 1 : 3;
+  }
+
+  //0, -250
+  private pGear(value: string): number {
+    return value === 'UP' ? 0 : -250;
+  }
+
+  public roc(sam: SeminoleActionModel): number {
+    const altitude = this.altitude(sam.densityAltitude.property);
+    const prop = this.prop(sam.propeller.property);
+    const bank = this.controlTechnique(sam.controlTechnique.property);
+    const airspeed = this.airspeed(sam.airspeed.property);
+    const weight = this.weight(sam.weight.property);
+    const cog = this.cog(sam.cog.property);
+    const pflaps = this.pflaps(sam.flaps.property);
+    const pgear = this.pGear(sam.gear.property);
+
+    console.log(`pflaps: ${pflaps}`);
+    return 170 + altitude + prop + bank + airspeed + weight + cog + pflaps + pgear;
+  }
+
+  public serviceCeiling(sam: SeminoleActionModel): number {
+    const prop = this.prop(sam.propeller.property);
+    const bank = this.controlTechnique(sam.controlTechnique.property);
+    const weight = this.weight(sam.weight.property);
+    const cog = this.cog(sam.cog.property);
+    const pflaps = this.pflaps(sam.flaps.property);
+    const pgear = this.pGear(sam.gear.property);
+
+    const sc = 5700 + (weight * 20) + (prop * 22) + (bank * 21) + (cog * 13) + (pflaps * 21) + (pgear * 21);
+    return sc < 0 ? NaN : sc;
+  }
+
+  public absoluteCeiling(serviceCeiling: number): number {
+    const ac = Math.floor(serviceCeiling * 1.102);
+    return ac < 0 ? NaN : ac;
+  }
+
+  public excessTHP(roc: number): number {
+    return Math.floor(roc / 8);
   }
 
 }
