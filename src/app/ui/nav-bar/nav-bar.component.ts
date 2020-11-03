@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ViewManagerService } from 'src/app/services/view-manager.service';
 
 @Component({
   selector: 'app-nav-bar',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NavBarComponent implements OnInit {
 
-  constructor() { }
+  constructor(public viewManagerService: ViewManagerService) { }
 
   ngOnInit() {
   }

@@ -11,6 +11,7 @@ import { SEPAerodynamicsModel } from 'src/app/utils/aerodynamics-model';
 import { SelectionData } from '../../controls/selector/selection-data';
 import { TextDictionary } from 'src/app/utils/text-dictionary';
 import { Intersection } from 'three';
+import { ViewManagerService } from 'src/app/services/view-manager.service';
 
 @Component({
   selector: 'app-view-sep',
@@ -41,15 +42,15 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   private _disposables: Subscription[] = [];
 
   constructor(private engineService: EngineService,
-    private cdr: ChangeDetectorRef) { }
+    private cdr: ChangeDetectorRef,
+    private vms: ViewManagerService) { }
 
   public ngOnInit() {
     this._animationDriver = new AnimationDriver();
     this._sam = new SeminoleActionModel();
     this._aeroModel = new SEPAerodynamicsModel();
     this._raycastController = new RaycastController();
-
-
+    this.vms.setCurrentView('Single Engine Performance');
 
     EventBus.get().subscribe(ThreeEngineEvent.INTERSECT, this);
   }

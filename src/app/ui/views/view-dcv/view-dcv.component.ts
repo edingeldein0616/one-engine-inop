@@ -11,6 +11,7 @@ import { EventBus, Listener, Subject } from 'src/app/engine/core/events';
 import { ThreeEngineEvent } from 'src/app/utils/custom-events';
 import { TextDictionary } from 'src/app/utils/text-dictionary';
 import { Intersection } from 'three';
+import { ViewManagerService } from 'src/app/services/view-manager.service';
 
 @Component({
   selector: 'app-view-dcv',
@@ -39,13 +40,15 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   private _disposables: Subscription[] = [];
 
   constructor(private engineService: EngineService,
-    private cdr: ChangeDetectorRef) { }
+    private cdr: ChangeDetectorRef,
+    private vms: ViewManagerService) { }
 
   public ngOnInit() {
     this._animationDriver = new AnimationDriver();
     this._sam = new SeminoleActionModel();
     this._aeroModel = new DCVAerodynamicsModel();
     this._raycastController = new RaycastController();
+    this.vms.setCurrentView('Directional Control and Vmca');
 
     EventBus.get().subscribe(ThreeEngineEvent.INTERSECT, this);
   }

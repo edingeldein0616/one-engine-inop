@@ -7,6 +7,7 @@ import { SeminoleActionModel } from 'src/app/utils/seminole-action-model';
 import { TextDictionary } from 'src/app/utils/text-dictionary';
 import { environment } from 'src/environments/environment';
 import { SelectionData } from '../../controls/selector/selection-data';
+import { ViewManagerService } from 'src/app/services/view-manager.service';
 
 @Component({
   selector: 'app-view-cef',
@@ -15,7 +16,8 @@ import { SelectionData } from '../../controls/selector/selection-data';
 })
 export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  constructor(private engineService: EngineService) { }
+  constructor(private engineService: EngineService,
+    private vms: ViewManagerService) { }
 
   public content: string = `<h3>This section covers critical engine factors that affect multiengine aircraft without counterrotating propellers.
     In most US-designed multiengine aircraft, both engines rotate to the right (clockwise) when viewed from the rear. Select a critical engine
@@ -32,6 +34,7 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this._animationDriver = new AnimationDriver();
     this._sam = new SeminoleActionModel();
+    this.vms.setCurrentView('Critical Engine Factors');
   }
 
   ngAfterViewInit() {

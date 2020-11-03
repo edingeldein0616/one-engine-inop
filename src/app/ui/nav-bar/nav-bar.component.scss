@@ -18,6 +18,10 @@ a:hover {
   color: inherit;
 }
 
+.space {
+  width: 1vw;
+}
+
 @mixin app-title-hover($theme) {
   $hover: map-get($theme, foreground);
 

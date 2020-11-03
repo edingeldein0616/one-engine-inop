@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ViewManagerService } from 'src/app/services/view-manager.service';
 
 @Component({
   selector: 'app-view-menu',
@@ -7,9 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ViewMenuComponent implements OnInit {
 
-  constructor() { }
+  constructor(private vms: ViewManagerService) { }
 
   ngOnInit() {
+    this.vms.setCurrentView('');
   }
 
 }

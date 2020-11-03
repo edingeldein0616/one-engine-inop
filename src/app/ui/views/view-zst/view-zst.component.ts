@@ -8,6 +8,7 @@ import { environment } from 'src/environments/environment';
 import { SelectionData } from '../../controls/selector/selection-data';
 import { Action } from 'rxjs/internal/scheduler/Action';
 import { ZeroSlopeEnding } from 'three';
+import { ViewManagerService } from 'src/app/services/view-manager.service';
 
 @Component({
   selector: 'app-view-zst',
@@ -27,11 +28,13 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
   private _animationDriver: AnimationDriver;
   private _disposables: Subscription[];
 
-  constructor(private engineService: EngineService) { }
+  constructor(private engineService: EngineService,
+    private vms: ViewManagerService) { }
 
   public ngOnInit() {
     this._sam = new SeminoleActionModel();
     this._animationDriver = new AnimationDriver();
+    this.vms.setCurrentView('Zero Sideslip Technique');
   }
 
   public ngAfterViewInit() {
