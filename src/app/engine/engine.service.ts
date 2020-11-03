@@ -1,14 +1,13 @@
-import { Injectable, NgZone, ElementRef, OnDestroy } from '@angular/core';
+import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { ThreeEngine } from './ThreeEngine';
 import { EntityFactory, CameraEntity, SceneEntity, ModelEntity } from './core/entities';
 import { HideableComponent, RootComponent } from './core/components';
 import { EventBus, Subject } from './core/events';
-import { AnimatorComponent } from './core/components/Animation';
+import { AnimatorComponent, MaterialAnimationComponent } from './core/components/Animation';
 import { LoaderService } from '../services/loader.service';
-import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
-import { Color } from 'three';
+import { Color, Mesh, MeshStandardMaterial } from 'three';
 import { AerodynamicsModel } from '../utils/aerodynamics-model';
 import { RaycastController } from '../utils/raycast-controller';
 import { ThreeEngineEvent } from '../utils/custom-events';
@@ -108,7 +107,7 @@ export class EngineService implements OnDestroy {
     me.getComponent(RootComponent).obj = gltf.scene;
     const anim = me.getComponent(AnimatorComponent);
     anim.configureAnimations(gltf);
-    const cgClip = anim.clip('cgAction'); //this._animationClips.find(clip => clip.name == 'cgAction');
+    const cgClip = anim.clip('cgAction');
     if(cgClip) {
       anim.subClip(cgClip, 'cg0Action', 0, 1);
       anim.subClip(cgClip, 'cg1Action', 0, 25);
@@ -119,6 +118,27 @@ export class EngineService implements OnDestroy {
 
     this._threeEngine.addEntity(me);
     return gltf;
+  }
+
+  public loadWindPlane(assetName: string) {
+    const gltf = this.loaderService.getAsset(assetName);
+
+    const me = EntityFactory.build(ModelEntity);
+    me.name = assetName;
+    const rc = me.getComponent(RootComponent)
+    rc.obj = gltf.scene;
+    const ac = me.getComponent(AnimatorComponent);
+    ac.configureAnimations(gltf);
+
+    const disk = rc.find(rc.obj, 'windplane-disk') as Mesh;
+    const mac = me.putComponent(MaterialAnimationComponent);
+
+    const material = disk.material as MeshStandardMaterial;
+    (disk as any).material.mapOffset = material.map.offset;
+    mac.mesh = disk;
+    mac.createVectorClip('windplane-action', 1,'.material.mapOffset', [0, 1], [0, 0, 0, 1]);;
+
+    this._threeEngine.addEntity(me);
   }
 
   public getModelReference(assetName: string): GLTF {

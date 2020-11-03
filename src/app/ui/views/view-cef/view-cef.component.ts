@@ -62,6 +62,7 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ];
 
+    this.orientation();
     this.gear();
 
     this._loaded = true;
@@ -264,6 +265,7 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     this._animationDriver.stop(environment.seminole, 'yawLeftAction');
     this._animationDriver.stop(environment.seminole, 'rollRightAction');
     this._animationDriver.stop(environment.seminole, 'rollLeftAction');
+    this._animationDriver.jumpTo(environment.seminole, 'yawRightAction', 0);
   }
 
   private rudder(inopEngine: string) {

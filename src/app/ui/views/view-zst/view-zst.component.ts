@@ -36,7 +36,7 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public ngAfterViewInit() {
     this.engineService.loadSeminole(environment.seminole);
-    this.engineService.loadMarkings(environment.windplane);
+    this.engineService.loadWindPlane(environment.windplane);
     this.engineService.loadMarkings(environment.zerosideslipMarkings);
 
     this._disposables = [
@@ -58,6 +58,8 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
         this.setImage(inopEngine, controlTechnique);
       })
     ];
+
+    this._animationDriver.play(environment.windplane, 'windplane-action');
     this.gear();
   }
 

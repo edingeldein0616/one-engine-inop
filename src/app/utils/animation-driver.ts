@@ -10,7 +10,7 @@ export class AnimationDriver {
   private _stopAction: (a: AnimationAction) => void;
   private _pauseAction: (a: AnimationAction) => void;
   private _resetAction: (a: AnimationAction) => void;
-  private _jumpToAction: (a: AnimationAction, position: number) => void;
+  private _jumpToAction: (a: AnimationAction, args: number[]) => void;
   private _haltAction: (a: AnimationAction) => void;
 
   constructor() {
@@ -26,7 +26,8 @@ export class AnimationDriver {
     this._resetAction = (a: AnimationAction) => {
       a.reset();
     };
-    this._jumpToAction = (a: AnimationAction, position: number) => {
+    this._jumpToAction = (a: AnimationAction, args: number[]) => {
+      const position = args[0];
       if(a.isRunning()) {
         a.stop();
       }
@@ -60,7 +61,7 @@ export class AnimationDriver {
   }
 
   public jumpTo(modelName:string, actionName: string, position: number): void {
-    const jumpToAction = this._subject(modelName, actionName, this._jumpToAction, modelName, position)
+    const jumpToAction = this._subject(modelName, actionName, this._jumpToAction, position)
     EventBus.get().publish(ThreeEngineEvent.ANIMATION, jumpToAction);
   }
 
