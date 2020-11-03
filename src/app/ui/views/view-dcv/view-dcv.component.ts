@@ -112,7 +112,7 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   }
 
   public onValueChanged(data: SelectionData) {
-    console.log(data);
+
     switch(data.label) {
       case 'INOP. ENGINE':
         this._sam.inopEngine.property = data.value;

@@ -117,7 +117,6 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   }
 
   public onValueChanged(data: SelectionData) {
-    console.log(data);
     switch(data.label) {
       case 'INOP. ENGINE':
         this._sam.inopEngine.property = data.value;
@@ -164,7 +163,6 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     switch(topic) {
       case ThreeEngineEvent.INTERSECT: {
         var firstIntersect = subject.data.shift() as Intersection;
-        console.log(firstIntersect);
         this.content = TextDictionary.getContent(firstIntersect.object.name);
         this.cdr.detectChanges();
       }

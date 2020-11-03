@@ -80,7 +80,6 @@ export class LoaderService implements OnDestroy {
     const loader = new GLTFLoader();
     loader.load(this.url + name + '.gltf',
       gltf => {
-        console.log(gltf);
         this._assets.set(name, gltf);
         this._onLoadedSubject.next(gltf);
         this.decSemiphore();

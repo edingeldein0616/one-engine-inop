@@ -355,7 +355,6 @@ export class SEPAerodynamicsModel extends AerodynamicsModel {
     const pflaps = this.pflaps(sam.flaps.property);
     const pgear = this.pGear(sam.gear.property);
 
-    console.log(`pflaps: ${pflaps}`);
     return 170 + altitude + prop + bank + airspeed + weight + cog + pflaps + pgear;
   }
 
