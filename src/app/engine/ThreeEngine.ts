@@ -43,7 +43,7 @@ class ThreeEngine extends Engine {
     }
 
     // initialize rendering system with the canvas and camera dependencies, bind resize event listener
-    this._renderingSystem = new RenderingSystem(this._canvas, this._camera);
+    this._renderingSystem = new RenderingSystem(this._canvas, this._camera, { backgroundColor: 0xCEE3EB });
     window.addEventListener('resize', event => { this._renderingSystem.resizeToContainer(); });
     // add rendering system to engine systems and add it to entity listener
     this.addSystem(this._renderingSystem);

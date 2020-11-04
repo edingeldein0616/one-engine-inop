@@ -18,9 +18,10 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
 
   private _canvas: HTMLCanvasElement;
   private _renderer: WebGLRenderer;
+  private _renderSettings: { backgroundColor: number }
   private _camera: PerspectiveCamera;
 
-  private _family: Family;
+  private _sceneFamily: Family;
   private _hideableFamily: Family;
   private _controls: OrbitControls;
   private _objects: Object3D[] = [];
@@ -33,11 +34,13 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
    * Creates instance of RenderingSystem. Calls super(), assigns canvas and camera fields.
    * @param canvas Canvas to render to.
    * @param camera Camera's view to render.
+   * @param renderSettings Settings for the WebGL renderer instance. Contains a number field for backgroundColor.
    */
-  constructor(canvas: HTMLCanvasElement, camera: PerspectiveCamera) {
+  constructor(canvas: HTMLCanvasElement, camera: PerspectiveCamera, renderSettings: any) {
     super();
     this._canvas = canvas;
     this._camera = camera;
+    this._renderSettings = renderSettings;
   }
 
   /**
@@ -54,7 +57,7 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
       // If the entity has a RootComponent (meaning it is an entity that contains a THREE.Object3D)
       if(entity.hasComponent(RootComponent)) {
         // Loop through all entites in the family.
-        this._family.entities.forEach(sceneEntity => {
+        this._sceneFamily.entities.forEach(sceneEntity => {
           // Get reference to the THREE.Object3D
           const obj = entity.getComponent(RootComponent).obj;
           // Add THREE.Object3D to scene
@@ -77,7 +80,7 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
       // If the entity has a RootComponent
       if(entity.hasComponent(RootComponent)) {
         // Loop through entites in the family
-        this._family.entities.forEach(sceneEntity => {
+        this._sceneFamily.entities.forEach(sceneEntity => {
           // Remove the entity
           var scene = sceneEntity.getComponent(SceneComponent).scene;
           scene.remove(entity.getComponent(RootComponent).obj);
@@ -94,7 +97,7 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     super.onAttach(engine);
 
     // Builds a family of all entities that contain a SceneComponent.
-    this._family = new FamilyBuilder(engine).include(SceneComponent).build();
+    this._sceneFamily = new FamilyBuilder(engine).include(SceneComponent).build();
     // All entities with hideable components
     this._hideableFamily = new FamilyBuilder(engine).include(HideableComponent).build();
     // Creates the WebGLRenderer that the rendring system will utilize.
@@ -103,9 +106,14 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
       alpha: false,
       antialias: true,
     });
-    this._renderer.setClearColor(0xFF00FF);
-    this._renderer.outputEncoding = sRGBEncoding;
-    this._renderer.gammaFactor = 8;
+
+    try{
+      if(this._renderSettings) {
+        this._renderer.setClearColor(this._renderSettings.backgroundColor);
+      } else throw Error('Render settings null');
+    } catch (ex) {
+      this._renderer.setClearColor(0x5F5F5F);
+    }
 
     this._controls = new OrbitControls(this._camera, this._canvas);
     this._controls.enablePan = false;
@@ -118,10 +126,7 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     // Subscribe to events.
     EventBus.get()
       .subscribe(ThreeEngineEvent.STATECHECK, this)
-      .subscribe(ThreeEngineEvent.ENVMAP, this)
-      .subscribe(ThreeEngineEvent.SKYBOX, this)
       .subscribe(ThreeEngineEvent.HIDEOBJECT, this);
-
   }
 
   /**
@@ -135,7 +140,7 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     this._renderer.clear();
 
     // Remvoe THREE.Object3Ds from the THREE.Scene component contained in SceneEntity and dispose of scene.
-    this._family.entities.forEach(sceneEntity => {
+    this._sceneFamily.entities.forEach(sceneEntity => {
       const scene = sceneEntity.getComponent(SceneComponent).scene;
       this._objects.forEach(obj => {
         scene.remove(obj);
@@ -149,9 +154,7 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
 
     // Unsubscribe from events
     EventBus.get()
-      .unsubscribe('state-check', this)
-      .unsubscribe('envmap', this)
-      .unsubscribe('skybox', this);
+      .unsubscribe('state-check', this);
 
     // Dispose of renderer and call super.
     // this._renderer.dispose(); This does not work properly
@@ -167,36 +170,16 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     switch (topic) {
       case ThreeEngineEvent.STATECHECK:
         break;
-      case ThreeEngineEvent.ENVMAP:
-        this._environmentMap(subject.data);
-        break;
-      case ThreeEngineEvent.SKYBOX:
-        this._skybox();
-        break;
       case ThreeEngineEvent.HIDEOBJECT:
         this.hide(subject.data.name, subject.data.hide);
         break;
       case ThreeEngineEvent.MOUSECLICK:
         this._cast = true;
         break;
-      default:
-        break;
     }
-
   }
 
-  private _environmentMap(dt: DataTexture): void {
-    const pmremGen = new PMREMGenerator(this._renderer);
-    const envMap = pmremGen.fromEquirectangular(dt).texture;
-
-    this._family.entities.forEach(sceneEntity => {
-      const scene = sceneEntity.getComponent(SceneComponent).scene;
-      //scene.background = envMap;
-      scene.environment = envMap;
-    });
-  }
-
-  private _skybox(): void {
+  private _skybox_old(): void {
     // Create sky
     const sky = new Sky();
     sky.scale.setScalar(450000);
@@ -239,7 +222,7 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
 
     uniforms[ "sunPosition" ].value.copy( sunSphere.position );
 
-    this._family.entities.forEach(sceneEntity => {
+    this._sceneFamily.entities.forEach(sceneEntity => {
       const scene = sceneEntity.getComponent(SceneComponent).scene;
       scene.add(sky, sunSphere);
     })
@@ -321,9 +304,9 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     }
 
     // Check if family is initialized
-    if(this._family) {
+    if(this._sceneFamily) {
       // For each entity in the family (Entities that contain SceneComponent)
-      for(const entity of this._family.entities) {
+      for(const entity of this._sceneFamily.entities) {
         // Call the render function and pass in the entity's scene and camera
         this._renderer.render(
           entity.getComponent(SceneComponent).scene,

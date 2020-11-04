@@ -1,13 +1,13 @@
 import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { ThreeEngine } from './ThreeEngine';
-import { EntityFactory, CameraEntity, SceneEntity, ModelEntity } from './core/entities';
-import { HideableComponent, RootComponent } from './core/components';
+import { EntityFactory, CameraEntity, SceneEntity, ModelEntity, DirectionalLightEntity, AmbientLightEntity } from './core/entities';
+import { HideableComponent, LightComponent, RootComponent } from './core/components';
 import { EventBus, Subject } from './core/events';
 import { AnimatorComponent, MaterialAnimationComponent } from './core/components/Animation';
 import { LoaderService } from '../services/loader.service';
 import { environment } from 'src/environments/environment';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
-import { Color, Mesh, MeshStandardMaterial } from 'three';
+import { Color, Mesh, MeshStandardMaterial, Vector3 } from 'three';
 import { AerodynamicsModel } from '../utils/aerodynamics-model';
 import { RaycastController } from '../utils/raycast-controller';
 import { ThreeEngineEvent } from '../utils/custom-events';
@@ -40,11 +40,15 @@ export class EngineService implements OnDestroy {
       EntityFactory.build(CameraEntity),
       EntityFactory.build(SceneEntity));
 
-    // Register hdri environment map
-    const subject = new Subject();
-    subject.data = this.loaderService.getAsset(environment.envmap);
-    EventBus.get().publish(ThreeEngineEvent.ENVMAP, subject);
-    EventBus.get().publish(ThreeEngineEvent.SKYBOX, null);
+    const dirLight = EntityFactory.build(DirectionalLightEntity);
+    dirLight.getComponent(LightComponent).light.intensity = 1;
+    dirLight.getComponent(RootComponent).obj.translateX(7);
+    dirLight.getComponent(RootComponent).obj.translateY(7);
+
+    const ambLight = EntityFactory.build(AmbientLightEntity);
+    ambLight.getComponent(LightComponent).light.intensity = 2;
+
+    this._threeEngine.addEntities(dirLight, ambLight);
 
     this._animate();
   }

@@ -1,19 +1,24 @@
 @import "src/app/ui/ui.component.scss";
 
 .renderer {
-  top: 3.5em;
+  top: 6%;
   width: 75%;
-  height: 79%;
+  height: 70%;
 }
 
 .exercise-button {
   padding: 1em 2em 1em 2em;
 }
 
-image:hover {
+img:hover {
   cursor: pointer;
 }
 
-.zst {
-  height: 20%;
+.panel.description {
+  // border-style: solid none none none;
+  width: 75%;
+  height: 24%;
+  bottom: 0em;
+  padding: 10px;
+  overflow-y: scroll;
 }

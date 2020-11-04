@@ -31,7 +31,7 @@
 
     <div class="row control">
       <div class="col">
-        <app-selectable-label label="INCLINOMETER" lookupValue="zst-inclinometer" (contentClicked)="lookupContent($event)"></app-selectable-label>
+        <app-selectable-label label="INCLINOMETER" lookupValue="zst-inclinometer" (contentClicked)="lookupContent($event)" size="large"></app-selectable-label>
       </div>
     </div>
 
@@ -63,7 +63,7 @@
 <!-- ----------------  -->
 <!--    DESCRIPTION    -->
 <!-- ----------------  -->
-<div class="panel description zst" [innerHTML]="this.content"></div>
+<div class="panel zst description" [innerHTML]="this.content"></div>
 
 <!-- ----------------  -->
 <!--    LOGO           -->
