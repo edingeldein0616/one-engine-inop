@@ -13,7 +13,7 @@
 
     <div class="row control">
       <div class="col-4">
-        <h5 class="text-center">INOP. ENGINE</h5>
+        <app-selectable-label label="INOP. ENGINE" lookupValue="cef-inop-engine" (contentClicked)="lookupContent($event)"></app-selectable-label>
       </div>
       <div class="col-8">
         <app-selector label="INOP. ENGINE" [useValue]="true" [toggleOptions]="['LEFT','RIGHT']" [initialValue]="0" (valueOutput)="onValueSelected($event)"></app-selector>
@@ -22,7 +22,7 @@
 
     <div class="row control">
       <div class="col-4">
-        <h5 class="text-center">CONTROL TECHNIQUE</h5>
+        <app-selectable-label label="CONTROL TECHNIQUE" lookupValue="zst-control-technique" (contentClicked)="lookupContent($event)"></app-selectable-label>
       </div>
       <div class="col-8">
         <app-selector label="CONTROL TECHNIQUE" [useValue]="true" [toggleOptions]="['WINGS LEVEL', 'ZERO SIDESLIP']" [initialValue]="0" (valueOutput)="onValueSelected($event)"></app-selector>
@@ -30,7 +30,7 @@
     </div>
 
     <div class="row control">
-      <div class="col">
+      <div class="text-center col">
         <app-selectable-label label="INCLINOMETER" lookupValue="zst-inclinometer" (contentClicked)="lookupContent($event)" size="large"></app-selectable-label>
       </div>
     </div>
