@@ -21,8 +21,8 @@ import { ViewManagerService } from 'src/app/services/view-manager.service';
 export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Listener {
 
   public content: string = `<h3>This section covers single-engine performance.</h3>
-  <h2><b>Click on the "Data" and "Performance Factors" text labels to read descriptive text here.</b><h2>
-  <h2><b>Clicking on the arrows marking aerodynamic and control forces around the aircraft will display additional text here.</b></h2>`;
+  <h3>Click on the "Data" and "Performance Factors" text labels to read descriptive text here.<h3>
+  <h3>Clicking on the arrows marking aerodynamic and control forces around the aircraft will display additional text here.</h3>`;
   public vyse: number = 21;
   public roc: number;
   public excessThp: number = 170;

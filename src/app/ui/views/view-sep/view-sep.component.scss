@@ -8,7 +8,26 @@
 }
 
 .footnote {
+  font-size: 10px;
   margin: 0;
   position: absolute;
   bottom: 1em;
+}
+
+
+.data-display {
+  text-align: center;
+}
+
+.dynamic {
+  font-size: 250%;
+  font-weight: normal;
+  display: inline-block;
+  color: var(--color-primary);
+}
+
+.static {
+  font-weight: 200;
+  display: inline-block;
+  margin-left: 10px;
 }

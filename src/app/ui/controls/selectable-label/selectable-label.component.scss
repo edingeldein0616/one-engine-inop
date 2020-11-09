@@ -6,11 +6,11 @@
 // }
 
 @mixin app-selectable-label($app-theme) {
-  $warn: map-get($app-theme, warn);
+  $primary: map-get($app-theme, primary);
 
   h5:hover, h2:hover {
     cursor: pointer;
-    color: mat-color($warn);
+    color: mat-color($primary);
   }
 }
 

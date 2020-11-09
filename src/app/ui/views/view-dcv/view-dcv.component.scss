@@ -8,6 +8,7 @@
 }
 
 .footnote {
+  font-size: 10px;
   margin: 0;
   position: absolute;
   bottom: 1em;
@@ -18,4 +19,27 @@
   padding: 1vw;
   top: 6%;
   left: 17%;
+}
+
+.data-display {
+  text-align: center;
+}
+
+.dynamic {
+  font-size: 250%;
+  font-weight: normal;
+  display: inline-block;
+  color: var(--color-primary);
+}
+
+.static {
+  font-weight: 200;
+  display: inline-block;
+  margin-left: 10px;
+}
+
+app-selectable-label {
+  h5 {
+    font-weight: 200;
+  }
 }
