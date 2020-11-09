@@ -8,6 +8,9 @@ import { MatHeaderRowDef } from '@angular/material';
 
 export abstract class AerodynamicsModel {
 
+  public static undPrimary: number = 0x009A44;
+  public static undWarn: number = 0xFF671F;
+
   public abstract unpackMarkings(gltf: GLTF, colorOne: Color, colorTwo: Color);
 
   protected traverse(object: Object3D, callback: (o: Object3D) => void ) {
