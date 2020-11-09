@@ -1,4 +1,37 @@
-h5:hover, h2:hover {
-  cursor: pointer;
-  color: red;
+@import 'src/styles/styles.scss';
+
+// h5:hover, h2:hover {
+//   cursor: pointer;
+//   color: var(--color-primary);
+// }
+
+@mixin app-selectable-label($app-theme) {
+  $warn: map-get($app-theme, warn);
+
+  h5:hover, h2:hover {
+    cursor: pointer;
+    color: mat-color($warn);
+  }
 }
+
+@include app-selectable-label($app-theme);
+// @import 'src/styles/styles.scss';
+
+// @mixin app-card-button($app-theme) {
+//   $background: map-get($app-theme, background);
+//   $primary: map-get($app-theme, primary);
+
+//   .card {
+//     cursor: pointer;
+//     background-color: mat-color($background, card);
+//   }
+
+//   .card:hover {
+//     background-color: mat-color($primary);
+//     .header {
+//       color: $dark-primary-text;
+//     }
+//   }
+// }
+
+// @include app-card-button($app-theme);

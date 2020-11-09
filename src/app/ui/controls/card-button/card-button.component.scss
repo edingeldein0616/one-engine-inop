@@ -2,7 +2,7 @@
 
 @mixin app-card-button($app-theme) {
   $background: map-get($app-theme, background);
-  $accent: map-get($app-theme, accent);
+  $primary: map-get($app-theme, primary);
 
   .card {
     cursor: pointer;
@@ -10,7 +10,7 @@
   }
 
   .card:hover {
-    background-color: mat-color($accent);
+    background-color: mat-color($primary);
     .header {
       color: $dark-primary-text;
     }

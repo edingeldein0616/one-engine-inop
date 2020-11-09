@@ -48,3 +48,8 @@ div.mat-button-toggle-label-content  {
   text-align: center!important;
   font-size: 0.8vw;
 }
+
+:root {
+  --color-primary: #{mat-color($app-primary)};
+  --color-warn: #{mat-color($app-warn)};
+}
