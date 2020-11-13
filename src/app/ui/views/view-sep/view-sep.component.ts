@@ -154,16 +154,20 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     this.absoluteCeiling = this._aeroModel.absoluteCeiling(this.serviceCeiling);
   }
 
-  public onLabelSelected(lookup: string) {
-    this.content = TextDictionary.getContent(lookup);
-    this.cdr.detectChanges();
+  public lookupContent(lookup: string): string {
+    const content = TextDictionary.getContent(lookup);
+    console.log(content);
+    if(content === undefined || content === '') {
+      return this.content;
+    }
+    return TextDictionary.getContent(lookup);
   }
 
   public receive(topic: string, subject: Subject) {
     switch(topic) {
       case ThreeEngineEvent.INTERSECT: {
         var firstIntersect = subject.data.shift() as Intersection;
-        this.content = TextDictionary.getContent(firstIntersect.object.name);
+        this.content = this.lookupContent(firstIntersect.object.name);
         this.cdr.detectChanges();
       }
     }
@@ -243,6 +247,7 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   }
 
   private _flaps(notch: number): void {
+    this._clearFlaps();
 
     if(this._currentFlapsAction) {
       this._animationDriver.stop(environment.seminole, this._currentFlapsAction);
@@ -261,6 +266,14 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
       this._currentFlapsAction = 'flapsTo40Action';
       this._animationDriver.jumpTo(environment.seminole, this._currentFlapsAction, 100);
     }
+  }
+
+
+  public _clearFlaps(): void {
+    this._animationDriver.stop(environment.seminole, 'flapsTo0Action');
+    this._animationDriver.stop(environment.seminole, 'flapsTo10Action');
+    this._animationDriver.stop(environment.seminole, 'flapsTo25Action');
+    this._animationDriver.stop(environment.seminole, 'flapsTo40Action');
   }
 
   public _centerOfGravity(position: number): void {

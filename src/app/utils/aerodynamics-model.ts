@@ -30,6 +30,7 @@ export class DCVAerodynamicsModel extends AerodynamicsModel {
         this._scales.set(o.name, new Scale(o));
         var color = o.name[0] === 't' ? colorTwo : colorOne;
         (o.material as any).color = color;
+        (o.material as any).emissive = color;
       }
     });
   }
@@ -227,6 +228,7 @@ export class SEPAerodynamicsModel extends AerodynamicsModel {
         this._scales.set(o.name, new Scale(o));
         var color = o.name[0] === 't' ? colorTwo : colorOne;
         (o.material as any).color = color;
+        (o.material as any).emissive = color;
       }
     });
   }

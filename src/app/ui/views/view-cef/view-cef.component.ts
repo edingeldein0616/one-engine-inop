@@ -75,8 +75,12 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     this.engineService.dispose();
   }
 
-  public labelSelected(lookup: string) {
-    this.content = TextDictionary.getContent(lookup);
+  public lookupContent(lookup: string): string {
+    const content = TextDictionary.getContent(lookup);
+    if(content === undefined || content === '') {
+      return this.content;
+    }
+    return TextDictionary.getContent(lookup);
   }
 
   public onClick(something: any) {

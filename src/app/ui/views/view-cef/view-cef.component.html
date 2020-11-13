@@ -13,7 +13,7 @@
 
     <div class="row control">
       <div class="col-4">
-        <app-selectable-label label="INOP. ENGINE" lookupValue="cef-inop-engine" (contentClicked)="labelSelected($event)"></app-selectable-label>
+        <app-selectable-label label="INOP. ENGINE" lookupValue="cef-inop-engine" (contentClicked)="lookupContent($event)"></app-selectable-label>
       </div>
       <div class="col-8">
         <app-selector label="INOP. ENGINE" [useValue]="true" [toggleOptions]="['LEFT','RIGHT']" [initialValue]="0" (valueOutput)="onValueChanged($event)"></app-selector>
@@ -22,7 +22,7 @@
 
     <div class="row control">
       <div class="col-4">
-        <app-selectable-label label="ENGINE CONFIGURATION" lookupValue="cef-engine-configuration" (contentClicked)="labelSelected($event)"></app-selectable-label>
+        <app-selectable-label label="ENGINE CONFIGURATION" lookupValue="cef-engine-configuration" (contentClicked)="lookupContent($event)"></app-selectable-label>
       </div>
       <div class="col-8">
         <app-selector label="ENGINE CONFIG." [useValue]="true" [toggleOptions]="['CONVENTIONAL', 'COUNTER ROT.']" [initialValue]="0" (valueOutput)="onValueChanged($event)"></app-selector>
