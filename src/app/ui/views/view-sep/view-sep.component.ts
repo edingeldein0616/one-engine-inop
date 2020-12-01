@@ -99,6 +99,8 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     this._sam.power.property = 100;
     this._aeroModel.calculateMarkings(this._sam);
 
+    this._flaps(0);
+
     window.addEventListener('mousemove', this._rayMouseMoveListener, false);
     window.addEventListener('click', this._rayClickListener, false);
 
@@ -108,6 +110,7 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   public ngOnDestroy() {
     this._clearOrientation();
     this._clearRudder();
+    this._flaps(0);
 
     while(this._disposables.length > 0) {
       this._disposables.pop().unsubscribe();
@@ -247,7 +250,6 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   }
 
   private _flaps(notch: number): void {
-    this._clearFlaps();
 
     if(this._currentFlapsAction) {
       this._animationDriver.stop(environment.seminole, this._currentFlapsAction);
@@ -266,14 +268,6 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
       this._currentFlapsAction = 'flapsTo40Action';
       this._animationDriver.jumpTo(environment.seminole, this._currentFlapsAction, 100);
     }
-  }
-
-
-  public _clearFlaps(): void {
-    this._animationDriver.stop(environment.seminole, 'flapsTo0Action');
-    this._animationDriver.stop(environment.seminole, 'flapsTo10Action');
-    this._animationDriver.stop(environment.seminole, 'flapsTo25Action');
-    this._animationDriver.stop(environment.seminole, 'flapsTo40Action');
   }
 
   public _centerOfGravity(position: number): void {

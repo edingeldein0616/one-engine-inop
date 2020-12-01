@@ -105,6 +105,8 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     this._aeroModel.calculateMarkings(this._sam);
     this._sam.inopEngine.property = this._sam.inopEngine.property;
 
+    this.flaps(0);
+
     window.addEventListener('mousemove', this._rayMouseMoveListener, false);
     window.addEventListener('click', this._rayClickListener, false);
 
@@ -249,7 +251,6 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   }
 
   public flaps(notch: number): void {
-    this.clearFlaps();
 
     if(this._currentFlapsAction) {
       this._animationDriver.stop(environment.seminole, this._currentFlapsAction);
@@ -268,13 +269,6 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
       this._currentFlapsAction = 'flapsTo40Action';
       this._animationDriver.jumpTo(environment.seminole, this._currentFlapsAction, 100);
     }
-  }
-
-  public clearFlaps(): void {
-    this._animationDriver.stop(environment.seminole, 'flapsTo0Action');
-    this._animationDriver.stop(environment.seminole, 'flapsTo10Action');
-    this._animationDriver.stop(environment.seminole, 'flapsTo25Action');
-    this._animationDriver.stop(environment.seminole, 'flapsTo40Action');
   }
 
   public centerOfGravity(position: number): void {
@@ -321,7 +315,7 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   public ngOnDestroy() {
     this.clearOrientation();
     this.clearRudder();
-    this.clearFlaps();
+    this.flaps(0);
 
     window.removeEventListener('mousemove', this._rayMouseMoveListener, false);
     window.removeEventListener('click', this._rayClickListener, false);
