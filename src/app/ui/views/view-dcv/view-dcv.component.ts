@@ -105,6 +105,8 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     this._aeroModel.calculateMarkings(this._sam);
     this._sam.inopEngine.property = this._sam.inopEngine.property;
 
+    this.flaps(0);
+
     window.addEventListener('mousemove', this._rayMouseMoveListener, false);
     window.addEventListener('click', this._rayClickListener, false);
 
@@ -303,12 +305,17 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   }
 
   public lookupContent(lookup: string): string {
+    const content = TextDictionary.getContent(lookup);
+    if(content === undefined || content === '') {
+      return this.content;
+    }
     return TextDictionary.getContent(lookup);
   }
 
   public ngOnDestroy() {
     this.clearOrientation();
     this.clearRudder();
+    this.flaps(0);
 
     window.removeEventListener('mousemove', this._rayMouseMoveListener, false);
     window.removeEventListener('click', this._rayClickListener, false);

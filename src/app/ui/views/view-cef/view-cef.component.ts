@@ -75,8 +75,12 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     this.engineService.dispose();
   }
 
-  public labelSelected(lookup: string) {
-    this.content = TextDictionary.getContent(lookup);
+  public lookupContent(lookup: string): string {
+    const content = TextDictionary.getContent(lookup);
+    if(content === undefined || content === '') {
+      return this.content;
+    }
+    return TextDictionary.getContent(lookup);
   }
 
   public onClick(something: any) {
@@ -221,7 +225,7 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     if(inopEngine === 'LEFT') {
       direction = engConfig === 'CONVENTIONAL' ? Torque.directionConvRight : Torque.directionCrRight;
       counter = engConfig === 'CONVENTIONAL' ? Torque.counterConvRight : Torque.counterCrRight;
-      roll = Torque.rollRight;
+      roll = engConfig === 'CONVENTIONAL' ? Torque.rollConvRight : Torque.rollCrRight;
     } else {
       direction = Torque.directionLeft;
       counter = Torque.counterLeft;
@@ -371,17 +375,19 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     this.engineService.hideObject(Torque.counterConvRight.obj, true);
     this.engineService.hideObject(Torque.counterCrRight.obj, true);
     this.engineService.hideObject(Torque.counterLeft.obj, true);
-    this.engineService.hideObject(Torque.rollRight.obj, true);
+    this.engineService.hideObject(Torque.rollConvRight.obj, true);
+    this.engineService.hideObject(Torque.rollCrRight.obj, true);
     this.engineService.hideObject(Torque.rollLeft.obj, true);
 
     this._animationDriver.stop(environment.torqueMarkings, Torque.directionConvRight.obj);
     this._animationDriver.stop(environment.torqueMarkings, Torque.directionCrRight.obj);
     this._animationDriver.stop(environment.torqueMarkings, Torque.directionLeft.obj);
-    this._animationDriver.stop(environment.torqueMarkings, Torque.counterConvRight.obj)
-    this._animationDriver.stop(environment.torqueMarkings, Torque.counterCrRight.obj)
-    this._animationDriver.stop(environment.torqueMarkings, Torque.counterLeft.obj)
-    this._animationDriver.stop(environment.torqueMarkings, Torque.rollRight.obj)
-    this._animationDriver.stop(environment.torqueMarkings, Torque.rollLeft.obj)
+    this._animationDriver.stop(environment.torqueMarkings, Torque.counterConvRight.obj);
+    this._animationDriver.stop(environment.torqueMarkings, Torque.counterCrRight.obj);
+    this._animationDriver.stop(environment.torqueMarkings, Torque.counterLeft.obj);
+    this._animationDriver.stop(environment.torqueMarkings, Torque.rollConvRight.obj);
+    this._animationDriver.stop(environment.torqueMarkings, Torque.rollCrRight.obj);
+    this._animationDriver.stop(environment.torqueMarkings, Torque.rollLeft.obj);
   }
 }
 
@@ -436,6 +442,7 @@ class Torque {
   public static readonly counterConvRight = new ActionPair('torque-counter-arrow-conv-right', 'torque-counter-action-conv-right');
   public static readonly counterCrRight = new ActionPair('torque-counter-arrow-cr-right', 'torque-counter-action-cr-right');
   public static readonly counterLeft = new ActionPair('torque-counter-arrow-left', 'torque-counter-action-left');
-  public static readonly rollRight = new ActionPair('torque-roll-arrow-right', 'torque-roll-action-right');
+  public static readonly rollConvRight = new ActionPair('torque-roll-arrow-conv-right', 'torque-roll-action-conv-right');
+  public static readonly rollCrRight = new ActionPair('torque-roll-arrow-cr-right', 'torque-roll-action-cr-right');
   public static readonly rollLeft = new ActionPair('torque-roll-arrow-left', 'torque-roll-action-left');
 }

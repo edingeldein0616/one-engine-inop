@@ -119,7 +119,7 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     this._controls.enablePan = false;
     this._controls.minDistance = 7;
     this._controls.maxDistance = 13;
-    this._controls.maxPolarAngle = Math.PI / 2;
+    // this._controls.maxPolarAngle = Math.PI / 2;
     this._controls.enableDamping = true;
     this._controls.dampingFactor = 0.05;
 
