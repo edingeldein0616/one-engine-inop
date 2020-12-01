@@ -208,6 +208,19 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
       this._raycastController.onMouseMove(mouseEvent);
     });
 
+    canvas.addEventListener('touchstart', () => {
+      this._clickOnRelease = true;
+    });
+    canvas.addEventListener('touchmove', touchEvent => {
+      this._clickOnRelease = false;
+    });
+    canvas.addEventListener('touchend', touchEvent => {
+      if(this._clickOnRelease) {
+        console.log('touch end');
+        this._raycastController.onTouchEnd(touchEvent);
+        this._cast = true;
+      }
+    });
   }
 
   private _skybox_old(): void {

@@ -46,10 +46,27 @@ export class RaycastController {
     // (-1 to +1) for both components
     if(event.target == this._canvas) {
       this._positionUpdated = true;
-      var bounds = this._canvas.getBoundingClientRect();
-      this._mousePosition.x = ((event.clientX - bounds.left) / this._canvas.clientWidth) * 2 - 1;
-      this._mousePosition.y = ((bounds.bottom - event.clientY) / this._canvas.clientHeight) * 2 - 1;
+      this._moveCursor(this._canvas, event.clientX, event.clientY);
+      // var bounds = this._canvas.getBoundingClientRect();
+      // this._mousePosition.x = ((event.clientX - bounds.left) / this._canvas.clientWidth) * 2 - 1;
+      // this._mousePosition.y = ((bounds.bottom - event.clientY) / this._canvas.clientHeight) * 2 - 1;
     }
+  }
+
+  public onTouchEnd(event: TouchEvent) {
+    const touches = event.changedTouches;
+    const firstTouch = touches[0];
+
+    if(event.target == this._canvas) {
+      this._positionUpdated = true;
+      this._moveCursor(this._canvas, firstTouch.pageX, firstTouch.pageY);
+    }
+  }
+
+  private _moveCursor(canvas: HTMLCanvasElement, clientX: number, clientY: number) {
+    var bounds = canvas.getBoundingClientRect();
+    this._mousePosition.x = ((clientX - bounds.left) / canvas.width) * 2 - 1;
+    this._mousePosition.y = ((bounds.bottom - clientY) / canvas.clientHeight) * 2 - 1;
   }
 
 }
