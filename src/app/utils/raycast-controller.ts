@@ -10,8 +10,10 @@ export class RaycastController {
   private _mousePosition: Vector2;
   private _positionUpdated: boolean;
 
-  constructor(... root: Object3D[]) {
-    this._root = root;
+  constructor(...root: Object3D[]) {
+    if(root) {
+      this._root = root;
+    }
     this._raycaster = new Raycaster();
     this._raycaster.far = 50;
     this._mousePosition = new Vector2(0, 0);
@@ -26,8 +28,13 @@ export class RaycastController {
     this._canvas = canvas;
   }
 
+  public attachRoot(...root: Object3D[]) {
+    this._root = root;
+  }
+
   public raycast(): Intersection[] {
     if(!this._positionUpdated) return;
+
     this._raycaster.setFromCamera(this._mousePosition, this._camera);
     var intersects = this._raycaster.intersectObjects(this._root, true);
     this._positionUpdated = false;

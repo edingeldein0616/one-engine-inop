@@ -27,6 +27,7 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
   private _objects: Object3D[] = [];
   private _raycastController: RaycastController;
   private _cast: boolean = false;
+  private _clickOnRelease: boolean = false;
 
   public get camera() { return this._camera};
 
@@ -41,6 +42,8 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     this._canvas = canvas;
     this._camera = camera;
     this._renderSettings = renderSettings;
+
+    this._setupCanvasMouseEvents(this._canvas);
   }
 
   /**
@@ -123,10 +126,17 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     this._controls.enableDamping = true;
     this._controls.dampingFactor = 0.05;
 
+    // setup raycasting
+    const rc = new RaycastController();
+    rc.attachCamera(this._camera);
+    rc.attachCanvas(this._canvas);
+    this._raycastController = rc;
+
     // Subscribe to events.
     EventBus.get()
       .subscribe(ThreeEngineEvent.STATECHECK, this)
-      .subscribe(ThreeEngineEvent.HIDEOBJECT, this);
+      .subscribe(ThreeEngineEvent.HIDEOBJECT, this)
+      .subscribe(ThreeEngineEvent.SENDROOTTORAYCASTER, this);
   }
 
   /**
@@ -152,6 +162,9 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
     this._renderer.dispose();
 
+    // detach raycaster
+    this._raycastController = null;
+
     // Unsubscribe from events
     EventBus.get()
       .unsubscribe('state-check', this);
@@ -166,17 +179,37 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
    * @param topic topic to listen to.
    * @param subject subject of the topic.
    */
-  receive(topic: string, subject: Subject) {
+  public receive(topic: string, subject: Subject) {
     switch (topic) {
       case ThreeEngineEvent.STATECHECK:
         break;
       case ThreeEngineEvent.HIDEOBJECT:
         this.hide(subject.data.name, subject.data.hide);
         break;
-      case ThreeEngineEvent.MOUSECLICK:
-        this._cast = true;
+      case ThreeEngineEvent.SENDROOTTORAYCASTER:
+        console.log(topic);
+        console.log(subject);
+        const root = subject.data as Object3D[];
+        this._raycastController.attachRoot(...root);
         break;
     }
+  }
+
+  private _setupCanvasMouseEvents(canvas: HTMLCanvasElement) {
+    console.log('setup click events');
+    canvas.addEventListener('mousedown', () => {
+      this._clickOnRelease = true;
+    });
+    canvas.addEventListener('mouseup', () => {
+      if(this._clickOnRelease) {
+        this._cast = true;
+      }
+    });
+    canvas.addEventListener('mousemove', mouseEvent => {
+      this._clickOnRelease = false;
+      this._raycastController.onMouseMove(mouseEvent);
+    });
+
   }
 
   private _skybox_old(): void {
@@ -267,18 +300,6 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
       this._camera.aspect = width / height;
       this._camera.updateProjectionMatrix();
     }
-  }
-
-  public attachRaycaster(raycastController: RaycastController) {
-    this._raycastController = raycastController;
-    this._raycastController.attachCamera(this._camera);
-    this._raycastController.attachCanvas(this._canvas);
-    EventBus.get().subscribe(ThreeEngineEvent.MOUSECLICK, this);
-  }
-
-  public detachRaycaster() {
-    this._raycastController = null;
-    EventBus.get().unsubscribe(ThreeEngineEvent.MOUSECLICK, this);
   }
 
   /**
