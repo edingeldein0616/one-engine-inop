@@ -316,7 +316,6 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     this.flaps(0);
 
     EventBus.get().unsubscribe(ThreeEngineEvent.INTERSECT, this);
-    this.engineService.detachRaycaster();
     this.engineService.dispose();
     while(this._disposables.length > 0) {
       this._disposables.pop().unsubscribe();

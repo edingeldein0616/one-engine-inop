@@ -44,6 +44,13 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     this._renderSettings = renderSettings;
 
     this._setupCanvasMouseEvents(this._canvas);
+
+    // setup raycasting
+    console.log('attach raycasting.');
+    const rc = new RaycastController();
+    rc.attachCamera(this._camera);
+    rc.attachCanvas(this._canvas);
+    this._raycastController = rc;
   }
 
   /**
@@ -126,11 +133,7 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     this._controls.enableDamping = true;
     this._controls.dampingFactor = 0.05;
 
-    // setup raycasting
-    const rc = new RaycastController();
-    rc.attachCamera(this._camera);
-    rc.attachCanvas(this._canvas);
-    this._raycastController = rc;
+
 
     // Subscribe to events.
     EventBus.get()
@@ -162,9 +165,6 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
     this._renderer.dispose();
 
-    // detach raycaster
-    this._raycastController = null;
-
     // Unsubscribe from events
     EventBus.get()
       .unsubscribe('state-check', this);
@@ -187,8 +187,6 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
         this.hide(subject.data.name, subject.data.hide);
         break;
       case ThreeEngineEvent.SENDROOTTORAYCASTER:
-        console.log(topic);
-        console.log(subject);
         const root = subject.data as Object3D[];
         this._raycastController.attachRoot(...root);
         break;

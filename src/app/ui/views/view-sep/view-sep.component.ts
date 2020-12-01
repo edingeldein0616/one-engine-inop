@@ -104,6 +104,8 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     this._clearRudder();
     this._flaps(0);
 
+    EventBus.get().unsubscribe(ThreeEngineEvent.INTERSECT, this);
+
     while(this._disposables.length > 0) {
       this._disposables.pop().unsubscribe();
     }
@@ -151,7 +153,6 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
 
   public lookupContent(lookup: string): string {
     const content = TextDictionary.getContent(lookup);
-    console.log(content);
     if(content === undefined || content === '') {
       return this.content;
     }
@@ -161,7 +162,10 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   public receive(topic: string, subject: Subject) {
     switch(topic) {
       case ThreeEngineEvent.INTERSECT: {
+
         var firstIntersect = subject.data.shift() as Intersection;
+        if(!firstIntersect) return;
+
         this.content = this.lookupContent(firstIntersect.object.name);
         this.cdr.detectChanges();
       }

@@ -159,10 +159,6 @@ export class EngineService implements OnDestroy {
     this._threeEngine.attachRaycaster(raycastController);
   }
 
-  public detachRaycaster() {
-    this._threeEngine.detachRaycaster();
-  }
-
   public dispose() {
     this._threeEngine.disposeEngine();
     this._threeEngine = null;
