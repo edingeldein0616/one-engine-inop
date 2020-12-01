@@ -10,7 +10,7 @@ import { RaycastController } from 'src/app/utils/raycast-controller';
 import { EventBus, Listener, Subject } from 'src/app/engine/core/events';
 import { ThreeEngineEvent } from 'src/app/utils/custom-events';
 import { TextDictionary } from 'src/app/utils/text-dictionary';
-import { Intersection } from 'three';
+import { Intersection, Object3D } from 'three';
 import { ViewManagerService } from 'src/app/services/view-manager.service';
 
 @Component({
@@ -23,9 +23,6 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   private _animationDriver: AnimationDriver;
   private _sam: SeminoleActionModel;
   private _aeroModel: DCVAerodynamicsModel;
-  private _raycastController: RaycastController;
-  private _rayClickListener = (event: MouseEvent) => { EventBus.get().publish(ThreeEngineEvent.MOUSECLICK, null)};
-  private _rayMouseMoveListener = (event: MouseEvent) => { this._raycastController.onMouseMove(event); };
 
   public vmca: number;
   public stallSpeed: number;
@@ -47,7 +44,6 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     this._animationDriver = new AnimationDriver();
     this._sam = new SeminoleActionModel();
     this._aeroModel = new DCVAerodynamicsModel();
-    this._raycastController = new RaycastController();
     this.vms.setCurrentView('Directional Control and Vmca');
 
     EventBus.get().subscribe(ThreeEngineEvent.INTERSECT, this);
@@ -58,8 +54,7 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     this.engineService.loadAttachedMarkings(environment.attachedMarkings);
 
     var staticMarkings = this.engineService.loadMarkings(environment.dcvStaticMarkings, this._aeroModel);
-    this._raycastController = new RaycastController(...staticMarkings.scene.children);
-    this.engineService.attachRaycaster(this._raycastController);
+    this._sendRootToRaycaster(...staticMarkings.scene.children);
 
     this._disposables = [
 
@@ -106,9 +101,6 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     this._sam.inopEngine.property = this._sam.inopEngine.property;
 
     this.flaps(0);
-
-    window.addEventListener('mousemove', this._rayMouseMoveListener, false);
-    window.addEventListener('click', this._rayClickListener, false);
 
     this.cdr.detectChanges();
   }
@@ -312,16 +304,18 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     return TextDictionary.getContent(lookup);
   }
 
+  private _sendRootToRaycaster(...root: Object3D[]) {
+    const sub = new Subject();
+    sub.data = root;
+    EventBus.get().publish(ThreeEngineEvent.SENDROOTTORAYCASTER, sub);
+  }
+
   public ngOnDestroy() {
     this.clearOrientation();
     this.clearRudder();
     this.flaps(0);
 
-    window.removeEventListener('mousemove', this._rayMouseMoveListener, false);
-    window.removeEventListener('click', this._rayClickListener, false);
-
     EventBus.get().unsubscribe(ThreeEngineEvent.INTERSECT, this);
-    this.engineService.detachRaycaster();
     this.engineService.dispose();
     while(this._disposables.length > 0) {
       this._disposables.pop().unsubscribe();

@@ -56,10 +56,6 @@ class ThreeEngine extends Engine {
     this._renderingSystem?.attachRaycaster(raycastController);
   }
 
-  public detachRaycaster() {
-    this._renderingSystem?.detachRaycaster();
-  }
-
   public addEntity(entity: Entity) {
     super.addEntity(entity);
     this._registeredEntities.push(entity);

@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment';
 import { SEPAerodynamicsModel } from 'src/app/utils/aerodynamics-model';
 import { SelectionData } from '../../controls/selector/selection-data';
 import { TextDictionary } from 'src/app/utils/text-dictionary';
-import { Intersection } from 'three';
+import { Intersection, Object3D } from 'three';
 import { ViewManagerService } from 'src/app/services/view-manager.service';
 
 @Component({
@@ -32,9 +32,6 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   private _animationDriver: AnimationDriver;
   private _sam: SeminoleActionModel;
   private _aeroModel: SEPAerodynamicsModel;
-  private _raycastController: RaycastController;
-  private _rayClickListener = (event: MouseEvent) => { EventBus.get().publish(ThreeEngineEvent.MOUSECLICK, null); };
-  private _rayMouseMoveListener = (event: MouseEvent) => { this._raycastController.onMouseMove(event); };
 
   private _currentFlapsAction: string;
   private _currentCgAction: string;
@@ -49,7 +46,6 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     this._animationDriver = new AnimationDriver();
     this._sam = new SeminoleActionModel();
     this._aeroModel = new SEPAerodynamicsModel();
-    this._raycastController = new RaycastController();
     this.vms.setCurrentView('Single Engine Performance');
 
     EventBus.get().subscribe(ThreeEngineEvent.INTERSECT, this);
@@ -92,17 +88,13 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     ];
 
     var staticMarkings = this.engineService.loadMarkings(environment.sepStaticMarkings, this._aeroModel);
-    this._raycastController = new RaycastController(...staticMarkings.scene.children);
-    this.engineService.attachRaycaster(this._raycastController);
+    this._sendRootToRaycaster(...staticMarkings.scene.children);
 
     this._sam.inopEngine.property = this._sam.inopEngine.property;
     this._sam.power.property = 100;
     this._aeroModel.calculateMarkings(this._sam);
 
     this._flaps(0);
-
-    window.addEventListener('mousemove', this._rayMouseMoveListener, false);
-    window.addEventListener('click', this._rayClickListener, false);
 
     this.cdr.detectChanges();
   }
@@ -111,6 +103,8 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     this._clearOrientation();
     this._clearRudder();
     this._flaps(0);
+
+    EventBus.get().unsubscribe(ThreeEngineEvent.INTERSECT, this);
 
     while(this._disposables.length > 0) {
       this._disposables.pop().unsubscribe();
@@ -159,7 +153,6 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
 
   public lookupContent(lookup: string): string {
     const content = TextDictionary.getContent(lookup);
-    console.log(content);
     if(content === undefined || content === '') {
       return this.content;
     }
@@ -169,7 +162,10 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   public receive(topic: string, subject: Subject) {
     switch(topic) {
       case ThreeEngineEvent.INTERSECT: {
+
         var firstIntersect = subject.data.shift() as Intersection;
+        if(!firstIntersect) return;
+
         this.content = this.lookupContent(firstIntersect.object.name);
         this.cdr.detectChanges();
       }
@@ -307,6 +303,12 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   private _clearRudder() {
     this._animationDriver.stop(environment.seminole, 'rudderRightAction');
     this._animationDriver.stop(environment.seminole, 'rudderLeftAction');
+  }
+
+  private _sendRootToRaycaster(...root: Object3D[]) {
+    const sub = new Subject();
+    sub.data = root;
+    EventBus.get().publish(ThreeEngineEvent.SENDROOTTORAYCASTER, sub);
   }
 
 }
