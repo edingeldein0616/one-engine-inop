@@ -363,7 +363,7 @@ export class SEPAerodynamicsModel extends AerodynamicsModel {
     return 170 + altitude + prop + bank + airspeed + weight + cog + pflaps + pgear;
   }
 
-  public serviceCeiling(sam: SeminoleActionModel): number {
+  public serviceCeiling(sam: SeminoleActionModel): string {
     const prop = this.prop(sam.propeller.property);
     const bank = this.controlTechnique(sam.controlTechnique.property);
     const weight = this.weight(sam.weight.property);
@@ -372,16 +372,21 @@ export class SEPAerodynamicsModel extends AerodynamicsModel {
     const pgear = this.pGear(sam.gear.property);
 
     const sc = 5700 + (weight * 20) + (prop * 22) + (bank * 21) + (cog * 13) + (pflaps * 21) + (pgear * 21);
-    return sc < 0 ? NaN : sc;
+    return this._toString(sc < 0 ? NaN : sc);
   }
 
-  public absoluteCeiling(serviceCeiling: number): number {
-    const ac = Math.floor(serviceCeiling * 1.102);
-    return ac < 0 ? NaN : ac;
+  public absoluteCeiling(scStr: string): string {
+    const sc = scStr === 'N/A' ? NaN : parseInt(scStr);
+    const ac = Math.floor(sc * 1.102);
+    return this._toString(ac < 0 ? NaN : ac);
   }
 
   public excessTHP(roc: number): number {
     return Math.floor(roc / 8);
+  }
+
+  private _toString(num: number): string {
+    return isNaN(num) ? 'N/A' : num.toString();
   }
 
 }

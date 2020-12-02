@@ -49,6 +49,10 @@ div.mat-button-toggle-label-content  {
   font-size: 0.8vw;
 }
 
+*:focus {
+  outline:none;
+}
+
 :root {
   --color-primary: #{mat-color($app-primary)};
   --color-warn: #{mat-color($app-warn)};

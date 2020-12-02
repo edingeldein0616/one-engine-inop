@@ -26,8 +26,8 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   public vyse: number = 21;
   public roc: number;
   public excessThp: number = 170;
-  public serviceCeiling: number;
-  public absoluteCeiling: number;
+  public serviceCeiling: string;
+  public absoluteCeiling: string;
 
   private _animationDriver: AnimationDriver;
   private _sam: SeminoleActionModel;

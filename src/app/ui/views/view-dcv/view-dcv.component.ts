@@ -6,7 +6,6 @@ import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { Subscription } from 'rxjs';
 import { SeminoleActionModel } from 'src/app/utils/seminole-action-model';
 import { DCVAerodynamicsModel } from 'src/app/utils/aerodynamics-model';
-import { RaycastController } from 'src/app/utils/raycast-controller';
 import { EventBus, Listener, Subject } from 'src/app/engine/core/events';
 import { ThreeEngineEvent } from 'src/app/utils/custom-events';
 import { TextDictionary } from 'src/app/utils/text-dictionary';
