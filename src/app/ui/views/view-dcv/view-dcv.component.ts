@@ -29,8 +29,6 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   public content: string = `<h3>This section covers single-engine directional control and Vmca.</h3>
     <h3>Click on the "Data" and "Control Factors" text labels to read descriptive text here.<h3>
     <h3>Clicking on the arrows marking aerodynamic and control forces around the aircraft will display additional text here.</h3>`;
-
-  private _currentFlapsAction: string;
   private _currentCgAction: string;
 
   private _disposables: Subscription[] = [];
@@ -60,14 +58,12 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
       this._sam.inopEngine.subject.subscribe(inopEngine => {
         const idle = this._sam.power.property < 1;
         this.propellers(this._sam.propeller.property, inopEngine, idle);
-        this.opEngine(inopEngine, idle);
         this.controlTechnique(this._sam.controlTechnique.property, inopEngine, idle);
       }),
 
       this._sam.propeller.subject.subscribe(propeller => {
         const idle = this._sam.power.property < 1;
         this.propellers(propeller, this._sam.inopEngine.property, idle);
-        this.opEngine(this._sam.inopEngine.property, idle);
       }),
 
       this._sam.controlTechnique.subject.subscribe(controlTechnique => {
@@ -86,7 +82,6 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
       this._sam.power.subject.subscribe(power => {
         const idle = power < 1;
         this.propellers(this._sam.propeller.property, this._sam.inopEngine.property, idle);
-        this.opEngine(this._sam.inopEngine.property, idle);
 
         this.controlTechnique(this._sam.controlTechnique.property, this._sam.inopEngine.property, idle);
       }),
@@ -165,101 +160,77 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   }
 
   public propellers(propeller: string, inopEngine: string, idle: boolean) {
-    const inopEngineAction = inopEngine === 'LEFT' ? 'propLAction' : 'propRAction';
-    const otherEngineAction = inopEngine === 'LEFT' ? 'propRAction' : 'propLAction';
-
-    if(propeller === 'WINDMILL') {
-      this._animationDriver.play(environment.seminole, inopEngineAction);
-    } else {
-      this._animationDriver.stop(environment.seminole, inopEngineAction);
-    }
-
-    if(idle) {
-      this._animationDriver.play(environment.seminole, otherEngineAction);
-    } else {
-      this._animationDriver.stop(environment.seminole, otherEngineAction);
-    }
-  }
-
-  public opEngine(inopEngine: string, idle: boolean) {
-    const opEngineAction = inopEngine === 'RIGHT' ? 'propLSpinAction' : 'propRSpinAction';
-    const opEngineSpin = inopEngine === 'RIGHT' ? 'propLeftSpin' : 'propRightSpin';
-    const otherEngineAction = inopEngine === 'RIGHT' ? 'propRSpinAction' : 'propLSpinAction';
-    const otherEngineSpin = inopEngine === 'RIGHT' ? 'propRightSpin' : 'propLeftSpin';
-    this._animationDriver.stop(environment.seminole, otherEngineAction);
+    this._animationDriver.play(environment.seminole, 'prop-left-action');
+    this._animationDriver.play(environment.seminole, 'prop-right-cr-action');
+    const inopPropAction = inopEngine === 'LEFT' ? 'prop-left-action' : 'prop-right-cr-action';
+    const inopPropVis = inopEngine === 'LEFT' ? 'prop-left' : 'prop-right';
+    const inopPropHide = inopEngine === 'LEFT' ? 'prop-right' : 'prop-left';
+    const opPropVis = inopEngine === 'LEFT' ? 'operative-prop-right' : 'operative-prop-left';
+    const opPropHide = inopEngine === 'LEFT' ? 'operative-prop-left' : 'operative-prop-right';
 
     if(!idle) {
-      this._animationDriver.play(environment.seminole, opEngineAction);
-      this.engineService.hideObject(opEngineSpin, false)
-      this.engineService.hideObject(otherEngineSpin, true);
+      this.engineService.hideObject(inopPropVis, false);
+      this.engineService.hideObject(inopPropHide, true);
+      this.engineService.hideObject(opPropVis, false);
+      this.engineService.hideObject(opPropHide, true);
     } else {
-      this.engineService.hideObject(opEngineSpin, true);
-      this.engineService.hideObject(otherEngineSpin, true);
-      this._animationDriver.stop(environment.seminole, opEngineAction);
+      this.engineService.hideObject('operative-prop-right', true);
+      this.engineService.hideObject('operative-prop-left', true);
+      this.engineService.hideObject('prop-right', false);
+      this.engineService.hideObject('prop-left', false);
     }
 
-
+    if(propeller === 'FEATHER') {
+      this._animationDriver.stop(environment.seminole, inopPropAction);
+    }
   }
 
   public rudder(inopEngine: string) {
-    this.clearRudder();
-    const rudderAction = inopEngine === 'LEFT' ? 'rudderRightAction' : 'rudderLeftAction';
-    this._animationDriver.jumpTo(environment.seminole, rudderAction, 100);
+    const jumpToLocation = inopEngine === 'LEFT' ? 0 : 100;
+    this._animationDriver.jumpTo(environment.seminole, 'rudder-action', jumpToLocation);
   }
 
   public clearOrientation() {
 
-    this._animationDriver.stop(environment.seminole, 'yawRightAction');
+    this._animationDriver.stop(environment.seminole, 'seminole-yaw-right-action');
     this._animationDriver.stop(environment.attachedMarkings, 'attached-yaw-action-right');
-    this._animationDriver.stop(environment.seminole, 'yawLeftAction');
+    this._animationDriver.stop(environment.seminole, 'seminole-yaw-left-action');
     this._animationDriver.stop(environment.attachedMarkings, 'attached-yaw-action-left');
-    this._animationDriver.stop(environment.seminole, 'rollRightAction');
+    this._animationDriver.stop(environment.seminole, 'seminole-roll-right-action');
     this._animationDriver.stop(environment.attachedMarkings, 'attached-roll-action-right');
-    this._animationDriver.stop(environment.seminole, 'rollLeftAction');
+    this._animationDriver.stop(environment.seminole, 'seminole-roll-left-action');
     this._animationDriver.stop(environment.attachedMarkings, 'attached-roll-action-left');
   }
 
-  public clearRudder() {
-    this._animationDriver.stop(environment.seminole, 'rudderRightAction');
-    this._animationDriver.stop(environment.seminole, 'rudderLeftAction');
-  }
-
   public wingsLevel(inopEngine: string) {
-    const yawAction = inopEngine === 'LEFT' ? 'yawRightAction' : 'yawLeftAction';
+    const yawAction = inopEngine === 'LEFT' ? 'seminole-yaw-right-action' : 'seminole-yaw-left-action';
     const attachedAction = inopEngine === 'LEFT' ? 'attached-yaw-action-right' : 'attached-yaw-action-left';
     this._animationDriver.jumpTo(environment.seminole, yawAction, 100);
     this._animationDriver.jumpTo(environment.attachedMarkings, attachedAction, 100);
   }
 
   public zeroSideSlip(inopEngine: string) {
-    const rollAction = inopEngine === 'LEFT' ? 'rollRightAction' : 'rollLeftAction';
+    const rollAction = inopEngine === 'LEFT' ? 'seminole-roll-right-action' : 'seminole-roll-left-action';
     const attachedAction = inopEngine === 'LEFT' ? 'attached-roll-action-right' : 'attached-roll-action-left';
     this._animationDriver.jumpTo(environment.seminole, rollAction, 100);
     this._animationDriver.jumpTo(environment.attachedMarkings, attachedAction, 100);
   }
 
   public gear(down: boolean): void {
-    this._animationDriver.jumpTo(environment.seminole, 'GearAction', down ? 0 : 100);
+    this._animationDriver.jumpTo(environment.seminole, 'gear-action', down ? 0 : 100);
   }
 
   public flaps(notch: number): void {
-
-    if(this._currentFlapsAction) {
-      this._animationDriver.stop(environment.seminole, this._currentFlapsAction);
-    }
+    const flapsAction = 'flaps-action';
 
     if(notch == (0/3) * 100) {
-      this._currentFlapsAction = 'flapsTo0Action';
-      this._animationDriver.jumpTo(environment.seminole, this._currentFlapsAction, 0);
+      this._animationDriver.jumpTo(environment.seminole, flapsAction, 0);
     } else if(notch == (1/3) * 100) {
-      this._currentFlapsAction = 'flapsTo10Action';
-      this._animationDriver.jumpTo(environment.seminole, this._currentFlapsAction, 100);
+      this._animationDriver.jumpTo(environment.seminole, flapsAction, 33);
     } else if(notch == (2/3) * 100) {
-      this._currentFlapsAction = 'flapsTo25Action';
-      this._animationDriver.jumpTo(environment.seminole, this._currentFlapsAction, 100);
+      this._animationDriver.jumpTo(environment.seminole, flapsAction, 66);
     } else if(notch == (3/3) * 100) {
-      this._currentFlapsAction = 'flapsTo40Action';
-      this._animationDriver.jumpTo(environment.seminole, this._currentFlapsAction, 100);
+      this._animationDriver.jumpTo(environment.seminole, flapsAction, 100);
     }
   }
 
@@ -312,7 +283,6 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
 
   public ngOnDestroy() {
     this.clearOrientation();
-    this.clearRudder();
     this.flaps(0);
 
     EventBus.get().unsubscribe(ThreeEngineEvent.INTERSECT, this);

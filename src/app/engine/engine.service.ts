@@ -42,12 +42,12 @@ export class EngineService implements OnDestroy {
       EntityFactory.build(SceneEntity));
 
     const dirLight = EntityFactory.build(DirectionalLightEntity);
-    dirLight.getComponent(LightComponent).light.intensity = 2;
+    dirLight.getComponent(LightComponent).light.intensity = 1;
     dirLight.getComponent(RootComponent).obj.translateX(7);
     dirLight.getComponent(RootComponent).obj.translateY(7);
 
     const directLight = EntityFactory.build(HemisphereLightEntity);
-    directLight.getComponent(LightComponent).light.intensity = 5;
+    directLight.getComponent(LightComponent).light.intensity = 1;
 
     this._threeEngine.addEntities(dirLight, directLight);
 
@@ -57,6 +57,7 @@ export class EngineService implements OnDestroy {
   public loadSeminole(assetName: string) {
 
     const gltf = this.loaderService.getAsset(assetName);
+    console.log(gltf);
 
     const me = EntityFactory.build(ModelEntity);
     me.name = environment.seminole;
