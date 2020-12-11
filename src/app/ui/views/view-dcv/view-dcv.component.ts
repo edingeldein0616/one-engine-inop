@@ -208,6 +208,7 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   }
 
   public clearOrientation() {
+
     this._animationDriver.stop(environment.seminole, 'yawRightAction');
     this._animationDriver.stop(environment.attachedMarkings, 'attached-yaw-action-right');
     this._animationDriver.stop(environment.seminole, 'yawLeftAction');

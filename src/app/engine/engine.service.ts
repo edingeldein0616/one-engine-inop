@@ -1,6 +1,6 @@
 import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { ThreeEngine } from './ThreeEngine';
-import { EntityFactory, CameraEntity, SceneEntity, ModelEntity, DirectionalLightEntity, AmbientLightEntity } from './core/entities';
+import { EntityFactory, CameraEntity, SceneEntity, ModelEntity, DirectionalLightEntity, HemisphereLightEntity } from './core/entities';
 import { HideableComponent, LightComponent, RootComponent } from './core/components';
 import { EventBus, Subject } from './core/events';
 import { AnimatorComponent, MaterialAnimationComponent } from './core/components/Animation';
@@ -11,6 +11,7 @@ import { Color, Mesh, MeshStandardMaterial, Vector3 } from 'three';
 import { AerodynamicsModel } from '../utils/aerodynamics-model';
 import { RaycastController } from '../utils/raycast-controller';
 import { ThreeEngineEvent } from '../utils/custom-events';
+import { Direct } from 'protractor/built/driverProviders';
 
 @Injectable({
   providedIn: 'root'
@@ -41,14 +42,14 @@ export class EngineService implements OnDestroy {
       EntityFactory.build(SceneEntity));
 
     const dirLight = EntityFactory.build(DirectionalLightEntity);
-    dirLight.getComponent(LightComponent).light.intensity = 1;
+    dirLight.getComponent(LightComponent).light.intensity = 2;
     dirLight.getComponent(RootComponent).obj.translateX(7);
     dirLight.getComponent(RootComponent).obj.translateY(7);
 
-    const ambLight = EntityFactory.build(AmbientLightEntity);
-    ambLight.getComponent(LightComponent).light.intensity = 2;
+    const directLight = EntityFactory.build(HemisphereLightEntity);
+    directLight.getComponent(LightComponent).light.intensity = 5;
 
-    this._threeEngine.addEntities(dirLight, ambLight);
+    this._threeEngine.addEntities(dirLight, directLight);
 
     this._animate();
   }
