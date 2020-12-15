@@ -1,17 +1,20 @@
-import { AnimationDriver } from 'src/app/utils/animation-driver';
 import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { Intersection, Object3D } from 'three';
+
+import { environment } from 'src/environments/environment';
+
 import { EventBus, Listener, Subject } from 'src/app/engine/core/events';
 import { EngineService } from 'src/app/engine/engine.service';
-import { ThreeEngineEvent } from 'src/app/utils/custom-events';
-import { RaycastController } from 'src/app/utils/raycast-controller';
-import { SeminoleActionModel } from 'src/app/utils/seminole-action-model';
-import { environment } from 'src/environments/environment';
-import { SEPAerodynamicsModel } from 'src/app/utils/aerodynamics-model';
-import { SelectionData } from '../../controls/selector/selection-data';
-import { TextDictionary } from 'src/app/utils/text-dictionary';
-import { Intersection, Object3D } from 'three';
+import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { ViewManagerService } from 'src/app/services/view-manager.service';
+
+import { SeminoleActionModel } from 'src/app/utils/seminole-action-model';
+import { SEPAerodynamicsModel } from 'src/app/utils/aerodynamics-model';
+import { TextDictionary } from 'src/app/utils/text-dictionary';
+import { AnimationDriver } from 'src/app/utils/animation-driver';
+import { ThreeEngineEvent } from 'src/app/utils/custom-events';
+import { Actions } from 'src/app/utils/animation-actions';
 
 @Component({
   selector: 'app-view-sep',
@@ -33,7 +36,6 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   private _sam: SeminoleActionModel;
   private _aeroModel: SEPAerodynamicsModel;
 
-  private _currentFlapsAction: string;
   private _currentCgAction: string;
 
   private _disposables: Subscription[] = [];
@@ -59,14 +61,12 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
       this._sam.inopEngine.subject.subscribe(inopEngine => {
         const idle = this._sam.power.property < 1;
         this._propellers(this._sam.propeller.property, inopEngine, idle);
-        this._opEngine(inopEngine, idle);
         this._controlTechnique(this._sam.controlTechnique.property, inopEngine, idle);
       }),
 
       this._sam.propeller.subject.subscribe(propeller => {
         const idle = this._sam.power.property < 1;
         this._propellers(propeller, this._sam.inopEngine.property, idle);
-        this._opEngine(this._sam.inopEngine.property, idle);
       }),
 
       this._sam.controlTechnique.subject.subscribe(controlTechnique => {
@@ -101,7 +101,6 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
 
   public ngOnDestroy() {
     this._clearOrientation();
-    this._clearRudder();
     this._flaps(0);
 
     EventBus.get().unsubscribe(ThreeEngineEvent.INTERSECT, this);
@@ -151,59 +150,29 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     this.absoluteCeiling = this._aeroModel.absoluteCeiling(this.serviceCeiling);
   }
 
-  public lookupContent(lookup: string): string {
-    const content = TextDictionary.getContent(lookup);
-    if(content === undefined || content === '') {
-      return this.content;
-    }
-    return TextDictionary.getContent(lookup);
-  }
-
-  public receive(topic: string, subject: Subject) {
-    switch(topic) {
-      case ThreeEngineEvent.INTERSECT: {
-
-        var firstIntersect = subject.data.shift() as Intersection;
-        if(!firstIntersect) return;
-
-        this.content = this.lookupContent(firstIntersect.object.name);
-        this.cdr.detectChanges();
-      }
-    }
-  }
-
   private _propellers(propeller: string, inopEngine: string, idle: boolean) {
-    const inopEngineAction = inopEngine === 'LEFT' ? 'propLAction' : 'propRAction';
-    const otherEngineAction = inopEngine === 'LEFT' ? 'propRAction' : 'propLAction';
-
-    if(propeller === 'WINDMILL') {
-      this._animationDriver.play(environment.seminole, inopEngineAction);
-    } else {
-      this._animationDriver.stop(environment.seminole, inopEngineAction);
-    }
-
-    if(idle) {
-      this._animationDriver.play(environment.seminole, otherEngineAction);
-    } else {
-      this._animationDriver.stop(environment.seminole, otherEngineAction);
-    }
-  }
-
-  private _opEngine(inopEngine: string, idle: boolean) {
-    const opEngineAction = inopEngine === 'RIGHT' ? 'propLSpinAction' : 'propRSpinAction';
-    const opEngineSpin = inopEngine === 'RIGHT' ? 'propLeftSpin' : 'propRightSpin';
-    const otherEngineAction = inopEngine === 'RIGHT' ? 'propRSpinAction' : 'propLSpinAction';
-    const otherEngineSpin = inopEngine === 'RIGHT' ? 'propRightSpin' : 'propLeftSpin';
-    this._animationDriver.stop(environment.seminole, otherEngineAction);
+    this._animationDriver.play(environment.seminole, 'prop-left-action');
+    this._animationDriver.play(environment.seminole, 'prop-right-cr-action');
+    const inopPropAction = inopEngine === 'LEFT' ? 'prop-left-action' : 'prop-right-cr-action';
+    const inopPropVis = inopEngine === 'LEFT' ? 'prop-left' : 'prop-right';
+    const inopPropHide = inopEngine === 'LEFT' ? 'prop-right' : 'prop-left';
+    const opPropVis = inopEngine === 'LEFT' ? 'operative-prop-right' : 'operative-prop-left';
+    const opPropHide = inopEngine === 'LEFT' ? 'operative-prop-left' : 'operative-prop-right';
 
     if(!idle) {
-      this._animationDriver.play(environment.seminole, opEngineAction);
-      this.engineService.hideObject(opEngineSpin, false)
-      this.engineService.hideObject(otherEngineSpin, true);
+      this.engineService.hideObject(inopPropVis, false);
+      this.engineService.hideObject(inopPropHide, true);
+      this.engineService.hideObject(opPropVis, false);
+      this.engineService.hideObject(opPropHide, true);
     } else {
-      this.engineService.hideObject(opEngineSpin, true);
-      this.engineService.hideObject(otherEngineSpin, true);
-      this._animationDriver.stop(environment.seminole, opEngineAction);
+      this.engineService.hideObject('operative-prop-right', true);
+      this.engineService.hideObject('operative-prop-left', true);
+      this.engineService.hideObject('prop-right', false);
+      this.engineService.hideObject('prop-left', false);
+    }
+
+    if(propeller === 'FEATHER') {
+      this._animationDriver.stop(environment.seminole, inopPropAction);
     }
   }
 
@@ -221,52 +190,43 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   }
 
   private _rudder(inopEngine: string) {
-    this._clearRudder();
-    const rudderAction = inopEngine === 'LEFT' ? 'rudderRightAction' : 'rudderLeftAction';
-    this._animationDriver.jumpTo(environment.seminole, rudderAction, 100);
+    const jumpToLocation = inopEngine === 'LEFT' ? 0 : 100;
+    this._animationDriver.jumpTo(environment.seminole, 'rudder-action', jumpToLocation);
   }
 
   private _wingsLevel(inopEngine: string) {
-    const yawAction = inopEngine === 'LEFT' ? 'yawRightAction' : 'yawLeftAction';
-    const attachedAction = inopEngine === 'LEFT' ? 'attached-yaw-action-right' : 'attached-yaw-action-left';
+    const yawAction = inopEngine === 'LEFT' ? Actions.SeminoleYawRight: Actions.SeminoleYawLeft;
+    const attachedAction = inopEngine === 'LEFT' ? Actions.AttachedYawRight : Actions.AttachedYawLeft;
     this._animationDriver.jumpTo(environment.seminole, yawAction, 100);
     this._animationDriver.jumpTo(environment.attachedMarkings, attachedAction, 100);
   }
 
   private _zeroSideSlip(inopEngine: string) {
-    const rollAction = inopEngine === 'LEFT' ? 'rollRightAction' : 'rollLeftAction';
-    const attachedAction = inopEngine === 'LEFT' ? 'attached-roll-action-right' : 'attached-roll-action-left';
+    const rollAction = inopEngine === 'LEFT' ? Actions.SeminoleRollRight: Actions.SeminoleRollLeft;
+    const attachedAction = inopEngine === 'LEFT' ? Actions.AttachedRollRight: Actions.AttachedRollLeft;
     this._animationDriver.jumpTo(environment.seminole, rollAction, 100);
     this._animationDriver.jumpTo(environment.attachedMarkings, attachedAction, 100);
   }
 
   private _gear(down: boolean): void {
-    this._animationDriver.stop(environment.seminole, 'GearAction');
-    this._animationDriver.jumpTo(environment.seminole, 'GearAction', down ? 0 : 100);
+    this._animationDriver.jumpTo(environment.seminole, 'gear-action', down ? 0 : 100);
   }
 
   private _flaps(notch: number): void {
-
-    if(this._currentFlapsAction) {
-      this._animationDriver.stop(environment.seminole, this._currentFlapsAction);
-    }
+    const flapsAction = 'flaps-action';
 
     if(notch == (0/3) * 100) {
-      this._currentFlapsAction = 'flapsTo0Action';
-      this._animationDriver.jumpTo(environment.seminole, this._currentFlapsAction, 0);
+      this._animationDriver.jumpTo(environment.seminole, flapsAction, 0);
     } else if(notch == (1/3) * 100) {
-      this._currentFlapsAction = 'flapsTo10Action';
-      this._animationDriver.jumpTo(environment.seminole, this._currentFlapsAction, 100);
+      this._animationDriver.jumpTo(environment.seminole, flapsAction, 33);
     } else if(notch == (2/3) * 100) {
-      this._currentFlapsAction = 'flapsTo25Action';
-      this._animationDriver.jumpTo(environment.seminole, this._currentFlapsAction, 100);
+      this._animationDriver.jumpTo(environment.seminole, flapsAction, 66);
     } else if(notch == (3/3) * 100) {
-      this._currentFlapsAction = 'flapsTo40Action';
-      this._animationDriver.jumpTo(environment.seminole, this._currentFlapsAction, 100);
+      this._animationDriver.jumpTo(environment.seminole, flapsAction, 100);
     }
   }
 
-  public _centerOfGravity(position: number): void {
+  private _centerOfGravity(position: number): void {
     if(this._currentCgAction) {
       this._animationDriver.stop(environment.attachedMarkings, this._currentCgAction);
     }
@@ -290,19 +250,35 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   }
 
   private _clearOrientation() {
-    this._animationDriver.stop(environment.seminole, 'yawRightAction');
-    this._animationDriver.stop(environment.attachedMarkings, 'attached-yaw-action-right');
-    this._animationDriver.stop(environment.seminole, 'yawLeftAction');
-    this._animationDriver.stop(environment.attachedMarkings, 'attached-yaw-action-left');
-    this._animationDriver.stop(environment.seminole, 'rollRightAction');
-    this._animationDriver.stop(environment.attachedMarkings, 'attached-roll-action-right');
-    this._animationDriver.stop(environment.seminole, 'rollLeftAction');
-    this._animationDriver.stop(environment.attachedMarkings, 'attached-roll-action-left');
+    this._animationDriver.stop(environment.seminole, Actions.SeminoleYawRight);
+    this._animationDriver.stop(environment.attachedMarkings, Actions.AttachedYawRight);
+    this._animationDriver.stop(environment.seminole, Actions.SeminoleYawLeft);
+    this._animationDriver.stop(environment.attachedMarkings, Actions.AttachedYawLeft);
+    this._animationDriver.stop(environment.seminole, Actions.SeminoleRollRight);
+    this._animationDriver.stop(environment.attachedMarkings, Actions.AttachedRollRight);
+    this._animationDriver.stop(environment.seminole, Actions.SeminoleRollLeft);
+    this._animationDriver.stop(environment.attachedMarkings, Actions.AttachedRollLeft);
   }
 
-  private _clearRudder() {
-    this._animationDriver.stop(environment.seminole, 'rudderRightAction');
-    this._animationDriver.stop(environment.seminole, 'rudderLeftAction');
+  public lookupContent(lookup: string): string {
+    const content = TextDictionary.getContent(lookup);
+    if(content === undefined || content === '') {
+      return this.content;
+    }
+    return TextDictionary.getContent(lookup);
+  }
+
+  public receive(topic: string, subject: Subject) {
+    switch(topic) {
+      case ThreeEngineEvent.INTERSECT: {
+
+        var firstIntersect = subject.data.shift() as Intersection;
+        if(!firstIntersect) return;
+
+        this.content = this.lookupContent(firstIntersect.object.name);
+        this.cdr.detectChanges();
+      }
+    }
   }
 
   private _sendRootToRaycaster(...root: Object3D[]) {

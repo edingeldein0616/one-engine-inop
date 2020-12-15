@@ -31,6 +31,7 @@ export class DCVAerodynamicsModel extends AerodynamicsModel {
         var color = o.name[0] === 't' ? colorTwo : colorOne;
         (o.material as any).color = color;
         (o.material as any).emissive = color;
+        (o.material as any).emissiveIntensity = .6;
       }
     });
   }
