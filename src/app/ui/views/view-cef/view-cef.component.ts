@@ -289,6 +289,7 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleYawLeft);
     this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleRollRight);
     this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleRollLeft);
+    this._animationDriver.jumpTo(environment.seminole, AnimationActions.SeminoleRollLeft, 0);
   }
 
   private rudder(inopEngine: string) {

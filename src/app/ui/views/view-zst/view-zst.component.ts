@@ -162,7 +162,6 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public clearOrientation() {
     this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleYawRight);
-    //this._animationDriver.stop(environment.zerosideslipMarkings, AnimationActions.ZerosideslipYaw);
     this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleYawLeft);
     this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleRollRight);
     this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleRollLeft);
