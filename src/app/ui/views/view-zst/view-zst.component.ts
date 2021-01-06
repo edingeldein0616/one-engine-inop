@@ -1,15 +1,12 @@
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
-import { ActionPair } from 'src/app/utils/action-pair';
 import { Subscription } from 'rxjs';
+
 import { EngineService } from 'src/app/engine/engine.service';
-import { AnimationDriver } from 'src/app/utils/animation-driver';
-import { SeminoleActionModel } from 'src/app/utils/seminole-action-model';
-import { environment } from 'src/environments/environment';
-import { SelectionData } from '../../controls/selector/selection-data';
-import { Action } from 'rxjs/internal/scheduler/Action';
-import { ZeroSlopeEnding } from 'three';
+import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { ViewManagerService } from 'src/app/services/view-manager.service';
-import { TextDictionary } from 'src/app/utils/text-dictionary';
+
+import { environment } from 'src/environments/environment';
+import { AnimationDriver, ActionPair, TextDictionary, SeminoleActionModel, AnimationActions, ZerosideslipPair } from 'src/app/utils';
 
 @Component({
   selector: 'app-view-zst',
@@ -50,8 +47,7 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
       this._sam.inopEngine.subject.subscribe(inopEngine => {
         var controlTechnique = this._sam.controlTechnique.property;
 
-        this.inopEngine(inopEngine);
-        this.opEngine(inopEngine);
+        this.propellers(inopEngine)
         this.rudder(inopEngine);
         this.controlTechnique(inopEngine, controlTechnique);
         this.markings(inopEngine, controlTechnique);
@@ -98,32 +94,32 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
     this.content = TextDictionary.getContent(lookup);
   }
 
-  private inopEngine(inopEngine: string) {
-    const inopEngineAction = inopEngine === 'LEFT' ? 'propLAction' : 'propRAction';
-    const otherEngineAction = inopEngine === 'LEFT' ? 'propRAction' : 'propLAction';
-    this._animationDriver.play(environment.seminole, inopEngineAction);
-    this._animationDriver.stop(environment.seminole, otherEngineAction);
-  }
+  private propellers(inopEngine: string) {
+    this._animationDriver.play(environment.seminole, AnimationActions.PropRightCr);
+    this._animationDriver.play(environment.seminole, AnimationActions.PropLeft);
 
-  private opEngine(inopEngine: string) {
-    const opEngineAction = inopEngine === 'RIGHT' ? 'propLSpinAction' : 'propRSpinAction';
-    const opEngineSpin = inopEngine === 'RIGHT' ? 'propLeftSpin' : 'propRightSpin';
-    const otherEngineAction = inopEngine === 'RIGHT' ? 'propRSpinAction' : 'propLSpinAction';
-    const otherEngineSpin = inopEngine === 'RIGHT' ? 'propRightSpin' : 'propLeftSpin';
-    this._animationDriver.stop(environment.seminole, otherEngineAction);
-    this._animationDriver.play(environment.seminole, opEngineAction);
-    this.engineService.hideObject(opEngineSpin, false)
-    this.engineService.hideObject(otherEngineSpin, true);
+    const inopPropVis = inopEngine === 'LEFT' ? 'prop-left' : 'prop-right';
+    const inopPropHide = inopEngine === 'LEFT' ? 'prop-right' : 'prop-left';
+    const opPropVis = inopEngine === 'LEFT' ? 'operative-prop-right' : 'operative-prop-left';
+    const opPropHide = inopEngine === 'LEFT' ? 'operative-prop-left' : 'operative-prop-right';
+
+    this.engineService.hideObject(inopPropVis, false);
+    this.engineService.hideObject(inopPropHide, true);
+    this.engineService.hideObject(opPropVis, false);
+    this.engineService.hideObject(opPropHide, true);
+
   }
 
   private controlTechnique(inopEngine: string, controlTechnique: string) {
     this.clearOrientation();
     if(controlTechnique === 'WINGS LEVEL') {
-      const yawAction = inopEngine === 'LEFT' ? 'yawRightAction' : 'yawLeftAction';
-      this._animationDriver.jumpTo(environment.seminole, yawAction, 100);
-      this._animationDriver.jumpTo(environment.zerosideslipMarkings, yawAction, 100);
+      const seminoleYawAction = inopEngine === 'LEFT' ? AnimationActions.SeminoleYawRight : AnimationActions.SeminoleYawLeft;
+      const zerosideslipYaw = inopEngine === 'LEFT' ? 100 : 0;
+      this._animationDriver.jumpTo(environment.seminole, seminoleYawAction, 100);
+      this._animationDriver.jumpTo(environment.zerosideslipMarkings, AnimationActions.ZerosideslipYaw, zerosideslipYaw);
     } else {
-      const rollAction = inopEngine === 'LEFT' ? 'rollRightAction' : 'rollLeftAction';
+      this._animationDriver.jumpTo(environment.zerosideslipMarkings, AnimationActions.ZerosideslipYaw, 50);
+      const rollAction = inopEngine === 'LEFT' ? AnimationActions.SeminoleRollRight : AnimationActions.SeminoleRollLeft;
       this._animationDriver.jumpTo(environment.seminole, rollAction, 100);
     }
   }
@@ -131,19 +127,19 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
   private markings(inopEngine: string, controlTechnique: string) {
     this.hideZerosideslip();
 
-    let direction: ActionPair = Zerosideslip.directionForward;
+    let direction: ActionPair = ZerosideslipPair.directionForward;
     let prop: ActionPair;
     let rudder: ActionPair;
     let slide: ActionPair;
 
     if(inopEngine === 'LEFT') {
-      prop = Zerosideslip.propRight;
-      rudder = Zerosideslip.rudderLeft;
-      slide = Zerosideslip.slideRight;
+      prop = ZerosideslipPair.propRight;
+      rudder = ZerosideslipPair.rudderLeft;
+      slide = ZerosideslipPair.slideRight;
     } else {
-      prop = Zerosideslip.propLeft;
-      rudder = Zerosideslip.rudderRight;
-      slide = Zerosideslip.slideLeft;
+      prop = ZerosideslipPair.propLeft;
+      rudder = ZerosideslipPair.rudderRight;
+      slide = ZerosideslipPair.slideLeft;
     }
 
     this.engineService.hideObject(direction.obj, false);
@@ -160,27 +156,20 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private rudder(inopEngine: string) {
-    this.clearRudder();
-    const rudderAction = inopEngine === 'LEFT' ? 'rudderRightAction' : 'rudderLeftAction';
-    this._animationDriver.jumpTo(environment.seminole, rudderAction, 100);
-  }
-
-  private clearRudder() {
-    this._animationDriver.stop(environment.seminole, 'rudderRightAction');
-    this._animationDriver.stop(environment.seminole, 'rudderLeftAction');
+    const rudderAction = inopEngine === 'LEFT' ? 100 : 0;
+    this._animationDriver.jumpTo(environment.seminole, AnimationActions.Rudder, rudderAction);
   }
 
   public clearOrientation() {
-    this._animationDriver.stop(environment.seminole, 'yawRightAction');
-    this._animationDriver.stop(environment.zerosideslipMarkings, 'yawRightAction');
-    this._animationDriver.stop(environment.seminole, 'yawLeftAction');
-    this._animationDriver.stop(environment.zerosideslipMarkings, 'yawLeftAction');
-    this._animationDriver.stop(environment.seminole, 'rollRightAction');
-    this._animationDriver.stop(environment.seminole, 'rollLeftAction');
+    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleYawRight);
+    //this._animationDriver.stop(environment.zerosideslipMarkings, AnimationActions.ZerosideslipYaw);
+    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleYawLeft);
+    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleRollRight);
+    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleRollLeft);
   }
 
   private gear() {
-    this._animationDriver.jumpTo(environment.seminole, 'GearAction', 100);
+    this._animationDriver.jumpTo(environment.seminole, AnimationActions.Gear, 100);
   }
 
   private setImage(inopEngine: string, controlTechnique: string) {
@@ -192,29 +181,19 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private hideZerosideslip() {
-    this._animationDriver.stop(environment.zerosideslipMarkings, Zerosideslip.directionForward.action);
-    this.engineService.hideObject(Zerosideslip.directionForward.obj, true);
-    this._animationDriver.stop(environment.zerosideslipMarkings, Zerosideslip.propLeft.action);
-    this.engineService.hideObject(Zerosideslip.propLeft.obj, true);
-    this._animationDriver.stop(environment.zerosideslipMarkings, Zerosideslip.propRight.action);
-    this.engineService.hideObject(Zerosideslip.propRight.obj, true);
-    this._animationDriver.stop(environment.zerosideslipMarkings, Zerosideslip.rudderRight.action);
-    this.engineService.hideObject(Zerosideslip.rudderRight.obj, true);
-    this._animationDriver.stop(environment.zerosideslipMarkings, Zerosideslip.rudderLeft.action);
-    this.engineService.hideObject(Zerosideslip.rudderLeft.obj, true);
-    this._animationDriver.stop(environment.zerosideslipMarkings, Zerosideslip.slideRight.action);
-    this.engineService.hideObject(Zerosideslip.slideRight.obj, true);
-    this._animationDriver.stop(environment.zerosideslipMarkings, Zerosideslip.slideLeft.action);
-    this.engineService.hideObject(Zerosideslip.slideLeft.obj, true);
+    this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.directionForward.action);
+    this.engineService.hideObject(ZerosideslipPair.directionForward.obj, true);
+    this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.propLeft.action);
+    this.engineService.hideObject(ZerosideslipPair.propLeft.obj, true);
+    this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.propRight.action);
+    this.engineService.hideObject(ZerosideslipPair.propRight.obj, true);
+    this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.rudderRight.action);
+    this.engineService.hideObject(ZerosideslipPair.rudderRight.obj, true);
+    this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.rudderLeft.action);
+    this.engineService.hideObject(ZerosideslipPair.rudderLeft.obj, true);
+    this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.slideRight.action);
+    this.engineService.hideObject(ZerosideslipPair.slideRight.obj, true);
+    this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.slideLeft.action);
+    this.engineService.hideObject(ZerosideslipPair.slideLeft.obj, true);
   }
-}
-
-class Zerosideslip {
-  public static readonly directionForward = new ActionPair('zerosideslip-direction-arrow-forward', 'zerosideslip-direction-action-forward');
-  public static readonly propLeft = new ActionPair('zerosideslip-prop-arrow-left', 'zerosideslip-prop-action-left');
-  public static readonly propRight = new ActionPair('zerosideslip-prop-arrow-right', 'zerosideslip-prop-action-right');
-  public static readonly rudderRight = new ActionPair('zerosideslip-rudder-arrow-right', 'zerosideslip-rudder-action-right');
-  public static readonly rudderLeft = new ActionPair('zerosideslip-rudder-arrow-left', 'zerosideslip-rudder-action-left');
-  public static readonly slideRight = new ActionPair('zerosideslip-slide-arrow-right', 'zerosideslip-slide-action-right');
-  public static readonly slideLeft = new ActionPair('zerosideslip-slide-arrow-left', 'zerosideslip-slide-action-left');
 }

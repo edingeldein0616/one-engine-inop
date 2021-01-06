@@ -1,17 +1,16 @@
 import { Injectable, NgZone, OnDestroy } from '@angular/core';
-import { ThreeEngine } from './ThreeEngine';
-import { EntityFactory, CameraEntity, SceneEntity, ModelEntity, DirectionalLightEntity, HemisphereLightEntity } from './core/entities';
-import { HideableComponent, LightComponent, RootComponent } from './core/components';
-import { EventBus, Subject } from './core/events';
-import { AnimatorComponent, MaterialAnimationComponent } from './core/components/Animation';
-import { LoaderService } from '../services/loader.service';
-import { environment } from 'src/environments/environment';
+import { Mesh, MeshStandardMaterial } from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
-import { Color, Mesh, MeshStandardMaterial, Vector3 } from 'three';
-import { AerodynamicsModel } from '../utils/aerodynamics-model';
-import { RaycastController } from '../utils/raycast-controller';
-import { ThreeEngineEvent } from '../utils/custom-events';
-import { Direct } from 'protractor/built/driverProviders';
+
+import { ThreeEngine } from './ThreeEngine';
+import { EventBus, Subject } from './core/events';
+import { HideableComponent, LightComponent, RootComponent } from './core/components';
+import { AnimatorComponent, MaterialAnimationComponent } from './core/components/Animation';
+import { EntityFactory, CameraEntity, SceneEntity, ModelEntity, DirectionalLightEntity, HemisphereLightEntity } from './core/entities';
+
+import { environment } from 'src/environments/environment';
+import { LoaderService } from 'src/app/services/loader.service';
+import { AerodynamicsModel, RaycastController, ThreeEngineEvent, ModelPainter } from 'src/app/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -81,9 +80,11 @@ export class EngineService implements OnDestroy {
   public loadMarkings(assetName: string, aeroModel?: AerodynamicsModel): GLTF {
 
     const gltf = this.loaderService.getAsset(assetName);
+    console.log(gltf);
 
     if(aeroModel) {
-      aeroModel.unpackMarkings(gltf, new Color(AerodynamicsModel.undPrimary), new Color(0xFFFFFF));
+      aeroModel.createScales(gltf);
+      ModelPainter.paintStaticMarkings(gltf);
     }
 
     const me = EntityFactory.build(ModelEntity);
@@ -99,6 +100,8 @@ export class EngineService implements OnDestroy {
   public loadAnimatedMarkings(assetName: string) {
     const gltf = this.loaderService.getAsset(assetName);
 
+    ModelPainter.paintAttachedMarkings(gltf);
+
     const me = EntityFactory.build(ModelEntity);
     me.name = assetName;
     me.getComponent(RootComponent).obj = gltf.scene;
@@ -108,19 +111,12 @@ export class EngineService implements OnDestroy {
   public loadAttachedMarkings(assetName: string): GLTF {
     const gltf = this.loaderService.getAsset(assetName);
 
+    ModelPainter.paintAttachedMarkings(gltf);
+
     const me = EntityFactory.build(ModelEntity);
     me.name = assetName;
     me.getComponent(RootComponent).obj = gltf.scene;
-    const anim = me.getComponent(AnimatorComponent);
-    anim.configureAnimations(gltf);
-    const cgClip = anim.clip('cgAction');
-    if(cgClip) {
-      anim.subClip(cgClip, 'cg0Action', 0, 1);
-      anim.subClip(cgClip, 'cg1Action', 0, 25);
-      anim.subClip(cgClip, 'cg2Action', 25, 50);
-      anim.subClip(cgClip, 'cg3Action', 50, 75);
-      anim.subClip(cgClip, 'cg4Action', 75, 100);
-    }
+    me.getComponent(AnimatorComponent).configureAnimations(gltf);
 
     this._threeEngine.addEntity(me);
     return gltf;

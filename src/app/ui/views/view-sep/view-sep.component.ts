@@ -14,7 +14,7 @@ import { SEPAerodynamicsModel } from 'src/app/utils/aerodynamics-model';
 import { TextDictionary } from 'src/app/utils/text-dictionary';
 import { AnimationDriver } from 'src/app/utils/animation-driver';
 import { ThreeEngineEvent } from 'src/app/utils/custom-events';
-import { Actions } from 'src/app/utils/animation-actions';
+import { AnimationActions } from 'src/app/utils/animation-actions';
 
 @Component({
   selector: 'app-view-sep',
@@ -195,15 +195,15 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   }
 
   private _wingsLevel(inopEngine: string) {
-    const yawAction = inopEngine === 'LEFT' ? Actions.SeminoleYawRight: Actions.SeminoleYawLeft;
-    const attachedAction = inopEngine === 'LEFT' ? Actions.AttachedYawRight : Actions.AttachedYawLeft;
+    const yawAction = inopEngine === 'LEFT' ? AnimationActions.SeminoleYawRight: AnimationActions.SeminoleYawLeft;
+    const attachedAction = inopEngine === 'LEFT' ? AnimationActions.AttachedYawRight : AnimationActions.AttachedYawLeft;
     this._animationDriver.jumpTo(environment.seminole, yawAction, 100);
     this._animationDriver.jumpTo(environment.attachedMarkings, attachedAction, 100);
   }
 
   private _zeroSideSlip(inopEngine: string) {
-    const rollAction = inopEngine === 'LEFT' ? Actions.SeminoleRollRight: Actions.SeminoleRollLeft;
-    const attachedAction = inopEngine === 'LEFT' ? Actions.AttachedRollRight: Actions.AttachedRollLeft;
+    const rollAction = inopEngine === 'LEFT' ? AnimationActions.SeminoleRollRight: AnimationActions.SeminoleRollLeft;
+    const attachedAction = inopEngine === 'LEFT' ? AnimationActions.AttachedRollRight: AnimationActions.AttachedRollLeft;
     this._animationDriver.jumpTo(environment.seminole, rollAction, 100);
     this._animationDriver.jumpTo(environment.attachedMarkings, attachedAction, 100);
   }
@@ -250,14 +250,14 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   }
 
   private _clearOrientation() {
-    this._animationDriver.stop(environment.seminole, Actions.SeminoleYawRight);
-    this._animationDriver.stop(environment.attachedMarkings, Actions.AttachedYawRight);
-    this._animationDriver.stop(environment.seminole, Actions.SeminoleYawLeft);
-    this._animationDriver.stop(environment.attachedMarkings, Actions.AttachedYawLeft);
-    this._animationDriver.stop(environment.seminole, Actions.SeminoleRollRight);
-    this._animationDriver.stop(environment.attachedMarkings, Actions.AttachedRollRight);
-    this._animationDriver.stop(environment.seminole, Actions.SeminoleRollLeft);
-    this._animationDriver.stop(environment.attachedMarkings, Actions.AttachedRollLeft);
+    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleYawRight);
+    this._animationDriver.stop(environment.attachedMarkings, AnimationActions.AttachedYawRight);
+    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleYawLeft);
+    this._animationDriver.stop(environment.attachedMarkings, AnimationActions.AttachedYawLeft);
+    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleRollRight);
+    this._animationDriver.stop(environment.attachedMarkings, AnimationActions.AttachedRollRight);
+    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleRollLeft);
+    this._animationDriver.stop(environment.attachedMarkings, AnimationActions.AttachedRollLeft);
   }
 
   public lookupContent(lookup: string): string {
