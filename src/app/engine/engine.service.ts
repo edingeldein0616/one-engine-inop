@@ -58,6 +58,8 @@ export class EngineService implements OnDestroy {
     const gltf = this.loaderService.getAsset(assetName);
     console.log(gltf);
 
+    ModelPainter.updateTextureEncoding(gltf);
+
     const me = EntityFactory.build(ModelEntity);
     me.name = environment.seminole;
     me.getComponent(RootComponent).obj = gltf.scene;
@@ -84,7 +86,7 @@ export class EngineService implements OnDestroy {
 
     if(aeroModel) {
       aeroModel.createScales(gltf);
-      ModelPainter.paintStaticMarkings(gltf);
+      //ModelPainter.paintStaticMarkings(gltf);
     }
 
     const me = EntityFactory.build(ModelEntity);
@@ -100,7 +102,7 @@ export class EngineService implements OnDestroy {
   public loadAnimatedMarkings(assetName: string) {
     const gltf = this.loaderService.getAsset(assetName);
 
-    ModelPainter.paintAttachedMarkings(gltf);
+    //ModelPainter.paintAttachedMarkings(gltf);
 
     const me = EntityFactory.build(ModelEntity);
     me.name = assetName;
@@ -111,7 +113,7 @@ export class EngineService implements OnDestroy {
   public loadAttachedMarkings(assetName: string): GLTF {
     const gltf = this.loaderService.getAsset(assetName);
 
-    ModelPainter.paintAttachedMarkings(gltf);
+    //ModelPainter.paintAttachedMarkings(gltf);
 
     const me = EntityFactory.build(ModelEntity);
     me.name = assetName;

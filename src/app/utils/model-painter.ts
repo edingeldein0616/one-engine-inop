@@ -1,4 +1,4 @@
-import { Mesh, Object3D, Color } from 'three';
+import { Mesh, Object3D, Color, LinearEncoding } from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 
 export class ModelPainter {
@@ -6,13 +6,25 @@ export class ModelPainter {
   public static undPrimary: number = 0x009A44;
   public static undWarn: number = 0xFF671F;
 
+  public static updateTextureEncoding(gltf: GLTF) {
+    const encoding = LinearEncoding;
+    this.traverse(gltf.scene as Object3D, (o: Object3D) => {
+      if(o instanceof Mesh) {
+        if((o.material as any).map) {
+          (o.material as any).map.encoding = encoding;
+          (o.material as any).needsUpdate = true;
+        }
+      }
+    });
+  }
+
   public static paintStaticMarkings(gltf: GLTF) {
     this.traverse(gltf.scene as Object3D, (o: Object3D) => {
       if(o instanceof Mesh) {
         var color = o.name[0] === 't' ? new Color(0xFFFFFF) : new Color(this.undPrimary);
         (o.material as any).color = color;
         (o.material as any).emissive = color;
-        (o.material as any).emissiveIntensity = .6;
+        (o.material as any).emissiveIntensity = 0;
       }
     });
   }
