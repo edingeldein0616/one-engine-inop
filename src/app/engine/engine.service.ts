@@ -1,5 +1,5 @@
 import { Injectable, NgZone, OnDestroy } from '@angular/core';
-import { Mesh, MeshStandardMaterial } from 'three';
+import { Color, Mesh, MeshStandardMaterial } from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 
 import { ThreeEngine } from './ThreeEngine';
@@ -41,14 +41,14 @@ export class EngineService implements OnDestroy {
       EntityFactory.build(SceneEntity));
 
     const dirLight = EntityFactory.build(DirectionalLightEntity);
-    dirLight.getComponent(LightComponent).light.intensity = 1;
-    dirLight.getComponent(RootComponent).obj.translateX(7);
-    dirLight.getComponent(RootComponent).obj.translateY(7);
+    dirLight.getComponent(LightComponent).light.color = new Color(0xFFFFFF);
+    dirLight.getComponent(LightComponent).light.intensity = 3;
+    dirLight.getComponent(LightComponent).obj.position.set(0.5, 0, 0.866) // ~60 degrees
 
-    const directLight = EntityFactory.build(HemisphereLightEntity);
-    directLight.getComponent(LightComponent).light.intensity = 1;
+    const hemiLight = EntityFactory.build(HemisphereLightEntity);
+    hemiLight.getComponent(LightComponent).light.intensity = 1;
 
-    this._threeEngine.addEntities(dirLight, directLight);
+    this._threeEngine.addEntities(dirLight, hemiLight);
 
     this._animate();
   }
