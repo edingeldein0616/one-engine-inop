@@ -18,6 +18,7 @@ export class AnimationActions {
 
   public static Rudder = 'rudder-action';
   public static Gear = 'gear-action';
+  public static Flaps = 'flaps-action';
 }
 
 export class ActionPair {

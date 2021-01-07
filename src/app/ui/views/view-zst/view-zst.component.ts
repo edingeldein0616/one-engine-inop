@@ -6,7 +6,7 @@ import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { ViewManagerService } from 'src/app/services/view-manager.service';
 
 import { environment } from 'src/environments/environment';
-import { AnimationDriver, ActionPair, TextDictionary, SeminoleActionModel, AnimationActions, ZerosideslipPair } from 'src/app/utils';
+import { AnimationDriver, ActionPair, TextDictionary, SeminoleActionModel, AnimationActions, ZerosideslipPair, Parts } from 'src/app/utils';
 
 @Component({
   selector: 'app-view-zst',
@@ -70,6 +70,7 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this._animationDriver.play(environment.windplane, 'windplane-action');
     this.gear();
+    this.flapsToZero();
 
     this._loading = false;
   }
@@ -98,10 +99,10 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
     this._animationDriver.play(environment.seminole, AnimationActions.PropRightCr);
     this._animationDriver.play(environment.seminole, AnimationActions.PropLeft);
 
-    const inopPropVis = inopEngine === 'LEFT' ? 'prop-left' : 'prop-right';
-    const inopPropHide = inopEngine === 'LEFT' ? 'prop-right' : 'prop-left';
-    const opPropVis = inopEngine === 'LEFT' ? 'operative-prop-right' : 'operative-prop-left';
-    const opPropHide = inopEngine === 'LEFT' ? 'operative-prop-left' : 'operative-prop-right';
+    const inopPropVis = inopEngine === 'LEFT' ? Parts.propLeft : Parts.propRight;
+    const inopPropHide = inopEngine === 'LEFT' ? Parts.propRight : Parts.propLeft;
+    const opPropVis = inopEngine === 'LEFT' ? Parts.operativePropRight : Parts.operativePropLeft;
+    const opPropHide = inopEngine === 'LEFT' ? Parts.operativePropLeft : Parts.operativePropRight;
 
     this.engineService.hideObject(inopPropVis, false);
     this.engineService.hideObject(inopPropHide, true);
@@ -158,6 +159,10 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
   private rudder(inopEngine: string) {
     const rudderAction = inopEngine === 'LEFT' ? 100 : 0;
     this._animationDriver.jumpTo(environment.seminole, AnimationActions.Rudder, rudderAction);
+  }
+
+  private flapsToZero() {
+    this._animationDriver.jumpTo(environment.seminole, AnimationActions.Flaps, 0);
   }
 
   public clearOrientation() {

@@ -68,6 +68,7 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.orientation();
     this.gear();
+    this.flapsToZero();
 
     this._loaded = true;
   }
@@ -259,6 +260,10 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     this.engineService.hideObject(opPropVis, false);
     this.engineService.hideObject(opPropHide, true);
 
+  }
+
+  private flapsToZero() {
+    this._animationDriver.jumpTo(environment.seminole, AnimationActions.Flaps, 0);
   }
 
   private resetProps() {
