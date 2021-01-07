@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
 import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { ViewManagerService } from 'src/app/services/view-manager.service';
 
-import { ActionPair, AnimationActions, SlipstreamPair, AcceleratedPair, TorquePair, PfactorPair } from 'src/app/utils';
+import { ActionPair, AnimationActions, SlipstreamPair, AcceleratedPair, TorquePair, PfactorPair, Parts } from 'src/app/utils';
 
 @Component({
   selector: 'app-view-cef',
@@ -49,7 +49,7 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this._sam.inopEngine.subject.subscribe(inopEngine => {
         this.rudder(inopEngine);
-        this._propellers(inopEngine, this._sam.engineConfig.property);
+        this.propellers(inopEngine, this._sam.engineConfig.property);
         this.opEngine(inopEngine);
 
         this.factors(this._sam.factors.property, inopEngine, this._sam.engineConfig.property);
@@ -57,7 +57,7 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this._sam.engineConfig.subject.subscribe(engConfig => {
         this.factors(this._sam.factors.property, this._sam.inopEngine.property, engConfig);
-        this._propellers(this._sam.inopEngine.property, engConfig);
+        this.propellers(this._sam.inopEngine.property, engConfig);
       }),
 
       this._sam.factors.subject.subscribe(factor => {
@@ -242,17 +242,17 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     this._animationDriver.play(environment.torqueMarkings, roll.action);
   }
 
-  private _propellers(inopEngine: string, engConfig: string) {
-    this._resetProps();
+  private propellers(inopEngine: string, engConfig: string) {
+    this.resetProps();
 
     const rightEngineAction = engConfig === 'CONVENTIONAL' ? AnimationActions.PropRightConv : AnimationActions.PropRightCr;
     this._animationDriver.play(environment.seminole, rightEngineAction);
     this._animationDriver.play(environment.seminole, AnimationActions.PropLeft);
 
-    const inopPropVis = inopEngine === 'LEFT' ? 'prop-left' : 'prop-right';
-    const inopPropHide = inopEngine === 'LEFT' ? 'prop-right' : 'prop-left';
-    const opPropVis = inopEngine === 'LEFT' ? 'operative-prop-right' : 'operative-prop-left';
-    const opPropHide = inopEngine === 'LEFT' ? 'operative-prop-left' : 'operative-prop-right';
+    const inopPropVis = inopEngine === 'LEFT' ? Parts.propLeft : Parts.propRight;
+    const inopPropHide = inopEngine === 'LEFT' ? Parts.propRight : Parts.propLeft;
+    const opPropVis = inopEngine === 'LEFT' ? Parts.operativePropRight : Parts.operativePropLeft;
+    const opPropHide = inopEngine === 'LEFT' ? Parts.operativePropLeft : Parts.operativePropRight;
 
     this.engineService.hideObject(inopPropVis, false);
     this.engineService.hideObject(inopPropHide, true);
@@ -261,7 +261,7 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
-  private _resetProps() {
+  private resetProps() {
     this._animationDriver.stop(environment.seminole, AnimationActions.PropLeft);
     this._animationDriver.stop(environment.seminole, AnimationActions.PropRightConv);
     this._animationDriver.stop(environment.seminole, AnimationActions.PropRightCr);

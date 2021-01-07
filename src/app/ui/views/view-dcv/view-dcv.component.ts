@@ -9,7 +9,7 @@ import { EventBus, Listener, Subject } from 'src/app/engine/core/events';
 import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { ViewManagerService } from 'src/app/services/view-manager.service';
 
-import { AnimationActions, TextDictionary, ThreeEngineEvent, AnimationDriver, SeminoleActionModel, DCVAerodynamicsModel} from 'src/app/utils';
+import { AnimationActions, TextDictionary, ThreeEngineEvent, AnimationDriver, SeminoleActionModel, DCVAerodynamicsModel, Parts} from 'src/app/utils';
 
 @Component({
   selector: 'app-view-dcv',
@@ -171,13 +171,13 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   }
 
   private _propellers(propeller: string, inopEngine: string, idle: boolean) {
-    this._animationDriver.play(environment.seminole, 'prop-left-action');
-    this._animationDriver.play(environment.seminole, 'prop-right-cr-action');
-    const inopPropAction = inopEngine === 'LEFT' ? 'prop-left-action' : 'prop-right-cr-action';
-    const inopPropVis = inopEngine === 'LEFT' ? 'prop-left' : 'prop-right';
-    const inopPropHide = inopEngine === 'LEFT' ? 'prop-right' : 'prop-left';
-    const opPropVis = inopEngine === 'LEFT' ? 'operative-prop-right' : 'operative-prop-left';
-    const opPropHide = inopEngine === 'LEFT' ? 'operative-prop-left' : 'operative-prop-right';
+    this._animationDriver.play(environment.seminole, AnimationActions.PropLeft);
+    this._animationDriver.play(environment.seminole, AnimationActions.PropRightCr);
+    const inopPropAction = inopEngine === 'LEFT' ? AnimationActions.PropLeft : AnimationActions.PropRightCr;
+    const inopPropVis = inopEngine === 'LEFT' ? Parts.propLeft : Parts.propRight;
+    const inopPropHide = inopEngine === 'LEFT' ? Parts.propRight : Parts.propLeft;
+    const opPropVis = inopEngine === 'LEFT' ? Parts.operativePropRight : Parts.operativePropLeft;
+    const opPropHide = inopEngine === 'LEFT' ? Parts.operativePropLeft : Parts.operativePropRight;
 
     if(!idle) {
       this.engineService.hideObject(inopPropVis, false);
@@ -185,10 +185,10 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
       this.engineService.hideObject(opPropVis, false);
       this.engineService.hideObject(opPropHide, true);
     } else {
-      this.engineService.hideObject('operative-prop-right', true);
-      this.engineService.hideObject('operative-prop-left', true);
-      this.engineService.hideObject('prop-right', false);
-      this.engineService.hideObject('prop-left', false);
+      this.engineService.hideObject(Parts.operativePropRight, true);
+      this.engineService.hideObject(Parts.operativePropLeft, true);
+      this.engineService.hideObject(Parts.propRight, false);
+      this.engineService.hideObject(Parts.propLeft, false);
     }
 
     if(propeller === 'FEATHER') {

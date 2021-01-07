@@ -9,10 +9,12 @@ export class ModelPainter {
   public static updateTextureEncoding(gltf: GLTF) {
     const encoding = LinearEncoding;
     this.traverse(gltf.scene as Object3D, (o: Object3D) => {
-      if(o instanceof Mesh) {
-        if((o.material as any).map) {
-          (o.material as any).map.encoding = encoding;
-          (o.material as any).needsUpdate = true;
+      if(!o.name.includes('PS')) {
+        if(o instanceof Mesh) {
+          if((o.material as any).map) {
+            (o.material as any).map.encoding = encoding;
+            (o.material as any).needsUpdate = true;
+          }
         }
       }
     });

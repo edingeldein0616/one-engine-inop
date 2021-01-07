@@ -94,3 +94,11 @@ export class ZerosideslipPair {
   public static readonly slideRight = new ActionPair('zerosideslip-slide-arrow-right', 'zerosideslip-slide-action-right');
   public static readonly slideLeft = new ActionPair('zerosideslip-slide-arrow-left', 'zerosideslip-slide-action-left');
 }
+
+export class Parts {
+  public static readonly operativePropRight = 'PS-operative-prop-right';
+  public static readonly operativePropLeft = 'PS-operative-prop-left';
+  public static readonly propRight = 'prop-right';
+  public static readonly propLeft = 'prop-left';
+
+}
