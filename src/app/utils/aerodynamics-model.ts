@@ -8,10 +8,14 @@ import { MatHeaderRowDef } from '@angular/material';
 
 export abstract class AerodynamicsModel {
 
-  public static undPrimary: number = 0x009A44;
-  public static undWarn: number = 0xFF671F;
-
-  public abstract unpackMarkings(gltf: GLTF, colorOne: Color, colorTwo: Color);
+  protected _scales: Map<string, Scale> = new Map<string, Scale>();
+  public createScales(gltf: GLTF) {
+    this.traverse(gltf.scene as Object3D, (o: Object3D) => {
+      if(o instanceof Mesh) {
+        this._scales.set(o.name, new Scale(o));
+      }
+    });
+  }
 
   protected traverse(object: Object3D, callback: (o: Object3D) => void ) {
     for(let obj of object.children) {
@@ -22,18 +26,6 @@ export abstract class AerodynamicsModel {
 }
 
 export class DCVAerodynamicsModel extends AerodynamicsModel {
-
-  private _scales: Map<string, Scale> = new Map<string, Scale>();
-  public unpackMarkings(gltf: GLTF, colorOne: Color, colorTwo: Color) {
-    this.traverse(gltf.scene as Object3D, (o: Object3D) => {
-      if(o instanceof Mesh) {
-        this._scales.set(o.name, new Scale(o));
-        var color = o.name[0] === 't' ? colorTwo : colorOne;
-        (o.material as any).color = color;
-        (o.material as any).emissive = color;
-      }
-    });
-  }
 
   public moveScale(name: string, increment: number) {
     this._scales.get(name).move(increment);
@@ -220,18 +212,6 @@ export class SEPAerodynamicsModel extends AerodynamicsModel {
 
   public rightThrust: ScaleValue = new ScaleValue('s-thrust-right', (n: string, p: number) => this.setScale(n,p));
   public rightDrag: ScaleValue = new ScaleValue('s-drag-right', (n: string, p: number) => this.setScale(n,p));
-
-  private _scales: Map<string, Scale> = new Map<string, Scale>();
-  public unpackMarkings(gltf: GLTF, colorOne: Color, colorTwo: Color) {
-    this.traverse(gltf.scene as Object3D, (o: Object3D) => {
-      if(o instanceof Mesh) {
-        this._scales.set(o.name, new Scale(o));
-        var color = o.name[0] === 't' ? colorTwo : colorOne;
-        (o.material as any).color = color;
-        (o.material as any).emissive = color;
-      }
-    });
-  }
 
   public moveScale(name: string, increment: number) {
     this._scales.get(name).move(increment);

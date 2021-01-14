@@ -1,13 +1,14 @@
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ActionPair } from 'src/app/utils/action-pair';
 import { EngineService } from 'src/app/engine/engine.service';
 import { AnimationDriver } from 'src/app/utils/animation-driver';
 import { SeminoleActionModel } from 'src/app/utils/seminole-action-model';
 import { TextDictionary } from 'src/app/utils/text-dictionary';
 import { environment } from 'src/environments/environment';
-import { SelectionData } from '../../controls/selector/selection-data';
+import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { ViewManagerService } from 'src/app/services/view-manager.service';
+
+import { ActionPair, AnimationActions, SlipstreamPair, AcceleratedPair, TorquePair, PfactorPair, Parts } from 'src/app/utils';
 
 @Component({
   selector: 'app-view-cef',
@@ -47,9 +48,8 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     this._disposables = [
 
       this._sam.inopEngine.subject.subscribe(inopEngine => {
-        this.clearRudder();
         this.rudder(inopEngine);
-        this.inopEngine(inopEngine);
+        this.propellers(inopEngine, this._sam.engineConfig.property);
         this.opEngine(inopEngine);
 
         this.factors(this._sam.factors.property, inopEngine, this._sam.engineConfig.property);
@@ -57,6 +57,7 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this._sam.engineConfig.subject.subscribe(engConfig => {
         this.factors(this._sam.factors.property, this._sam.inopEngine.property, engConfig);
+        this.propellers(this._sam.inopEngine.property, engConfig);
       }),
 
       this._sam.factors.subject.subscribe(factor => {
@@ -67,6 +68,7 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.orientation();
     this.gear();
+    this.flapsToZero();
 
     this._loaded = true;
   }
@@ -88,6 +90,7 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public onValueChanged(data: SelectionData) {
+    this.orientation();
     switch(data.label) {
       case 'INOP. ENGINE':
         this._sam.inopEngine.property = data.value;
@@ -134,15 +137,15 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     let lift: ActionPair;
     let scale: ActionPair;
     if(inopEngine === 'LEFT') {
-      force = Pfactor.forceRight;
-      direction = engConfig === 'CONVENTIONAL' ? Pfactor.directionConvRight : Pfactor.directionCrRight;
-      lift = engConfig === 'CONVENTIONAL' ? Pfactor.liftConvRight : Pfactor.liftCrRight;
-      scale = engConfig === 'CONVENTIONAL' ? Pfactor.scaleConvRight : Pfactor.scaleCrRight;
+      force = PfactorPair.forceRight;
+      direction = engConfig === 'CONVENTIONAL' ? PfactorPair.directionConvRight : PfactorPair.directionCrRight;
+      lift = engConfig === 'CONVENTIONAL' ? PfactorPair.liftConvRight : PfactorPair.liftCrRight;
+      scale = engConfig === 'CONVENTIONAL' ? PfactorPair.scaleConvRight : PfactorPair.scaleCrRight;
     } else {
-      force = Pfactor.forceLeft;
-      direction = Pfactor.directionLeft;
-      lift = Pfactor.liftLeft;
-      scale = Pfactor.scaleLeft;
+      force = PfactorPair.forceLeft;
+      direction = PfactorPair.directionLeft;
+      lift = PfactorPair.liftLeft;
+      scale = PfactorPair.scaleLeft;
     }
 
     this.engineService.hideObject(direction.obj, false);
@@ -160,15 +163,15 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     let spiral: ActionPair;
     let rudder: ActionPair;
     if(inopEngine === 'LEFT') {
-      force = Slipstream.forceRight;
-      direction = engConfig === 'CONVENTIONAL' ? Slipstream.directionConvRight : Slipstream.directionCrRight;
-      spiral = engConfig === 'CONVENTIONAL' ? Slipstream.spiralConvRight : Slipstream.spiralCrRight;
-      rudder = Slipstream.rudderLeft;
+      force = SlipstreamPair.forceRight;
+      direction = engConfig === 'CONVENTIONAL' ? SlipstreamPair.directionConvRight : SlipstreamPair.directionCrRight;
+      spiral = engConfig === 'CONVENTIONAL' ? SlipstreamPair.spiralConvRight : SlipstreamPair.spiralCrRight;
+      rudder = SlipstreamPair.rudderLeft;
     } else {
-      force = Slipstream.forceLeft;
-      direction = Slipstream.directionLeft;
-      spiral = Slipstream.spiralLeft;
-      rudder = Slipstream.rudderRight;
+      force = SlipstreamPair.forceLeft;
+      direction = SlipstreamPair.directionLeft;
+      spiral = SlipstreamPair.spiralLeft;
+      rudder = SlipstreamPair.rudderRight;
     }
 
     this.engineService.hideObject(direction.obj, false);
@@ -191,17 +194,17 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     let rudder: ActionPair;
     let scale: ActionPair;
     if(inopEngine === 'LEFT') {
-      flow = engConfig === 'CONVENTIONAL' ? Accelerated.flowConvRight : Accelerated.flowCrRight;
-      roll = engConfig === 'CONVENTIONAL' ? Accelerated.rollConvRight : Accelerated.rollCrRight;
-      yaw = engConfig === 'CONVENTIONAL' ? Accelerated.yawConvRight : Accelerated.yawCrRight;
-      rudder = Accelerated.rudderLeft;
-      scale = engConfig === 'CONVENTIONAL' ? Accelerated.scaleConvRight : Accelerated.scaleCrRight;
+      flow = engConfig === 'CONVENTIONAL' ? AcceleratedPair.flowConvRight : AcceleratedPair.flowCrRight;
+      roll = engConfig === 'CONVENTIONAL' ? AcceleratedPair.rollConvRight : AcceleratedPair.rollCrRight;
+      yaw = engConfig === 'CONVENTIONAL' ? AcceleratedPair.yawConvRight : AcceleratedPair.yawCrRight;
+      rudder = AcceleratedPair.rudderLeft;
+      scale = engConfig === 'CONVENTIONAL' ? AcceleratedPair.scaleConvRight : AcceleratedPair.scaleCrRight;
     } else {
-      flow = Accelerated.flowLeft;
-      roll = Accelerated.rollLeft;
-      yaw = Accelerated.yawLeft;
-      rudder = Accelerated.rudderRight;
-      scale = Accelerated.scaleLeft;
+      flow = AcceleratedPair.flowLeft;
+      roll = AcceleratedPair.rollLeft;
+      yaw = AcceleratedPair.yawLeft;
+      rudder = AcceleratedPair.rudderRight;
+      scale = AcceleratedPair.scaleLeft;
     }
 
     this.engineService.hideObject(flow.obj, false);
@@ -223,13 +226,13 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     let counter: ActionPair;
     let roll: ActionPair;
     if(inopEngine === 'LEFT') {
-      direction = engConfig === 'CONVENTIONAL' ? Torque.directionConvRight : Torque.directionCrRight;
-      counter = engConfig === 'CONVENTIONAL' ? Torque.counterConvRight : Torque.counterCrRight;
-      roll = engConfig === 'CONVENTIONAL' ? Torque.rollConvRight : Torque.rollCrRight;
+      direction = engConfig === 'CONVENTIONAL' ? TorquePair.directionConvRight : TorquePair.directionCrRight;
+      counter = engConfig === 'CONVENTIONAL' ? TorquePair.counterConvRight : TorquePair.counterCrRight;
+      roll = engConfig === 'CONVENTIONAL' ? TorquePair.rollConvRight : TorquePair.rollCrRight;
     } else {
-      direction = Torque.directionLeft;
-      counter = Torque.counterLeft;
-      roll = Torque.rollLeft;
+      direction = TorquePair.directionLeft;
+      counter = TorquePair.counterLeft;
+      roll = TorquePair.rollLeft;
     }
 
     this.engineService.hideObject(direction.obj, false);
@@ -240,14 +243,33 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     this._animationDriver.play(environment.torqueMarkings, roll.action);
   }
 
+  private propellers(inopEngine: string, engConfig: string) {
+    this.resetProps();
 
+    const rightEngineAction = engConfig === 'CONVENTIONAL' ? AnimationActions.PropRightConv : AnimationActions.PropRightCr;
+    this._animationDriver.play(environment.seminole, rightEngineAction);
+    this._animationDriver.play(environment.seminole, AnimationActions.PropLeft);
 
-  private inopEngine(inopEngine: string) {
-    const inopEngineAction = inopEngine === 'LEFT' ? 'propLAction' : 'propRAction';
-    const otherEngineAction = inopEngine === 'LEFT' ? 'propRAction' : 'propLAction';
+    const inopPropVis = inopEngine === 'LEFT' ? Parts.propLeft : Parts.propRight;
+    const inopPropHide = inopEngine === 'LEFT' ? Parts.propRight : Parts.propLeft;
+    const opPropVis = inopEngine === 'LEFT' ? Parts.operativePropRight : Parts.operativePropLeft;
+    const opPropHide = inopEngine === 'LEFT' ? Parts.operativePropLeft : Parts.operativePropRight;
 
-    this._animationDriver.play(environment.seminole, inopEngineAction);
-    this._animationDriver.stop(environment.seminole, otherEngineAction);
+    this.engineService.hideObject(inopPropVis, false);
+    this.engineService.hideObject(inopPropHide, true);
+    this.engineService.hideObject(opPropVis, false);
+    this.engineService.hideObject(opPropHide, true);
+
+  }
+
+  private flapsToZero() {
+    this._animationDriver.jumpTo(environment.seminole, AnimationActions.Flaps, 0);
+  }
+
+  private resetProps() {
+    this._animationDriver.stop(environment.seminole, AnimationActions.PropLeft);
+    this._animationDriver.stop(environment.seminole, AnimationActions.PropRightConv);
+    this._animationDriver.stop(environment.seminole, AnimationActions.PropRightCr);
   }
 
   private opEngine(inopEngine: string) {
@@ -264,25 +286,20 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private gear() {
-    this._animationDriver.jumpTo(environment.seminole, 'GearAction', 100);
+    this._animationDriver.jumpTo(environment.seminole, 'gear-action', 100);
   }
 
   private orientation() {
-    this._animationDriver.stop(environment.seminole, 'yawRightAction');
-    this._animationDriver.stop(environment.seminole, 'yawLeftAction');
-    this._animationDriver.stop(environment.seminole, 'rollRightAction');
-    this._animationDriver.stop(environment.seminole, 'rollLeftAction');
-    this._animationDriver.jumpTo(environment.seminole, 'yawRightAction', 0);
+    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleYawRight);
+    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleYawLeft);
+    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleRollRight);
+    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleRollLeft);
+    this._animationDriver.jumpTo(environment.seminole, AnimationActions.SeminoleRollLeft, 0);
   }
 
   private rudder(inopEngine: string) {
-    const rudderAction = inopEngine === 'LEFT' ? 'rudderRightAction' : 'rudderLeftAction';
-    this._animationDriver.jumpTo(environment.seminole, rudderAction, 100);
-  }
-
-  private clearRudder() {
-    this._animationDriver.stop(environment.seminole, 'rudderRightAction');
-    this._animationDriver.stop(environment.seminole, 'rudderLeftAction');
+    const rudderAction = inopEngine === 'LEFT' ? 100 : 0;
+    this._animationDriver.jumpTo(environment.seminole, 'rudder-action', rudderAction);
   }
 
   private hide() {
@@ -293,156 +310,101 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private pfactorHide() {
-    this.engineService.hideObject(Pfactor.directionConvRight.obj, true);
-    this.engineService.hideObject(Pfactor.directionCrRight.obj, true);
-    this.engineService.hideObject(Pfactor.directionLeft.obj, true);
-    this.engineService.hideObject(Pfactor.forceRight.obj, true);
-    this.engineService.hideObject(Pfactor.forceLeft.obj, true);
-    this.engineService.hideObject(Pfactor.liftConvRight.obj, true);
-    this.engineService.hideObject(Pfactor.liftCrRight.obj, true);
-    this.engineService.hideObject(Pfactor.liftLeft.obj, true);
-    this.engineService.hideObject(Pfactor.scaleConvRight.obj, true);
-    this.engineService.hideObject(Pfactor.scaleCrRight.obj, true);
-    this.engineService.hideObject(Pfactor.scaleLeft.obj, true);
+    this.engineService.hideObject(PfactorPair.directionConvRight.obj, true);
+    this.engineService.hideObject(PfactorPair.directionCrRight.obj, true);
+    this.engineService.hideObject(PfactorPair.directionLeft.obj, true);
+    this.engineService.hideObject(PfactorPair.forceRight.obj, true);
+    this.engineService.hideObject(PfactorPair.forceLeft.obj, true);
+    this.engineService.hideObject(PfactorPair.liftConvRight.obj, true);
+    this.engineService.hideObject(PfactorPair.liftCrRight.obj, true);
+    this.engineService.hideObject(PfactorPair.liftLeft.obj, true);
+    this.engineService.hideObject(PfactorPair.scaleConvRight.obj, true);
+    this.engineService.hideObject(PfactorPair.scaleCrRight.obj, true);
+    this.engineService.hideObject(PfactorPair.scaleLeft.obj, true);
 
-    this._animationDriver.stop(environment.pfactorMarkings, Pfactor.directionConvRight.action);
-    this._animationDriver.stop(environment.pfactorMarkings, Pfactor.directionCrRight.action);
-    this._animationDriver.stop(environment.pfactorMarkings, Pfactor.directionLeft.action);
-    this._animationDriver.stop(environment.pfactorMarkings, Pfactor.forceLeft.action);
-    this._animationDriver.stop(environment.pfactorMarkings, Pfactor.forceRight.action);
-    this._animationDriver.stop(environment.pfactorMarkings, Pfactor.liftConvRight.action);
-    this._animationDriver.stop(environment.pfactorMarkings, Pfactor.liftCrRight.action);
-    this._animationDriver.stop(environment.pfactorMarkings, Pfactor.liftLeft.action);
+    this._animationDriver.stop(environment.pfactorMarkings, PfactorPair.directionConvRight.action);
+    this._animationDriver.stop(environment.pfactorMarkings, PfactorPair.directionCrRight.action);
+    this._animationDriver.stop(environment.pfactorMarkings, PfactorPair.directionLeft.action);
+    this._animationDriver.stop(environment.pfactorMarkings, PfactorPair.forceLeft.action);
+    this._animationDriver.stop(environment.pfactorMarkings, PfactorPair.forceRight.action);
+    this._animationDriver.stop(environment.pfactorMarkings, PfactorPair.liftConvRight.action);
+    this._animationDriver.stop(environment.pfactorMarkings, PfactorPair.liftCrRight.action);
+    this._animationDriver.stop(environment.pfactorMarkings, PfactorPair.liftLeft.action);
   }
 
   private slipstreamHide() {
-    this.engineService.hideObject(Slipstream.directionConvRight.obj, true);
-    this.engineService.hideObject(Slipstream.directionCrRight.obj, true);
-    this.engineService.hideObject(Slipstream.directionLeft.obj, true);
-    this.engineService.hideObject(Slipstream.forceRight.obj, true);
-    this.engineService.hideObject(Slipstream.forceLeft.obj, true);
-    this.engineService.hideObject(Slipstream.spiralConvRight.obj, true);
-    this.engineService.hideObject(Slipstream.spiralCrRight.obj, true);
-    this.engineService.hideObject(Slipstream.spiralLeft.obj, true);
-    this.engineService.hideObject(Slipstream.rudderLeft.obj, true);
-    this.engineService.hideObject(Slipstream.rudderRight.obj, true);
+    this.engineService.hideObject(SlipstreamPair.directionConvRight.obj, true);
+    this.engineService.hideObject(SlipstreamPair.directionCrRight.obj, true);
+    this.engineService.hideObject(SlipstreamPair.directionLeft.obj, true);
+    this.engineService.hideObject(SlipstreamPair.forceRight.obj, true);
+    this.engineService.hideObject(SlipstreamPair.forceLeft.obj, true);
+    this.engineService.hideObject(SlipstreamPair.spiralConvRight.obj, true);
+    this.engineService.hideObject(SlipstreamPair.spiralCrRight.obj, true);
+    this.engineService.hideObject(SlipstreamPair.spiralLeft.obj, true);
+    this.engineService.hideObject(SlipstreamPair.rudderLeft.obj, true);
+    this.engineService.hideObject(SlipstreamPair.rudderRight.obj, true);
 
-    this._animationDriver.stop(environment.slipstreamMarkings, Slipstream.directionConvRight.action);
-    this._animationDriver.stop(environment.slipstreamMarkings, Slipstream.directionCrRight.action);
-    this._animationDriver.stop(environment.slipstreamMarkings, Slipstream.directionLeft.action);
-    this._animationDriver.stop(environment.slipstreamMarkings, Slipstream.forceRight.action);
-    this._animationDriver.stop(environment.slipstreamMarkings, Slipstream.forceLeft.action);
-    this._animationDriver.stop(environment.slipstreamMarkings, Slipstream.spiralConvRight.action);
-    this._animationDriver.stop(environment.slipstreamMarkings, Slipstream.spiralCrRight.action);
-    this._animationDriver.stop(environment.slipstreamMarkings, Slipstream.spiralLeft.action);
-    this._animationDriver.stop(environment.slipstreamMarkings, Slipstream.rudderLeft.action);
-    this._animationDriver.stop(environment.slipstreamMarkings, Slipstream.rudderRight.action);
+    this._animationDriver.stop(environment.slipstreamMarkings, SlipstreamPair.directionConvRight.action);
+    this._animationDriver.stop(environment.slipstreamMarkings, SlipstreamPair.directionCrRight.action);
+    this._animationDriver.stop(environment.slipstreamMarkings, SlipstreamPair.directionLeft.action);
+    this._animationDriver.stop(environment.slipstreamMarkings, SlipstreamPair.forceRight.action);
+    this._animationDriver.stop(environment.slipstreamMarkings, SlipstreamPair.forceLeft.action);
+    this._animationDriver.stop(environment.slipstreamMarkings, SlipstreamPair.spiralConvRight.action);
+    this._animationDriver.stop(environment.slipstreamMarkings, SlipstreamPair.spiralCrRight.action);
+    this._animationDriver.stop(environment.slipstreamMarkings, SlipstreamPair.spiralLeft.action);
+    this._animationDriver.stop(environment.slipstreamMarkings, SlipstreamPair.rudderLeft.action);
+    this._animationDriver.stop(environment.slipstreamMarkings, SlipstreamPair.rudderRight.action);
   }
 
   private acceleratedHide() {
-    this.engineService.hideObject(Accelerated.flowConvRight.obj, true);
-    this.engineService.hideObject(Accelerated.flowCrRight.obj, true);
-    this.engineService.hideObject(Accelerated.flowLeft.obj, true);
-    this.engineService.hideObject(Accelerated.rollConvRight.obj, true);
-    this.engineService.hideObject(Accelerated.rollCrRight.obj, true);
-    this.engineService.hideObject(Accelerated.rollLeft.obj, true);
-    this.engineService.hideObject(Accelerated.yawConvRight.obj, true);
-    this.engineService.hideObject(Accelerated.yawCrRight.obj, true);
-    this.engineService.hideObject(Accelerated.yawLeft.obj, true);
-    this.engineService.hideObject(Accelerated.rudderLeft.obj, true);
-    this.engineService.hideObject(Accelerated.rudderRight.obj, true);
-    this.engineService.hideObject(Accelerated.scaleConvRight.obj, true);
-    this.engineService.hideObject(Accelerated.scaleCrRight.obj, true);
-    this.engineService.hideObject(Accelerated.scaleLeft.obj, true);
+    this.engineService.hideObject(AcceleratedPair.flowConvRight.obj, true);
+    this.engineService.hideObject(AcceleratedPair.flowCrRight.obj, true);
+    this.engineService.hideObject(AcceleratedPair.flowLeft.obj, true);
+    this.engineService.hideObject(AcceleratedPair.rollConvRight.obj, true);
+    this.engineService.hideObject(AcceleratedPair.rollCrRight.obj, true);
+    this.engineService.hideObject(AcceleratedPair.rollLeft.obj, true);
+    this.engineService.hideObject(AcceleratedPair.yawConvRight.obj, true);
+    this.engineService.hideObject(AcceleratedPair.yawCrRight.obj, true);
+    this.engineService.hideObject(AcceleratedPair.yawLeft.obj, true);
+    this.engineService.hideObject(AcceleratedPair.rudderLeft.obj, true);
+    this.engineService.hideObject(AcceleratedPair.rudderRight.obj, true);
+    this.engineService.hideObject(AcceleratedPair.scaleConvRight.obj, true);
+    this.engineService.hideObject(AcceleratedPair.scaleCrRight.obj, true);
+    this.engineService.hideObject(AcceleratedPair.scaleLeft.obj, true);
 
-    this._animationDriver.stop(environment.acceleratedMarkings, Accelerated.flowConvRight.action);
-    this._animationDriver.stop(environment.acceleratedMarkings, Accelerated.flowCrRight.action);
-    this._animationDriver.stop(environment.acceleratedMarkings, Accelerated.flowLeft.action);
-    this._animationDriver.stop(environment.acceleratedMarkings, Accelerated.rollConvRight.action);
-    this._animationDriver.stop(environment.acceleratedMarkings, Accelerated.rollCrRight.action);
-    this._animationDriver.stop(environment.acceleratedMarkings, Accelerated.rollLeft.action);
-    this._animationDriver.stop(environment.acceleratedMarkings, Accelerated.yawConvRight.action);
-    this._animationDriver.stop(environment.acceleratedMarkings, Accelerated.yawCrRight.action);
-    this._animationDriver.stop(environment.acceleratedMarkings, Accelerated.yawLeft.action);
-    this._animationDriver.stop(environment.acceleratedMarkings, Accelerated.rudderLeft.action);
-    this._animationDriver.stop(environment.acceleratedMarkings, Accelerated.rudderRight.action);
+    this._animationDriver.stop(environment.acceleratedMarkings, AcceleratedPair.flowConvRight.action);
+    this._animationDriver.stop(environment.acceleratedMarkings, AcceleratedPair.flowCrRight.action);
+    this._animationDriver.stop(environment.acceleratedMarkings, AcceleratedPair.flowLeft.action);
+    this._animationDriver.stop(environment.acceleratedMarkings, AcceleratedPair.rollConvRight.action);
+    this._animationDriver.stop(environment.acceleratedMarkings, AcceleratedPair.rollCrRight.action);
+    this._animationDriver.stop(environment.acceleratedMarkings, AcceleratedPair.rollLeft.action);
+    this._animationDriver.stop(environment.acceleratedMarkings, AcceleratedPair.yawConvRight.action);
+    this._animationDriver.stop(environment.acceleratedMarkings, AcceleratedPair.yawCrRight.action);
+    this._animationDriver.stop(environment.acceleratedMarkings, AcceleratedPair.yawLeft.action);
+    this._animationDriver.stop(environment.acceleratedMarkings, AcceleratedPair.rudderLeft.action);
+    this._animationDriver.stop(environment.acceleratedMarkings, AcceleratedPair.rudderRight.action);
   }
 
   private torqueHide() {
-    this.engineService.hideObject(Torque.directionConvRight.obj, true);
-    this.engineService.hideObject(Torque.directionCrRight.obj, true);
-    this.engineService.hideObject(Torque.directionLeft.obj, true);
-    this.engineService.hideObject(Torque.counterConvRight.obj, true);
-    this.engineService.hideObject(Torque.counterCrRight.obj, true);
-    this.engineService.hideObject(Torque.counterLeft.obj, true);
-    this.engineService.hideObject(Torque.rollConvRight.obj, true);
-    this.engineService.hideObject(Torque.rollCrRight.obj, true);
-    this.engineService.hideObject(Torque.rollLeft.obj, true);
+    this.engineService.hideObject(TorquePair.directionConvRight.obj, true);
+    this.engineService.hideObject(TorquePair.directionCrRight.obj, true);
+    this.engineService.hideObject(TorquePair.directionLeft.obj, true);
+    this.engineService.hideObject(TorquePair.counterConvRight.obj, true);
+    this.engineService.hideObject(TorquePair.counterCrRight.obj, true);
+    this.engineService.hideObject(TorquePair.counterLeft.obj, true);
+    this.engineService.hideObject(TorquePair.rollConvRight.obj, true);
+    this.engineService.hideObject(TorquePair.rollCrRight.obj, true);
+    this.engineService.hideObject(TorquePair.rollLeft.obj, true);
 
-    this._animationDriver.stop(environment.torqueMarkings, Torque.directionConvRight.obj);
-    this._animationDriver.stop(environment.torqueMarkings, Torque.directionCrRight.obj);
-    this._animationDriver.stop(environment.torqueMarkings, Torque.directionLeft.obj);
-    this._animationDriver.stop(environment.torqueMarkings, Torque.counterConvRight.obj);
-    this._animationDriver.stop(environment.torqueMarkings, Torque.counterCrRight.obj);
-    this._animationDriver.stop(environment.torqueMarkings, Torque.counterLeft.obj);
-    this._animationDriver.stop(environment.torqueMarkings, Torque.rollConvRight.obj);
-    this._animationDriver.stop(environment.torqueMarkings, Torque.rollCrRight.obj);
-    this._animationDriver.stop(environment.torqueMarkings, Torque.rollLeft.obj);
+    this._animationDriver.stop(environment.torqueMarkings, TorquePair.directionConvRight.obj);
+    this._animationDriver.stop(environment.torqueMarkings, TorquePair.directionCrRight.obj);
+    this._animationDriver.stop(environment.torqueMarkings, TorquePair.directionLeft.obj);
+    this._animationDriver.stop(environment.torqueMarkings, TorquePair.counterConvRight.obj);
+    this._animationDriver.stop(environment.torqueMarkings, TorquePair.counterCrRight.obj);
+    this._animationDriver.stop(environment.torqueMarkings, TorquePair.counterLeft.obj);
+    this._animationDriver.stop(environment.torqueMarkings, TorquePair.rollConvRight.obj);
+    this._animationDriver.stop(environment.torqueMarkings, TorquePair.rollCrRight.obj);
+    this._animationDriver.stop(environment.torqueMarkings, TorquePair.rollLeft.obj);
   }
 }
 
-class Pfactor {
-  public static readonly directionConvRight = new ActionPair('pfactor-direction-arrow-conv-right', 'pfactor-direction-action-conv-right');
-  public static readonly directionCrRight = new ActionPair('pfactor-direction-arrow-cr-right', 'pfactor-direction-action-cr-right');
-  public static readonly directionLeft = new ActionPair('pfactor-direction-arrow-left', 'pfactor-direction-action-left');
-  public static readonly forceLeft = new ActionPair('pfactor-force-arrow-left', 'pfactor-force-action-left');
-  public static readonly forceRight = new ActionPair('pfactor-force-arrow-right', 'pfactor-force-action-right');
-  public static readonly liftConvRight = new ActionPair('pfactor-lift-arrow-conv-right', 'pfactor-lift-action-conv-right');
-  public static readonly liftCrRight = new ActionPair('pfactor-lift-arrow-cr-right', 'pfactor-lift-action-cr-right');
-  public static readonly liftLeft = new ActionPair('pfactor-lift-arrow-left', 'pfactor-lift-action-left');
-  public static readonly scaleConvRight = new ActionPair('pfactor-scale-conv-right', '');
-  public static readonly scaleCrRight = new ActionPair('pfactor-scale-cr-right', '');
-  public static readonly scaleLeft = new ActionPair('pfactor-scale-left', '');
-}
-
-class Slipstream {
-  public static readonly directionConvRight = new ActionPair('slipstream-direction-arrow-conv-right', 'slipstream-direction-action-conv-right');
-  public static readonly directionCrRight = new ActionPair('slipstream-direction-arrow-cr-right', 'slipstream-direction-action-cr-right');
-  public static readonly directionLeft = new ActionPair('slipstream-direction-arrow-left', 'slipstream-direction-action-left');
-  public static readonly forceLeft = new ActionPair('slipstream-force-arrow-left', 'slipstream-force-action-left');
-  public static readonly forceRight = new ActionPair('slipstream-force-arrow-right', 'slipstream-force-action-right');
-  public static readonly spiralConvRight = new ActionPair('slipstream-spiral-arrow-conv-right', 'slipstream-spiral-conv-right-action');
-  public static readonly spiralCrRight = new ActionPair('slipstream-spiral-arrow-cr-right', 'slipstream-spiral-cr-right-action');
-  public static readonly spiralLeft = new ActionPair('slipstream-spiral-arrow-left', 'slipstream-spiral-left-action');
-  public static readonly rudderLeft = new ActionPair('slipstream-rudder-arrow-left', 'slipstream-rudder-action-left');
-  public static readonly rudderRight = new ActionPair('slipstream-rudder-arrow-right', 'slipstream-rudder-action-right');
-}
-
-class Accelerated {
-  public static readonly flowConvRight = new ActionPair('accelerated-flow-arrow-conv-right', 'accelerated-flow-action-conv-right');
-  public static readonly flowCrRight = new ActionPair('accelerated-flow-arrow-cr-right', 'accelerated-flow-action-cr-right');
-  public static readonly flowLeft = new ActionPair('accelerated-flow-arrow-left', 'accelerated-flow-action-left');
-  public static readonly rollConvRight = new ActionPair('accelerated-roll-arrow-conv-right', 'accelerated-roll-action-conv-right');
-  public static readonly rollCrRight = new ActionPair('accelerated-roll-arrow-cr-right', 'accelerated-roll-action-cr-right');
-  public static readonly rollLeft = new ActionPair('accelerated-roll-arrow-left', 'accelerated-roll-action-left');
-  public static readonly yawConvRight = new ActionPair('accelerated-yaw-arrow-conv-right', 'accelerated-yaw-action-conv-right');
-  public static readonly yawCrRight = new ActionPair('accelerated-yaw-arrow-cr-right', 'accelerated-yaw-action-cr-right');
-  public static readonly yawLeft = new ActionPair('accelerated-yaw-arrow-left', 'accelerated-yaw-action-left');
-  public static readonly rudderLeft = new ActionPair('accelerated-rudder-arrow-left', 'accelerated-rudder-action-left');
-  public static readonly rudderRight = new ActionPair('accelerated-rudder-arrow-right', 'accelerated-rudder-action-right');
-  public static readonly scaleConvRight = new ActionPair('accelerated-scale-conv-right', '');
-  public static readonly scaleCrRight = new ActionPair('accelerated-scale-cr-right', '');
-  public static readonly scaleLeft = new ActionPair('accelerated-scale-left', '');
-}
-
-class Torque {
-  public static readonly directionConvRight = new ActionPair('torque-direction-arrow-conv-right', 'torque-direction-action-conv-right');
-  public static readonly directionCrRight = new ActionPair('torque-direction-arrow-cr-right', 'torque-direction-action-cr-right');
-  public static readonly directionLeft = new ActionPair('torque-direction-arrow-left', 'torque-direction-action-left');
-  public static readonly counterConvRight = new ActionPair('torque-counter-arrow-conv-right', 'torque-counter-action-conv-right');
-  public static readonly counterCrRight = new ActionPair('torque-counter-arrow-cr-right', 'torque-counter-action-cr-right');
-  public static readonly counterLeft = new ActionPair('torque-counter-arrow-left', 'torque-counter-action-left');
-  public static readonly rollConvRight = new ActionPair('torque-roll-arrow-conv-right', 'torque-roll-action-conv-right');
-  public static readonly rollCrRight = new ActionPair('torque-roll-arrow-cr-right', 'torque-roll-action-cr-right');
-  public static readonly rollLeft = new ActionPair('torque-roll-arrow-left', 'torque-roll-action-left');
-}

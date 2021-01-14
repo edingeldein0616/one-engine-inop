@@ -1,6 +1,6 @@
 import { Entity } from '@nova-engine/ecs';
 import { SceneComponent, PerspectiveCameraComponent, LightComponent, RootComponent, HideableComponent } from '../components';
-import { PerspectiveCamera, DirectionalLight, AmbientLight } from 'three';
+import { PerspectiveCamera, DirectionalLight, AmbientLight, HemisphereLight } from 'three';
 import { AnimatorComponent } from '../components/Animation';
 
 class SceneEntity extends Entity {
@@ -41,6 +41,13 @@ class AmbientLightEntity extends Entity {
   }
 }
 
+class HemisphereLightEntity extends Entity {
+  constructor() {
+    super();
+    this.putComponent(LightComponent).light = new HemisphereLight(0xFFFFFF, 0x404040, 1.5);
+  }
+}
+
 class ModelEntity extends Entity {
   public name: string;
   constructor() {
@@ -56,4 +63,4 @@ interface GenericEntity<T extends Entity> {
   new(): T;
 }
 
-export { SceneEntity, CameraEntity, DirectionalLightEntity, AmbientLightEntity, ModelEntity, GenericEntity };
+export { SceneEntity, CameraEntity, DirectionalLightEntity, AmbientLightEntity, ModelEntity, GenericEntity, HemisphereLightEntity };

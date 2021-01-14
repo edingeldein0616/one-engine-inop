@@ -1,16 +1,15 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
-import { EngineService } from 'src/app/engine/engine.service';
-import { environment } from 'src/environments/environment';
-import { AnimationDriver } from 'src/app/utils/animation-driver';
-import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
-import { Subscription } from 'rxjs';
-import { SeminoleActionModel } from 'src/app/utils/seminole-action-model';
-import { DCVAerodynamicsModel } from 'src/app/utils/aerodynamics-model';
-import { EventBus, Listener, Subject } from 'src/app/engine/core/events';
-import { ThreeEngineEvent } from 'src/app/utils/custom-events';
-import { TextDictionary } from 'src/app/utils/text-dictionary';
 import { Intersection, Object3D } from 'three';
+import { Subscription } from 'rxjs';
+
+import { environment } from 'src/environments/environment';
+
+import { EngineService } from 'src/app/engine/engine.service';
+import { EventBus, Listener, Subject } from 'src/app/engine/core/events';
+import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { ViewManagerService } from 'src/app/services/view-manager.service';
+
+import { AnimationActions, TextDictionary, ThreeEngineEvent, AnimationDriver, SeminoleActionModel, DCVAerodynamicsModel, Parts} from 'src/app/utils';
 
 @Component({
   selector: 'app-view-dcv',
@@ -29,8 +28,6 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   public content: string = `<h3>This section covers single-engine directional control and Vmca.</h3>
     <h3>Click on the "Data" and "Control Factors" text labels to read descriptive text here.<h3>
     <h3>Clicking on the arrows marking aerodynamic and control forces around the aircraft will display additional text here.</h3>`;
-
-  private _currentFlapsAction: string;
   private _currentCgAction: string;
 
   private _disposables: Subscription[] = [];
@@ -59,49 +56,58 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
 
       this._sam.inopEngine.subject.subscribe(inopEngine => {
         const idle = this._sam.power.property < 1;
-        this.propellers(this._sam.propeller.property, inopEngine, idle);
-        this.opEngine(inopEngine, idle);
-        this.controlTechnique(this._sam.controlTechnique.property, inopEngine, idle);
+        this._propellers(this._sam.propeller.property, inopEngine, idle);
+        this._controlTechnique(this._sam.controlTechnique.property, inopEngine, idle);
       }),
 
       this._sam.propeller.subject.subscribe(propeller => {
         const idle = this._sam.power.property < 1;
-        this.propellers(propeller, this._sam.inopEngine.property, idle);
-        this.opEngine(this._sam.inopEngine.property, idle);
+        this._propellers(propeller, this._sam.inopEngine.property, idle);
       }),
 
       this._sam.controlTechnique.subject.subscribe(controlTechnique => {
         const idle = this._sam.power.property < 1;
-        this.controlTechnique(controlTechnique, this._sam.inopEngine.property, idle);
+        this._controlTechnique(controlTechnique, this._sam.inopEngine.property, idle);
       }),
 
       this._sam.flaps.subject.subscribe(flaps => {
-        this.flaps(flaps);
+        this._flaps(flaps);
       }),
 
       this._sam.gear.subject.subscribe(gear => {
-        this.gear(gear === 'DOWN');
+        this._gear(gear === 'DOWN');
       }),
 
       this._sam.power.subject.subscribe(power => {
         const idle = power < 1;
-        this.propellers(this._sam.propeller.property, this._sam.inopEngine.property, idle);
-        this.opEngine(this._sam.inopEngine.property, idle);
+        this._propellers(this._sam.propeller.property, this._sam.inopEngine.property, idle);
 
-        this.controlTechnique(this._sam.controlTechnique.property, this._sam.inopEngine.property, idle);
+        this._controlTechnique(this._sam.controlTechnique.property, this._sam.inopEngine.property, idle);
       }),
 
       this._sam.cog.subject.subscribe(cog => {
-        this.centerOfGravity(cog);
+        this._centerOfGravity(cog);
       })
     ];
 
     this._aeroModel.calculateMarkings(this._sam);
     this._sam.inopEngine.property = this._sam.inopEngine.property;
 
-    this.flaps(0);
+    this._flaps(0);
 
     this.cdr.detectChanges();
+  }
+
+  public ngOnDestroy() {
+    this._clearOrientation();
+    this._flaps(0);
+
+    EventBus.get().unsubscribe(ThreeEngineEvent.INTERSECT, this);
+    this.engineService.dispose();
+    while(this._disposables.length > 0) {
+      this._disposables.pop().unsubscribe();
+    }
+    this._disposables = [];
   }
 
   public onValueChanged(data: SelectionData) {
@@ -146,123 +152,99 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   }
 
   public labelSelected(lookup: string) {
-    this.content = this.lookupContent(lookup);
+    this.content = this._lookupContent(lookup);
     this.cdr.detectChanges();
   }
 
-  public controlTechnique(controlTechnique: string, inopEngine: string, idle: boolean) {
-    this.clearOrientation();
+  private _controlTechnique(controlTechnique: string, inopEngine: string, idle: boolean) {
+    this._clearOrientation();
     if(!idle) {
-      this.rudder(inopEngine);
+      this._rudder(inopEngine);
 
       if(controlTechnique === 'WINGS LEVEL') {
-        this.wingsLevel(inopEngine);
+        this._wingsLevel(inopEngine);
       } else {
-        this.zeroSideSlip(inopEngine);
+        this._zeroSideSlip(inopEngine);
       }
     }
 
   }
 
-  public propellers(propeller: string, inopEngine: string, idle: boolean) {
-    const inopEngineAction = inopEngine === 'LEFT' ? 'propLAction' : 'propRAction';
-    const otherEngineAction = inopEngine === 'LEFT' ? 'propRAction' : 'propLAction';
-
-    if(propeller === 'WINDMILL') {
-      this._animationDriver.play(environment.seminole, inopEngineAction);
-    } else {
-      this._animationDriver.stop(environment.seminole, inopEngineAction);
-    }
-
-    if(idle) {
-      this._animationDriver.play(environment.seminole, otherEngineAction);
-    } else {
-      this._animationDriver.stop(environment.seminole, otherEngineAction);
-    }
-  }
-
-  public opEngine(inopEngine: string, idle: boolean) {
-    const opEngineAction = inopEngine === 'RIGHT' ? 'propLSpinAction' : 'propRSpinAction';
-    const opEngineSpin = inopEngine === 'RIGHT' ? 'propLeftSpin' : 'propRightSpin';
-    const otherEngineAction = inopEngine === 'RIGHT' ? 'propRSpinAction' : 'propLSpinAction';
-    const otherEngineSpin = inopEngine === 'RIGHT' ? 'propRightSpin' : 'propLeftSpin';
-    this._animationDriver.stop(environment.seminole, otherEngineAction);
+  private _propellers(propeller: string, inopEngine: string, idle: boolean) {
+    this._animationDriver.play(environment.seminole, AnimationActions.PropLeft);
+    this._animationDriver.play(environment.seminole, AnimationActions.PropRightCr);
+    const inopPropAction = inopEngine === 'LEFT' ? AnimationActions.PropLeft : AnimationActions.PropRightCr;
+    const inopPropVis = inopEngine === 'LEFT' ? Parts.propLeft : Parts.propRight;
+    const inopPropHide = inopEngine === 'LEFT' ? Parts.propRight : Parts.propLeft;
+    const opPropVis = inopEngine === 'LEFT' ? Parts.operativePropRight : Parts.operativePropLeft;
+    const opPropHide = inopEngine === 'LEFT' ? Parts.operativePropLeft : Parts.operativePropRight;
 
     if(!idle) {
-      this._animationDriver.play(environment.seminole, opEngineAction);
-      this.engineService.hideObject(opEngineSpin, false)
-      this.engineService.hideObject(otherEngineSpin, true);
+      this.engineService.hideObject(inopPropVis, false);
+      this.engineService.hideObject(inopPropHide, true);
+      this.engineService.hideObject(opPropVis, false);
+      this.engineService.hideObject(opPropHide, true);
     } else {
-      this.engineService.hideObject(opEngineSpin, true);
-      this.engineService.hideObject(otherEngineSpin, true);
-      this._animationDriver.stop(environment.seminole, opEngineAction);
+      this.engineService.hideObject(Parts.operativePropRight, true);
+      this.engineService.hideObject(Parts.operativePropLeft, true);
+      this.engineService.hideObject(Parts.propRight, false);
+      this.engineService.hideObject(Parts.propLeft, false);
     }
 
-
+    if(propeller === 'FEATHER') {
+      this._animationDriver.stop(environment.seminole, inopPropAction);
+    }
   }
 
-  public rudder(inopEngine: string) {
-    this.clearRudder();
-    const rudderAction = inopEngine === 'LEFT' ? 'rudderRightAction' : 'rudderLeftAction';
-    this._animationDriver.jumpTo(environment.seminole, rudderAction, 100);
+  private _rudder(inopEngine: string) {
+    const jumpToLocation = inopEngine === 'LEFT' ? 0 : 100;
+    this._animationDriver.jumpTo(environment.seminole, 'rudder-action', jumpToLocation);
   }
 
-  public clearOrientation() {
-    this._animationDriver.stop(environment.seminole, 'yawRightAction');
-    this._animationDriver.stop(environment.attachedMarkings, 'attached-yaw-action-right');
-    this._animationDriver.stop(environment.seminole, 'yawLeftAction');
-    this._animationDriver.stop(environment.attachedMarkings, 'attached-yaw-action-left');
-    this._animationDriver.stop(environment.seminole, 'rollRightAction');
-    this._animationDriver.stop(environment.attachedMarkings, 'attached-roll-action-right');
-    this._animationDriver.stop(environment.seminole, 'rollLeftAction');
-    this._animationDriver.stop(environment.attachedMarkings, 'attached-roll-action-left');
+  private _clearOrientation() {
+    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleYawRight);
+    this._animationDriver.stop(environment.attachedMarkings, AnimationActions.AttachedYawRight);
+    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleYawLeft);
+    this._animationDriver.stop(environment.attachedMarkings, AnimationActions.AttachedYawLeft);
+    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleRollRight);
+    this._animationDriver.stop(environment.attachedMarkings, AnimationActions.AttachedRollRight);
+    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleRollLeft);
+    this._animationDriver.stop(environment.attachedMarkings, AnimationActions.AttachedRollLeft);
   }
 
-  public clearRudder() {
-    this._animationDriver.stop(environment.seminole, 'rudderRightAction');
-    this._animationDriver.stop(environment.seminole, 'rudderLeftAction');
-  }
-
-  public wingsLevel(inopEngine: string) {
-    const yawAction = inopEngine === 'LEFT' ? 'yawRightAction' : 'yawLeftAction';
-    const attachedAction = inopEngine === 'LEFT' ? 'attached-yaw-action-right' : 'attached-yaw-action-left';
+  private _wingsLevel(inopEngine: string) {
+    const yawAction = inopEngine === 'LEFT' ? AnimationActions.SeminoleYawRight : AnimationActions.SeminoleYawLeft;
+    const attachedAction = inopEngine === 'LEFT' ? AnimationActions.AttachedYawRight : AnimationActions.AttachedYawLeft;
     this._animationDriver.jumpTo(environment.seminole, yawAction, 100);
     this._animationDriver.jumpTo(environment.attachedMarkings, attachedAction, 100);
   }
 
-  public zeroSideSlip(inopEngine: string) {
-    const rollAction = inopEngine === 'LEFT' ? 'rollRightAction' : 'rollLeftAction';
-    const attachedAction = inopEngine === 'LEFT' ? 'attached-roll-action-right' : 'attached-roll-action-left';
+  private _zeroSideSlip(inopEngine: string) {
+    const rollAction = inopEngine === 'LEFT' ? AnimationActions.SeminoleRollRight : AnimationActions.SeminoleRollLeft;
+    const attachedAction = inopEngine === 'LEFT' ? AnimationActions.AttachedRollRight : AnimationActions.AttachedRollLeft;
     this._animationDriver.jumpTo(environment.seminole, rollAction, 100);
     this._animationDriver.jumpTo(environment.attachedMarkings, attachedAction, 100);
   }
 
-  public gear(down: boolean): void {
-    this._animationDriver.jumpTo(environment.seminole, 'GearAction', down ? 0 : 100);
+  private _gear(down: boolean): void {
+    this._animationDriver.jumpTo(environment.seminole, 'gear-action', down ? 0 : 100);
   }
 
-  public flaps(notch: number): void {
-
-    if(this._currentFlapsAction) {
-      this._animationDriver.stop(environment.seminole, this._currentFlapsAction);
-    }
+  private _flaps(notch: number): void {
+    const flapsAction = 'flaps-action';
 
     if(notch == (0/3) * 100) {
-      this._currentFlapsAction = 'flapsTo0Action';
-      this._animationDriver.jumpTo(environment.seminole, this._currentFlapsAction, 0);
+      this._animationDriver.jumpTo(environment.seminole, flapsAction, 0);
     } else if(notch == (1/3) * 100) {
-      this._currentFlapsAction = 'flapsTo10Action';
-      this._animationDriver.jumpTo(environment.seminole, this._currentFlapsAction, 100);
+      this._animationDriver.jumpTo(environment.seminole, flapsAction, 33);
     } else if(notch == (2/3) * 100) {
-      this._currentFlapsAction = 'flapsTo25Action';
-      this._animationDriver.jumpTo(environment.seminole, this._currentFlapsAction, 100);
+      this._animationDriver.jumpTo(environment.seminole, flapsAction, 66);
     } else if(notch == (3/3) * 100) {
-      this._currentFlapsAction = 'flapsTo40Action';
-      this._animationDriver.jumpTo(environment.seminole, this._currentFlapsAction, 100);
+      this._animationDriver.jumpTo(environment.seminole, flapsAction, 100);
     }
   }
 
-  public centerOfGravity(position: number): void {
+  private _centerOfGravity(position: number): void {
     if(this._currentCgAction) {
       this._animationDriver.stop(environment.attachedMarkings, this._currentCgAction);
     }
@@ -289,13 +271,13 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     switch(topic) {
       case ThreeEngineEvent.INTERSECT: {
         var firstIntersect = subject.data.shift() as Intersection;
-        this.content = this.lookupContent(firstIntersect.object.name);
+        this.content = this._lookupContent(firstIntersect.object.name);
         this.cdr.detectChanges();
       }
     }
   }
 
-  public lookupContent(lookup: string): string {
+  private _lookupContent(lookup: string): string {
     const content = TextDictionary.getContent(lookup);
     if(content === undefined || content === '') {
       return this.content;
@@ -308,18 +290,5 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     sub.data = root;
     EventBus.get().publish(ThreeEngineEvent.SENDROOTTORAYCASTER, sub);
   }
-
-  public ngOnDestroy() {
-    this.clearOrientation();
-    this.clearRudder();
-    this.flaps(0);
-
-    EventBus.get().unsubscribe(ThreeEngineEvent.INTERSECT, this);
-    this.engineService.dispose();
-    while(this._disposables.length > 0) {
-      this._disposables.pop().unsubscribe();
-    }
-    this._disposables = [];
-  }
-
 }
+

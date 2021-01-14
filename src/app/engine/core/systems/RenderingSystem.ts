@@ -1,8 +1,8 @@
 import { System, Engine, Entity, Family, FamilyBuilder, EngineEntityListener } from '@nova-engine/ecs';
 import { WebGLRenderer, PerspectiveCamera, Object3D, DataTexture, PMREMGenerator, sRGBEncoding, Mesh, SphereBufferGeometry, MeshBasicMaterial, Scene, Camera } from 'three';
 import { Sky } from 'three/examples/jsm/objects/Sky';
-import { SceneComponent, RootComponent, HideableComponent } from '../components';
-import { SceneEntity } from '../entities'
+import { SceneComponent, RootComponent, HideableComponent, LightComponent } from '../components';
+import { DirectionalLightEntity, SceneEntity } from '../entities'
 import { Listener, EventBus, Subject } from '../events';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { RaycastController } from 'src/app/utils/raycast-controller';
@@ -62,7 +62,11 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     if(entity instanceof SceneEntity) {
       var scene = entity.getComponent(SceneComponent).scene;
       scene.add(this._camera);
-    } else {
+    }
+    else if(entity instanceof DirectionalLightEntity) {
+      this._camera.add(entity.getComponent(LightComponent).light);
+    }
+    else {
       // Entity is not of type SceneEntity
       // If the entity has a RootComponent (meaning it is an entity that contains a THREE.Object3D)
       if(entity.hasComponent(RootComponent)) {
