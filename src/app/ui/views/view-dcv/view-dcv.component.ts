@@ -167,7 +167,6 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
         this._zeroSideSlip(inopEngine);
       }
     }
-
   }
 
   private _propellers(propeller: string, inopEngine: string, idle: boolean) {
@@ -215,15 +214,21 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   private _wingsLevel(inopEngine: string) {
     const yawAction = inopEngine === 'LEFT' ? AnimationActions.SeminoleYawRight : AnimationActions.SeminoleYawLeft;
     const attachedAction = inopEngine === 'LEFT' ? AnimationActions.AttachedYawRight : AnimationActions.AttachedYawLeft;
+
     this._animationDriver.jumpTo(environment.seminole, yawAction, 100);
     this._animationDriver.jumpTo(environment.attachedMarkings, attachedAction, 100);
+
+    this._animationDriver.jumpTo(environment.attachedMarkings, AnimationActions.AttachedRollLeft, 0);
   }
 
   private _zeroSideSlip(inopEngine: string) {
     const rollAction = inopEngine === 'LEFT' ? AnimationActions.SeminoleRollRight : AnimationActions.SeminoleRollLeft;
     const attachedAction = inopEngine === 'LEFT' ? AnimationActions.AttachedRollRight : AnimationActions.AttachedRollLeft;
+    
     this._animationDriver.jumpTo(environment.seminole, rollAction, 100);
     this._animationDriver.jumpTo(environment.attachedMarkings, attachedAction, 100);
+
+    this._animationDriver.jumpTo(environment.attachedMarkings, AnimationActions.AttachedYawLeft, 0);
   }
 
   private _gear(down: boolean): void {
@@ -245,25 +250,16 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   }
 
   private _centerOfGravity(position: number): void {
-    if(this._currentCgAction) {
-      this._animationDriver.stop(environment.attachedMarkings, this._currentCgAction);
-    }
-
     if(position == (0/4) * 100) {
-      this._currentCgAction = 'cg0Action';
-      this._animationDriver.jumpTo(environment.attachedMarkings, this._currentCgAction, 0);
+      this._animationDriver.jumpTo(environment.attachedMarkings, AnimationActions.COG, 0);
     } else if(position == (1/4) * 100) {
-      this._currentCgAction = 'cg1Action';
-      this._animationDriver.jumpTo(environment.attachedMarkings, this._currentCgAction, 100);
+      this._animationDriver.jumpTo(environment.attachedMarkings, AnimationActions.COG, 25);
     } else if(position == (2/4) * 100) {
-      this._currentCgAction = 'cg2Action';
-      this._animationDriver.jumpTo(environment.attachedMarkings, this._currentCgAction, 100);
+      this._animationDriver.jumpTo(environment.attachedMarkings, AnimationActions.COG, 50);
     } else if(position == (3/4) * 100) {
-      this._currentCgAction = 'cg3Action';
-      this._animationDriver.jumpTo(environment.attachedMarkings, this._currentCgAction, 100);
+      this._animationDriver.jumpTo(environment.attachedMarkings, AnimationActions.COG, 75);
     } else if(position == (4/4) * 100) {
-      this._currentCgAction = 'cg4Action';
-      this._animationDriver.jumpTo(environment.attachedMarkings, this._currentCgAction, 100);
+      this._animationDriver.jumpTo(environment.attachedMarkings, AnimationActions.COG, 100);
     }
   }
 
