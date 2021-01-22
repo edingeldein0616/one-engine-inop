@@ -197,15 +197,21 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   private _wingsLevel(inopEngine: string) {
     const yawAction = inopEngine === 'LEFT' ? AnimationActions.SeminoleYawRight: AnimationActions.SeminoleYawLeft;
     const attachedAction = inopEngine === 'LEFT' ? AnimationActions.AttachedYawRight : AnimationActions.AttachedYawLeft;
+
     this._animationDriver.jumpTo(environment.seminole, yawAction, 100);
     this._animationDriver.jumpTo(environment.attachedMarkings, attachedAction, 100);
+
+    this._animationDriver.jumpTo(environment.attachedMarkings, AnimationActions.AttachedRollLeft, 0);
   }
 
   private _zeroSideSlip(inopEngine: string) {
     const rollAction = inopEngine === 'LEFT' ? AnimationActions.SeminoleRollRight: AnimationActions.SeminoleRollLeft;
     const attachedAction = inopEngine === 'LEFT' ? AnimationActions.AttachedRollRight: AnimationActions.AttachedRollLeft;
+    
     this._animationDriver.jumpTo(environment.seminole, rollAction, 100);
     this._animationDriver.jumpTo(environment.attachedMarkings, attachedAction, 100);
+
+    this._animationDriver.jumpTo(environment.attachedMarkings, AnimationActions.AttachedYawRight, 0);
   }
 
   private _gear(down: boolean): void {
