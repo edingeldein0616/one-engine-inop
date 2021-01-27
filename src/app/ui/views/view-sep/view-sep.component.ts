@@ -266,7 +266,12 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
     this._animationDriver.stop(environment.attachedMarkings, AnimationActions.AttachedRollLeft);
   }
 
-  public lookupContent(lookup: string): string {
+  public labelSelected(lookup: string) {
+    this.content = this._lookupContent(lookup);
+    this.cdr.detectChanges();
+  }
+
+  private _lookupContent(lookup: string): string {
     const content = TextDictionary.getContent(lookup);
     if(content === undefined || content === '') {
       return this.content;
@@ -281,7 +286,7 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
         var firstIntersect = subject.data.shift() as Intersection;
         if(!firstIntersect) return;
 
-        this.content = this.lookupContent(firstIntersect.object.name);
+        this.content = this._lookupContent(firstIntersect.object.name);
         this.cdr.detectChanges();
       }
     }

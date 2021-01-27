@@ -95,7 +95,8 @@ export class TextDictionary {
       </ol>`},
     {title: 'zst-inclinometer', content: `<h3>The inclinometer, or "ball" can be used to establish a zero sideslip condition. Using a yaw string, a zero sideslip can be established, noting the position of the ball. This ball position can then be used to help establish a zero sideslip for future single-engine conditions when a yaw string is not available.</h3>
       <h3>In the Seminole, a zero sideslip is established with about 1/2 ball deflection towards the operating engine. In a zero sideslip condition, there are no rolling or yawing forces present - the ball merely sits at the lowest point in the inclinometer tube, which is slightly off center due to the aircraft's bank angle.</h3>`},
-    {title: 'zst-control-technique', content: '<h3>Use these buttons to select which control technique to use.</h3>'}
+    {title: 'zst-control-technique', content: '<h3>Use these buttons to select which control technique to use.</h3>'},
+    {title: 'cef-engine-configuration-cr', content:'<h3>With a counter-rotating engine configuration, the critical engine factors listed here have the same effect for both engines. Aircraft performance and control characteristics will be the same regardless of which engine is inoperative.</h3>'}
   ];
 
   public static getContent(title: string): string {
