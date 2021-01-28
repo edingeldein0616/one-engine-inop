@@ -1,17 +1,18 @@
-import { OnDestroy, OnInit } from "@angular/core";
+import { environment } from "src/environments/environment";
+import { OnDestroy } from "@angular/core";
 import { Subscription } from "rxjs";
 import { AppInjector } from "src/app/app-injector.service";
-import { EventBus } from "src/app/engine/core/events";
 import { EngineService } from "src/app/engine/engine.service";
-import { DCVAerodynamicsModel, SeminoleActionModel, AnimationDriver, AnimationActions, Parts, ThreeEngineEvent } from "src/app/utils";
-import { environment } from "src/environments/environment";
+import { SeminoleActionModel, AnimationDriver, AnimationActions, Parts, ThreeEngineEvent, AerodynamicsModel } from "src/app/utils";
 import { DisplayViewComponent } from "./display-view.component";
 
 export abstract class ModelViewComponent extends DisplayViewComponent implements OnDestroy {
 
+    protected abstract _dispose();
+    protected abstract _aeroModel: AerodynamicsModel;
+
     protected _animationDriver: AnimationDriver;
     protected _seminoleActionModel: SeminoleActionModel;
-    protected _aeroModel: DCVAerodynamicsModel;
 
     protected _disposables: Subscription[];
 
@@ -25,7 +26,6 @@ export abstract class ModelViewComponent extends DisplayViewComponent implements
 
         this._animationDriver = new AnimationDriver();
         this._seminoleActionModel = new SeminoleActionModel();
-        this._aeroModel = new DCVAerodynamicsModel();
     }
 
     public ngOnDestroy() {
@@ -37,8 +37,6 @@ export abstract class ModelViewComponent extends DisplayViewComponent implements
 
         this._dispose();
     }
-
-    protected abstract _dispose();
 
     protected _controlTechnique(controlTechnique: string, inopEngine: string, idle: boolean) {
         this._neutralOrientation();
@@ -145,5 +143,5 @@ export abstract class ModelViewComponent extends DisplayViewComponent implements
         this._animationDriver.jumpTo(environment.attachedMarkings, attachedAction, 100);
 
         this._animationDriver.jumpTo(environment.attachedMarkings, AnimationActions.AttachedYawLeft, 0);
-    }    
+    }
 }

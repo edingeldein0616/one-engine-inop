@@ -1,17 +1,12 @@
 import { environment } from 'src/environments/environment';
 
 import { Component, ChangeDetectorRef } from '@angular/core';
-import { Intersection, Object3D } from 'three';
-import { Subscription } from 'rxjs';
 
-import { ModelViewComponent } from '../model-view.component';
 import { Raycastable } from '../raycastable';
 
-import { EventBus, Subject } from 'src/app/engine/core/events';
 import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
-import { ViewManagerService } from 'src/app/services/view-manager.service';
 
-import { ThreeEngineEvent, StarterTitle} from 'src/app/utils';
+import { DCVAerodynamicsModel, StarterTitle} from 'src/app/utils';
 import { InteractableModelViewComponent } from '../interactable-model-view.component';
 
 @Component({
@@ -19,13 +14,19 @@ import { InteractableModelViewComponent } from '../interactable-model-view.compo
   templateUrl: './view-dcv.component.html',
   styleUrls: ['./view-dcv.component.scss']
 })
-export class ViewDcvComponent extends InteractableModelViewComponent implements Raycastable {
+export class ViewDcvComponent extends InteractableModelViewComponent {
 
   public vmca: number;
   public stallSpeed: number;
   public rudderEffectiveness: number;
 
-  constructor(private ref: ChangeDetectorRef) { super(); }
+  protected _aeroModel: DCVAerodynamicsModel;
+
+  constructor(private ref: ChangeDetectorRef) { 
+      super(); 
+  
+      this._aeroModel = new DCVAerodynamicsModel();
+  }
 
   protected detectChange() {
     this.ref.detectChanges();
