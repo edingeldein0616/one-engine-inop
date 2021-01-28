@@ -1,44 +1,44 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { environment } from 'src/environments/environment';
+
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { Intersection, Object3D } from 'three';
 import { Subscription } from 'rxjs';
 
-import { ModelDisplayViewComponent } from '../model-display-view.component';
+import { ModelViewComponent } from '../model-view.component';
+import { Raycastable } from '../raycastable';
 
-import { environment } from 'src/environments/environment';
-
-import { EngineService } from 'src/app/engine/engine.service';
-import { EventBus, Listener, Subject } from 'src/app/engine/core/events';
+import { EventBus, Subject } from 'src/app/engine/core/events';
 import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { ViewManagerService } from 'src/app/services/view-manager.service';
 
-import { AnimationActions, ThreeEngineEvent, AnimationDriver, SeminoleActionModel, DCVAerodynamicsModel, Parts, StarterTitle} from 'src/app/utils';
+import { ThreeEngineEvent, StarterTitle} from 'src/app/utils';
+import { InteractableModelViewComponent } from '../interactable-model-view.component';
 
 @Component({
   selector: 'app-view-dcv',
   templateUrl: './view-dcv.component.html',
   styleUrls: ['./view-dcv.component.scss']
 })
-export class ViewDcvComponent extends ModelDisplayViewComponent {
+export class ViewDcvComponent extends InteractableModelViewComponent implements Raycastable {
 
   public vmca: number;
   public stallSpeed: number;
   public rudderEffectiveness: number;
 
-  private _disposables: Subscription[] = [];
+  constructor(private ref: ChangeDetectorRef) { super(); }
 
-  constructor( private cdr: ChangeDetectorRef,private vms: ViewManagerService) { super(); }
-
-  public ngOnInit() {
-    this.vms.setCurrentView('Directional Control and Vmca');
-    EventBus.get().subscribe(ThreeEngineEvent.INTERSECT, this);
+  protected detectChange() {
+    this.ref.detectChanges();
   }
 
   public ngAfterViewInit() {
+    this.viewManagerService.setCurrentView('Directional Control and Vmca');
+
     this.engineService.loadSeminole(environment.seminole);
     this.engineService.loadAttachedMarkings(environment.attachedMarkings);
 
     var staticMarkings = this.engineService.loadMarkings(environment.dcvStaticMarkings, this._aeroModel);
-    this._sendRootToRaycaster(...staticMarkings.scene.children);
+    this.sendRootToRaycaster(...staticMarkings.scene.children);
 
     this._disposables = [
 
@@ -84,17 +84,6 @@ export class ViewDcvComponent extends ModelDisplayViewComponent {
     this._flaps(0);
 
     this.onLabelSelected(StarterTitle.DCV);
-
-    this.cdr.detectChanges();
-  }
-
-  public ngOnDestroy() {
-    EventBus.get().unsubscribe(ThreeEngineEvent.INTERSECT, this);
-    this.engineService.dispose();
-    while(this._disposables.length > 0) {
-      this._disposables.pop().unsubscribe();
-    }
-    this._disposables = [];
   }
 
   public onValueChanged(data: SelectionData) {
@@ -136,22 +125,6 @@ export class ViewDcvComponent extends ModelDisplayViewComponent {
     this.vmca = this._aeroModel.vmca(this._seminoleActionModel);
     this.stallSpeed = this._aeroModel.stallSpeed(this._seminoleActionModel);
     this.rudderEffectiveness = (this._aeroModel.rudderEffectiveness(this._seminoleActionModel) / 23) * 100;
-  }
-
-  public receive(topic: string, subject: Subject) {
-    switch(topic) {
-      case ThreeEngineEvent.INTERSECT: {
-        var firstIntersect = subject.data.shift() as Intersection;
-        this.onLabelSelected(firstIntersect.object.name);
-        this.cdr.detectChanges();
-      }
-    }
-  }
-
-  private _sendRootToRaycaster(...root: Object3D[]) {
-    const sub = new Subject();
-    sub.data = root;
-    EventBus.get().publish(ThreeEngineEvent.SENDROOTTORAYCASTER, sub);
   }
 }
 

@@ -1,14 +1,19 @@
+import { OnDestroy, OnInit } from "@angular/core";
+import { Subscription } from "rxjs";
 import { AppInjector } from "src/app/app-injector.service";
+import { EventBus } from "src/app/engine/core/events";
 import { EngineService } from "src/app/engine/engine.service";
-import { DCVAerodynamicsModel, SeminoleActionModel, AnimationDriver, AnimationActions, Parts } from "src/app/utils";
+import { DCVAerodynamicsModel, SeminoleActionModel, AnimationDriver, AnimationActions, Parts, ThreeEngineEvent } from "src/app/utils";
 import { environment } from "src/environments/environment";
 import { DisplayViewComponent } from "./display-view.component";
 
-export abstract class ModelDisplayViewComponent extends DisplayViewComponent {
+export abstract class ModelViewComponent extends DisplayViewComponent implements OnDestroy {
 
     protected _animationDriver: AnimationDriver;
     protected _seminoleActionModel: SeminoleActionModel;
     protected _aeroModel: DCVAerodynamicsModel;
+
+    protected _disposables: Subscription[];
 
     protected engineService: EngineService;
 
@@ -22,6 +27,18 @@ export abstract class ModelDisplayViewComponent extends DisplayViewComponent {
         this._seminoleActionModel = new SeminoleActionModel();
         this._aeroModel = new DCVAerodynamicsModel();
     }
+
+    public ngOnDestroy() {
+        this.engineService.dispose();
+        while (this._disposables.length > 0) {
+            this._disposables.pop().unsubscribe();
+        }
+        this._disposables = [];
+
+        this._dispose();
+    }
+
+    protected abstract _dispose();
 
     protected _controlTechnique(controlTechnique: string, inopEngine: string, idle: boolean) {
         this._neutralOrientation();
