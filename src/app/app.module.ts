@@ -8,6 +8,7 @@ import { UiComponent } from './ui/ui.component';
 import { OeiControlsModule } from './ui/controls/oei-controls.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavBarComponent } from './ui/nav-bar/nav-bar.component';
+import { DisplayViewComponent } from './ui/views/display-view.component';
 import { ViewDcvComponent } from './ui/views/view-dcv/view-dcv.component';
 import { ViewSepComponent } from './ui/views/view-sep/view-sep.component';
 import { ViewCefComponent } from './ui/views/view-cef/view-cef.component';
