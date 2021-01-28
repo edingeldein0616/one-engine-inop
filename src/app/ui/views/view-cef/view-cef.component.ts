@@ -58,6 +58,10 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
       this._sam.engineConfig.subject.subscribe(engConfig => {
         this.factors(this._sam.factors.property, this._sam.inopEngine.property, engConfig);
         this.propellers(this._sam.inopEngine.property, engConfig);
+
+        if(engConfig === 'COUNTER ROT.') {
+          this.content = TextDictionary.getContent('cef-engine-configuration-cr');
+        }
       }),
 
       this._sam.factors.subject.subscribe(factor => {
@@ -137,7 +141,7 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     let lift: ActionPair;
     let scale: ActionPair;
     if(inopEngine === 'LEFT') {
-      force = PfactorPair.forceRight;
+      force = engConfig === 'CONVENTIONAL' ? PfactorPair.forceConvRight : PfactorPair.forceCrRight;
       direction = engConfig === 'CONVENTIONAL' ? PfactorPair.directionConvRight : PfactorPair.directionCrRight;
       lift = engConfig === 'CONVENTIONAL' ? PfactorPair.liftConvRight : PfactorPair.liftCrRight;
       scale = engConfig === 'CONVENTIONAL' ? PfactorPair.scaleConvRight : PfactorPair.scaleCrRight;
@@ -163,7 +167,7 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     let spiral: ActionPair;
     let rudder: ActionPair;
     if(inopEngine === 'LEFT') {
-      force = SlipstreamPair.forceRight;
+      force = engConfig === 'CONVENTIONAL' ? SlipstreamPair.forceConvRight : SlipstreamPair.forceCrRight;
       direction = engConfig === 'CONVENTIONAL' ? SlipstreamPair.directionConvRight : SlipstreamPair.directionCrRight;
       spiral = engConfig === 'CONVENTIONAL' ? SlipstreamPair.spiralConvRight : SlipstreamPair.spiralCrRight;
       rudder = SlipstreamPair.rudderLeft;
@@ -188,18 +192,21 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private accelerated(inopEngine: string, engConfig: string) {
+    let direction: ActionPair;
     let flow: ActionPair;
     let roll: ActionPair;
     let yaw: ActionPair;
     let rudder: ActionPair;
     let scale: ActionPair;
     if(inopEngine === 'LEFT') {
+      direction = engConfig === 'CONVENTIONAL' ? AcceleratedPair.directionConvRight : AcceleratedPair.directionCrRight;
       flow = engConfig === 'CONVENTIONAL' ? AcceleratedPair.flowConvRight : AcceleratedPair.flowCrRight;
       roll = engConfig === 'CONVENTIONAL' ? AcceleratedPair.rollConvRight : AcceleratedPair.rollCrRight;
       yaw = engConfig === 'CONVENTIONAL' ? AcceleratedPair.yawConvRight : AcceleratedPair.yawCrRight;
       rudder = AcceleratedPair.rudderLeft;
       scale = engConfig === 'CONVENTIONAL' ? AcceleratedPair.scaleConvRight : AcceleratedPair.scaleCrRight;
     } else {
+      direction = AcceleratedPair.directionLeft;
       flow = AcceleratedPair.flowLeft;
       roll = AcceleratedPair.rollLeft;
       yaw = AcceleratedPair.yawLeft;
@@ -207,10 +214,12 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
       scale = AcceleratedPair.scaleLeft;
     }
 
+    this.engineService.hideObject(direction.obj, false);
     this.engineService.hideObject(flow.obj, false);
     this.engineService.hideObject(roll.obj, false);
     this.engineService.hideObject(yaw.obj, false);
     this.engineService.hideObject(scale.obj, false);
+    this._animationDriver.play(environment.acceleratedMarkings, direction.action);
     this._animationDriver.play(environment.acceleratedMarkings, flow.action);
     this._animationDriver.play(environment.acceleratedMarkings, roll.action);
     this._animationDriver.play(environment.acceleratedMarkings, yaw.action);
@@ -313,7 +322,8 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     this.engineService.hideObject(PfactorPair.directionConvRight.obj, true);
     this.engineService.hideObject(PfactorPair.directionCrRight.obj, true);
     this.engineService.hideObject(PfactorPair.directionLeft.obj, true);
-    this.engineService.hideObject(PfactorPair.forceRight.obj, true);
+    this.engineService.hideObject(PfactorPair.forceCrRight.obj, true);
+    this.engineService.hideObject(PfactorPair.forceConvRight.obj, true);
     this.engineService.hideObject(PfactorPair.forceLeft.obj, true);
     this.engineService.hideObject(PfactorPair.liftConvRight.obj, true);
     this.engineService.hideObject(PfactorPair.liftCrRight.obj, true);
@@ -326,7 +336,8 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     this._animationDriver.stop(environment.pfactorMarkings, PfactorPair.directionCrRight.action);
     this._animationDriver.stop(environment.pfactorMarkings, PfactorPair.directionLeft.action);
     this._animationDriver.stop(environment.pfactorMarkings, PfactorPair.forceLeft.action);
-    this._animationDriver.stop(environment.pfactorMarkings, PfactorPair.forceRight.action);
+    this._animationDriver.stop(environment.pfactorMarkings, PfactorPair.forceCrRight.action);
+    this._animationDriver.stop(environment.pfactorMarkings, PfactorPair.forceConvRight.action);
     this._animationDriver.stop(environment.pfactorMarkings, PfactorPair.liftConvRight.action);
     this._animationDriver.stop(environment.pfactorMarkings, PfactorPair.liftCrRight.action);
     this._animationDriver.stop(environment.pfactorMarkings, PfactorPair.liftLeft.action);
@@ -336,7 +347,8 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     this.engineService.hideObject(SlipstreamPair.directionConvRight.obj, true);
     this.engineService.hideObject(SlipstreamPair.directionCrRight.obj, true);
     this.engineService.hideObject(SlipstreamPair.directionLeft.obj, true);
-    this.engineService.hideObject(SlipstreamPair.forceRight.obj, true);
+    this.engineService.hideObject(SlipstreamPair.forceCrRight.obj, true);
+    this.engineService.hideObject(SlipstreamPair.forceConvRight.obj, true);
     this.engineService.hideObject(SlipstreamPair.forceLeft.obj, true);
     this.engineService.hideObject(SlipstreamPair.spiralConvRight.obj, true);
     this.engineService.hideObject(SlipstreamPair.spiralCrRight.obj, true);
@@ -347,7 +359,8 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     this._animationDriver.stop(environment.slipstreamMarkings, SlipstreamPair.directionConvRight.action);
     this._animationDriver.stop(environment.slipstreamMarkings, SlipstreamPair.directionCrRight.action);
     this._animationDriver.stop(environment.slipstreamMarkings, SlipstreamPair.directionLeft.action);
-    this._animationDriver.stop(environment.slipstreamMarkings, SlipstreamPair.forceRight.action);
+    this._animationDriver.stop(environment.slipstreamMarkings, SlipstreamPair.forceCrRight.action);
+    this._animationDriver.stop(environment.slipstreamMarkings, SlipstreamPair.forceConvRight.action);
     this._animationDriver.stop(environment.slipstreamMarkings, SlipstreamPair.forceLeft.action);
     this._animationDriver.stop(environment.slipstreamMarkings, SlipstreamPair.spiralConvRight.action);
     this._animationDriver.stop(environment.slipstreamMarkings, SlipstreamPair.spiralCrRight.action);
@@ -357,6 +370,9 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private acceleratedHide() {
+    this.engineService.hideObject(AcceleratedPair.directionConvRight.obj, true);
+    this.engineService.hideObject(AcceleratedPair.directionCrRight.obj, true);
+    this.engineService.hideObject(AcceleratedPair.directionLeft.obj, true);
     this.engineService.hideObject(AcceleratedPair.flowConvRight.obj, true);
     this.engineService.hideObject(AcceleratedPair.flowCrRight.obj, true);
     this.engineService.hideObject(AcceleratedPair.flowLeft.obj, true);
@@ -372,6 +388,9 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
     this.engineService.hideObject(AcceleratedPair.scaleCrRight.obj, true);
     this.engineService.hideObject(AcceleratedPair.scaleLeft.obj, true);
 
+    this._animationDriver.stop(environment.acceleratedMarkings, AcceleratedPair.directionConvRight.action);
+    this._animationDriver.stop(environment.acceleratedMarkings, AcceleratedPair.directionCrRight.action);
+    this._animationDriver.stop(environment.acceleratedMarkings, AcceleratedPair.directionLeft.action);
     this._animationDriver.stop(environment.acceleratedMarkings, AcceleratedPair.flowConvRight.action);
     this._animationDriver.stop(environment.acceleratedMarkings, AcceleratedPair.flowCrRight.action);
     this._animationDriver.stop(environment.acceleratedMarkings, AcceleratedPair.flowLeft.action);

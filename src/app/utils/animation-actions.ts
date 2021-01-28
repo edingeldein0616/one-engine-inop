@@ -36,7 +36,8 @@ export class PfactorPair {
   public static readonly directionCrRight = new ActionPair('pfactor-direction-arrow-cr-right', 'pfactor-direction-action-cr-right');
   public static readonly directionLeft = new ActionPair('pfactor-direction-arrow-left', 'pfactor-direction-action-left');
   public static readonly forceLeft = new ActionPair('pfactor-force-arrow-left', 'pfactor-force-action-left');
-  public static readonly forceRight = new ActionPair('pfactor-force-arrow-right', 'pfactor-force-action-right');
+  public static readonly forceConvRight = new ActionPair('pfactor-force-arrow-conv-right', 'pfactor-force-action-conv-right');
+  public static readonly forceCrRight = new ActionPair('pfactor-force-arrow-cr-right', 'pfactor-force-action-cr-right');
   public static readonly liftConvRight = new ActionPair('pfactor-lift-arrow-conv-right', 'pfactor-lift-action-conv-right');
   public static readonly liftCrRight = new ActionPair('pfactor-lift-arrow-cr-right', 'pfactor-lift-action-cr-right');
   public static readonly liftLeft = new ActionPair('pfactor-lift-arrow-left', 'pfactor-lift-action-left');
@@ -50,15 +51,19 @@ export class SlipstreamPair {
   public static readonly directionCrRight = new ActionPair('slipstream-direction-arrow-cr-right', 'slipstream-direction-action-cr-right');
   public static readonly directionLeft = new ActionPair('slipstream-direction-arrow-left', 'slipstream-direction-action-left');
   public static readonly forceLeft = new ActionPair('slipstream-force-arrow-left', 'slipstream-force-action-left');
-  public static readonly forceRight = new ActionPair('slipstream-force-arrow-right', 'slipstream-force-action-right');
-  public static readonly spiralConvRight = new ActionPair('slipstream-spiral-arrow-conv-right', 'slipstream-spiral-conv-right-action');
-  public static readonly spiralCrRight = new ActionPair('slipstream-spiral-arrow-cr-right', 'slipstream-spiral-cr-right-action');
-  public static readonly spiralLeft = new ActionPair('slipstream-spiral-arrow-left', 'slipstream-spiral-left-action');
+  public static readonly forceConvRight = new ActionPair('slipstream-force-arrow-conv-right', 'slipstream-force-action-conv-right');
+  public static readonly forceCrRight = new ActionPair('slipstream-force-arrow-cr-right', 'slipstream-force-action-cr-right');
+  public static readonly spiralConvRight = new ActionPair('slipstream-spiral-arrow-conv-right', 'slipstream-spiral-action-conv-right');
+  public static readonly spiralCrRight = new ActionPair('slipstream-spiral-arrow-cr-right', 'slipstream-spiral-action-cr-right');
+  public static readonly spiralLeft = new ActionPair('slipstream-spiral-arrow-left', 'slipstream-spiral-action-left');
   public static readonly rudderLeft = new ActionPair('slipstream-rudder-arrow-left', 'slipstream-rudder-action-left');
   public static readonly rudderRight = new ActionPair('slipstream-rudder-arrow-right', 'slipstream-rudder-action-right');
 }
 
 export class AcceleratedPair {
+  public static readonly directionConvRight = new ActionPair('accelerated-direction-arrow-conv-right', 'accelerated-direction-action-conv-right');
+  public static readonly directionCrRight = new ActionPair('accelerated-direction-arrow-cr-right', 'accelerated-direction-action-cr-right');
+  public static readonly directionLeft = new ActionPair('accelerated-direction-arrow-left', 'accelerated-direction-action-left');
   public static readonly flowConvRight = new ActionPair('accelerated-flow-arrow-conv-right', 'accelerated-flow-action-conv-right');
   public static readonly flowCrRight = new ActionPair('accelerated-flow-arrow-cr-right', 'accelerated-flow-action-cr-right');
   public static readonly flowLeft = new ActionPair('accelerated-flow-arrow-left', 'accelerated-flow-action-left');
