@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment';
 import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 
 import { InteractableModelViewComponent } from '../interactable-model-view.component';
-import { SEPAerodynamicsModel } from 'src/app/utils';
+import { SEPAerodynamicsModel, StarterTitle } from 'src/app/utils';
 
 @Component({
   selector: 'app-view-sep',
@@ -31,6 +31,8 @@ export class ViewSepComponent extends InteractableModelViewComponent {
   protected detectChange() { this.cdr.detectChanges(); }
 
   public ngAfterViewInit() {
+    this.viewManagerService.setCurrentView('Single Engine Performance');
+
     this.engineService.loadSeminole(environment.seminole);
     this.engineService.loadAttachedMarkings(environment.attachedMarkings);
 
@@ -73,7 +75,7 @@ export class ViewSepComponent extends InteractableModelViewComponent {
 
     this._flaps(0);
 
-    this.cdr.detectChanges();
+    this.onLabelSelected(StarterTitle.SEP);
   }
 
   public onValueChanged(data: SelectionData) {

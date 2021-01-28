@@ -2,8 +2,6 @@ import { environment } from 'src/environments/environment';
 
 import { Component, ChangeDetectorRef } from '@angular/core';
 
-import { Raycastable } from '../raycastable';
-
 import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 
 import { DCVAerodynamicsModel, StarterTitle} from 'src/app/utils';
