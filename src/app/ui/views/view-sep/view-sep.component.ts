@@ -15,6 +15,7 @@ import { TextDictionary } from 'src/app/utils/text-dictionary';
 import { AnimationDriver } from 'src/app/utils/animation-driver';
 import { ThreeEngineEvent } from 'src/app/utils/custom-events';
 import { AnimationActions, Parts } from 'src/app/utils/animation-actions';
+import { ContentDictionaryService } from 'src/app/services/content-dictionary.service';
 
 @Component({
   selector: 'app-view-sep',
@@ -42,7 +43,8 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
 
   constructor(private engineService: EngineService,
     private cdr: ChangeDetectorRef,
-    private vms: ViewManagerService) { }
+    private vms: ViewManagerService,
+    private cds: ContentDictionaryService) { }
 
   public ngOnInit() {
     this._animationDriver = new AnimationDriver();
@@ -272,11 +274,13 @@ export class ViewSepComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   }
 
   private _lookupContent(lookup: string): string {
-    const content = TextDictionary.getContent(lookup);
-    if(content === undefined || content === '') {
-      return this.content;
-    }
-    return TextDictionary.getContent(lookup);
+    console.log(lookup);
+    return this.cds.getContent(lookup);
+    // const content = TextDictionary.getContent(lookup);
+    // if(content === undefined || content === '') {
+    //   return this.content;
+    // }
+    // return TextDictionary.getContent(lookup);
   }
 
   public receive(topic: string, subject: Subject) {

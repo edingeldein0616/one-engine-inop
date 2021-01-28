@@ -9,7 +9,8 @@ import { EventBus, Listener, Subject } from 'src/app/engine/core/events';
 import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { ViewManagerService } from 'src/app/services/view-manager.service';
 
-import { AnimationActions, TextDictionary, ThreeEngineEvent, AnimationDriver, SeminoleActionModel, DCVAerodynamicsModel, Parts} from 'src/app/utils';
+import { AnimationActions, TextDictionary, ThreeEngineEvent, AnimationDriver, SeminoleActionModel, DCVAerodynamicsModel, Parts, DCVTitle} from 'src/app/utils';
+import { ContentDictionaryService } from 'src/app/services/content-dictionary.service';
 
 @Component({
   selector: 'app-view-dcv',
@@ -34,7 +35,8 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
 
   constructor(private engineService: EngineService,
     private cdr: ChangeDetectorRef,
-    private vms: ViewManagerService) { }
+    private vms: ViewManagerService,
+    private cds: ContentDictionaryService) { }
 
   public ngOnInit() {
     this._animationDriver = new AnimationDriver();
@@ -274,11 +276,13 @@ export class ViewDcvComponent implements OnInit, AfterViewInit, OnDestroy, Liste
   }
 
   private _lookupContent(lookup: string): string {
-    const content = TextDictionary.getContent(lookup);
-    if(content === undefined || content === '') {
-      return this.content;
-    }
-    return TextDictionary.getContent(lookup);
+    console.log(lookup);
+    return this.cds.getContent(lookup);
+    // const content = TextDictionary.getContent(lookup);
+    // if(content === undefined || content === '') {
+    //   return this.content;
+    // }
+    // return TextDictionary.getContent(lookup);
   }
 
   private _sendRootToRaycaster(...root: Object3D[]) {

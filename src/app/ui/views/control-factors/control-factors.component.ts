@@ -1,7 +1,7 @@
 import { Component, Input, Output, forwardRef } from '@angular/core';
 import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
-import { EventBus, Subject } from 'src/app/engine/core/events';
 import { EventEmitter } from '@angular/core';
+import { DCVTitle, SEPTitle } from 'src/app/utils/content-titles';
 
 export class ControlFactorsComponent {
 
@@ -29,7 +29,20 @@ export class ControlFactorsComponent {
   styleUrls: ['./dcv-control-factors/dcv-control-factors.component.scss'],
   providers: [{provide: ControlFactorsComponent, useExisting: forwardRef(() => DcvControlFactorsComponent)}]
 })
-export class DcvControlFactorsComponent extends ControlFactorsComponent {}
+export class DcvControlFactorsComponent extends ControlFactorsComponent {
+  inopEngine = DCVTitle.InopEngine;
+  stallSpeed = DCVTitle.StallSpeed;
+  vmca = DCVTitle.VMCA;
+  power = DCVTitle.Power;
+  densityAltitude = DCVTitle.DensityAltitude;
+  propeller = DCVTitle.Propeller;
+  controlTechnique = DCVTitle.ControlTechnique;
+  airspeed = DCVTitle.Airspeed;
+  weight = DCVTitle.Weight;
+  cog = DCVTitle.COG;
+  flaps = DCVTitle.Flaps
+  gear = DCVTitle.LandingGear;
+}
 
 @Component({
   selector: 'app-sep-control-factors',
@@ -37,4 +50,17 @@ export class DcvControlFactorsComponent extends ControlFactorsComponent {}
   styleUrls: ['./sep-control-factors/sep-control-factors.component.scss'],
   providers: [{provide: ControlFactorsComponent, useExisting: forwardRef(() => SepControlFactorsComponent)}]
 })
-export class SepControlFactorsComponent extends ControlFactorsComponent {}
+export class SepControlFactorsComponent extends ControlFactorsComponent {
+  
+  
+  inopEngine = SEPTitle.InopEngine;
+  power = SEPTitle.Power;
+  densityAltitude = SEPTitle.DensityAltitude;
+  propeller = SEPTitle.Propeller;
+  controlTechnique = SEPTitle.ControlTechnique;
+  airspeed = SEPTitle.Airspeed;
+  weight = SEPTitle.Weight;
+  cog = SEPTitle.COG;
+  flaps = SEPTitle.Flaps;
+  gear = SEPTitle.LandingGear;
+}

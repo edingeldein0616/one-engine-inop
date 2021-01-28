@@ -1,10 +1,7 @@
-import { Subject, Observable } from 'rxjs';
 import { Scale } from 'src/app/utils/scale';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Object3D, Color, Mesh } from 'three';
 import { SeminoleActionModel } from './seminole-action-model';
-import { Action } from 'rxjs/internal/scheduler/Action';
-import { MatHeaderRowDef } from '@angular/material';
 
 export abstract class AerodynamicsModel {
 
