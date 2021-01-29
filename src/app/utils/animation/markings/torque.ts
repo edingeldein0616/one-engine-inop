@@ -41,7 +41,7 @@ export class Torque extends MarkingsBase {
 
 }
 
-export class TorqueMap extends MarkingsMapBase {
+class TorqueMap extends MarkingsMapBase {
     public static readonly directionConvRight = 'directionConvRight';
     public static readonly directionCrRight = 'directionCrRight';
     public static readonly directionLeft = 'directionLeft';

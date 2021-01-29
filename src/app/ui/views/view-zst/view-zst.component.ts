@@ -6,7 +6,7 @@ import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { ViewManagerService } from 'src/app/services/view-manager.service';
 
 import { environment } from 'src/environments/environment';
-import { AnimationDriver,  TextDictionary, SeminoleActionModel, AnimationActions, Parts } from 'src/app/utils';//ActionPair, ZerosideslipPair } 
+import { AnimationDriver,  TextDictionary, SeminoleActionModel } from 'src/app/utils';  //AnimationAcSeminoleAnimationActionrom 'src/app/utils';//ActionPair, ZerosideslipPair } 
 
 @Component({
   selector: 'app-view-zst',
@@ -96,8 +96,8 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private propellers(inopEngine: string) {
-    this._animationDriver.play(environment.seminole, AnimationActions.PropRightCr);
-    this._animationDriver.play(environment.seminole, AnimationActions.PropLeft);
+    this._animationDriver.play(environment.seminole, SeminoleAnimationAction.PropRightCr);
+    this._animationDriver.play(environment.seminole, SeminoleAnimationAction.PropLeft);
 
     const inopPropVis = inopEngine === 'LEFT' ? Parts.propLeft : Parts.propRight;
     const inopPropHide = inopEngine === 'LEFT' ? Parts.propRight : Parts.propLeft;
@@ -114,13 +114,13 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
   private controlTechnique(inopEngine: string, controlTechnique: string) {
     this.clearOrientation();
     if(controlTechnique === 'WINGS LEVEL') {
-      const seminoleYawAction = inopEngine === 'LEFT' ? AnimationActions.SeminoleYawRight : AnimationActions.SeminoleYawLeft;
+      const seminoleYawAction = inopEngine === 'LEFT' ? SeminoleAnimationAction.SeminoleYawRight : SeminoleAnimationAction.SeminoleYawLeft;
       const zerosideslipYaw = inopEngine === 'LEFT' ? 100 : 0;
       this._animationDriver.jumpTo(environment.seminole, seminoleYawAction, 100);
-      this._animationDriver.jumpTo(environment.zerosideslipMarkings, AnimationActions.ZerosideslipYaw, zerosideslipYaw);
+      this._animationDriver.jumpTo(environment.zerosideslipMarkings, SeminoleAnimationAction.ZerosideslipYaw, zerosideslipYaw);
     } else {
-      this._animationDriver.jumpTo(environment.zerosideslipMarkings, AnimationActions.ZerosideslipYaw, 50);
-      const rollAction = inopEngine === 'LEFT' ? AnimationActions.SeminoleRollRight : AnimationActions.SeminoleRollLeft;
+      this._animationDriver.jumpTo(environment.zerosideslipMarkings, SeminoleAnimationAction.ZerosideslipYaw, 50);
+      const rollAction = inopEngine === 'LEFT' ? SeminoleAnimationAction.SeminoleRollRight : SeminoleAnimationAction.SeminoleRollLeft;
       this._animationDriver.jumpTo(environment.seminole, rollAction, 100);
     }
   }
@@ -158,22 +158,22 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private rudder(inopEngine: string) {
     const rudderAction = inopEngine === 'LEFT' ? 100 : 0;
-    this._animationDriver.jumpTo(environment.seminole, AnimationActions.Rudder, rudderAction);
+    this._animationDriver.jumpTo(environment.seminole, SeminoleAnimationAction.Rudder, rudderAction);
   }
 
   private flapsToZero() {
-    this._animationDriver.jumpTo(environment.seminole, AnimationActions.Flaps, 0);
+    this._animationDriver.jumpTo(environment.seminole, SeminoleAnimationAction.Flaps, 0);
   }
 
   public clearOrientation() {
-    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleYawRight);
-    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleYawLeft);
-    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleRollRight);
-    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleRollLeft);
+    this._animationDriver.stop(environment.seminole, SeminoleAnimationAction.SeminoleYawRight);
+    this._animationDriver.stop(environment.seminole, SeminoleAnimationAction.SeminoleYawLeft);
+    this._animationDriver.stop(environment.seminole, SeminoleAnimationAction.SeminoleRollRight);
+    this._animationDriver.stop(environment.seminole, SeminoleAnimationAction.SeminoleRollLeft);
   }
 
   private gear() {
-    this._animationDriver.jumpTo(environment.seminole, AnimationActions.Gear, 100);
+    this._animationDriver.jumpTo(environment.seminole, SeminoleAnimationAction.Gear, 100);
   }
 
   private setImage(inopEngine: string, controlTechnique: string) {

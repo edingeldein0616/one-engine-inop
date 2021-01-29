@@ -1,7 +1,7 @@
 import { Engine } from "@nova-engine/ecs";
 import { EngineService } from "src/app/engine/engine.service";
 import { environment } from "src/environments/environment";
-import { AnimationDriver } from "../../animation-driver";
+import { AnimationDriver } from "../animation-driver";
 import { ActionPair } from "../action-pair";
 
 export abstract class MarkingsBase {

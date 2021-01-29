@@ -3,7 +3,7 @@ import { OnDestroy } from "@angular/core";
 import { Subscription } from "rxjs";
 import { AppInjector } from "src/app/app-injector.service";
 import { EngineService } from "src/app/engine/engine.service";
-import { SeminoleActionModel, AnimationDriver, AnimationActions, Parts, ThreeEngineEvent, AerodynamicsModel } from "src/app/utils";
+import { SeminoleActionModel, AnimationDriver, SeminoleAnimationAction, PropParts, AerodynamicsModel } from "src/app/utils";
 import { DisplayViewComponent } from "./display-view.component";
 
 export abstract class ModelViewComponent extends DisplayViewComponent implements OnDestroy {
@@ -52,13 +52,13 @@ export abstract class ModelViewComponent extends DisplayViewComponent implements
     }
 
     protected _propellers(propeller: string, inopEngine: string, idle: boolean) {
-        this._animationDriver.play(environment.seminole, AnimationActions.PropLeft);
-        this._animationDriver.play(environment.seminole, AnimationActions.PropRightCr);
-        const inopPropAction = inopEngine === 'LEFT' ? AnimationActions.PropLeft : AnimationActions.PropRightCr;
-        const inopPropVis = inopEngine === 'LEFT' ? Parts.propLeft : Parts.propRight;
-        const inopPropHide = inopEngine === 'LEFT' ? Parts.propRight : Parts.propLeft;
-        const opPropVis = inopEngine === 'LEFT' ? Parts.operativePropRight : Parts.operativePropLeft;
-        const opPropHide = inopEngine === 'LEFT' ? Parts.operativePropLeft : Parts.operativePropRight;
+        this._animationDriver.play(environment.seminole, SeminoleAnimationAction.PropLeft);
+        this._animationDriver.play(environment.seminole, SeminoleAnimationAction.PropRightCr);
+        const inopPropAction = inopEngine === 'LEFT' ? SeminoleAnimationAction.PropLeft : SeminoleAnimationAction.PropRightCr;
+        const inopPropVis = inopEngine === 'LEFT' ? PropParts.propLeft : PropParts.propRight;
+        const inopPropHide = inopEngine === 'LEFT' ? PropParts.propRight : PropParts.propLeft;
+        const opPropVis = inopEngine === 'LEFT' ? PropParts.operativePropRight : PropParts.operativePropLeft;
+        const opPropHide = inopEngine === 'LEFT' ? PropParts.operativePropLeft : PropParts.operativePropRight;
 
         if (!idle) {
             this.engineService.hideObject(inopPropVis, false);
@@ -66,10 +66,10 @@ export abstract class ModelViewComponent extends DisplayViewComponent implements
             this.engineService.hideObject(opPropVis, false);
             this.engineService.hideObject(opPropHide, true);
         } else {
-            this.engineService.hideObject(Parts.operativePropRight, true);
-            this.engineService.hideObject(Parts.operativePropLeft, true);
-            this.engineService.hideObject(Parts.propRight, false);
-            this.engineService.hideObject(Parts.propLeft, false);
+            this.engineService.hideObject(PropParts.operativePropRight, true);
+            this.engineService.hideObject(PropParts.operativePropLeft, true);
+            this.engineService.hideObject(PropParts.propRight, false);
+            this.engineService.hideObject(PropParts.propLeft, false);
         }
 
         if (propeller === 'FEATHER') {
@@ -102,46 +102,46 @@ export abstract class ModelViewComponent extends DisplayViewComponent implements
 
     protected _cog(position: number): void {
         if (position == (0 / 4) * 100) {
-            this._animationDriver.jumpTo(environment.attachedMarkings, AnimationActions.COG, 0);
+            this._animationDriver.jumpTo(environment.attachedMarkings, SeminoleAnimationAction.COG, 0);
         } else if (position == (1 / 4) * 100) {
-            this._animationDriver.jumpTo(environment.attachedMarkings, AnimationActions.COG, 25);
+            this._animationDriver.jumpTo(environment.attachedMarkings, SeminoleAnimationAction.COG, 25);
         } else if (position == (2 / 4) * 100) {
-            this._animationDriver.jumpTo(environment.attachedMarkings, AnimationActions.COG, 50);
+            this._animationDriver.jumpTo(environment.attachedMarkings, SeminoleAnimationAction.COG, 50);
         } else if (position == (3 / 4) * 100) {
-            this._animationDriver.jumpTo(environment.attachedMarkings, AnimationActions.COG, 75);
+            this._animationDriver.jumpTo(environment.attachedMarkings, SeminoleAnimationAction.COG, 75);
         } else if (position == (4 / 4) * 100) {
-            this._animationDriver.jumpTo(environment.attachedMarkings, AnimationActions.COG, 100);
+            this._animationDriver.jumpTo(environment.attachedMarkings, SeminoleAnimationAction.COG, 100);
         }
     }
 
     protected _neutralOrientation() {
-        this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleYawRight);
-        this._animationDriver.stop(environment.attachedMarkings, AnimationActions.AttachedYawRight);
-        this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleYawLeft);
-        this._animationDriver.stop(environment.attachedMarkings, AnimationActions.AttachedYawLeft);
-        this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleRollRight);
-        this._animationDriver.stop(environment.attachedMarkings, AnimationActions.AttachedRollRight);
-        this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleRollLeft);
-        this._animationDriver.stop(environment.attachedMarkings, AnimationActions.AttachedRollLeft);
+        this._animationDriver.stop(environment.seminole, SeminoleAnimationAction.SeminoleYawRight);
+        this._animationDriver.stop(environment.attachedMarkings, SeminoleAnimationAction.AttachedYawRight);
+        this._animationDriver.stop(environment.seminole, SeminoleAnimationAction.SeminoleYawLeft);
+        this._animationDriver.stop(environment.attachedMarkings, SeminoleAnimationAction.AttachedYawLeft);
+        this._animationDriver.stop(environment.seminole, SeminoleAnimationAction.SeminoleRollRight);
+        this._animationDriver.stop(environment.attachedMarkings, SeminoleAnimationAction.AttachedRollRight);
+        this._animationDriver.stop(environment.seminole, SeminoleAnimationAction.SeminoleRollLeft);
+        this._animationDriver.stop(environment.attachedMarkings, SeminoleAnimationAction.AttachedRollLeft);
     }
 
     private _wingsLevel(inopEngine: string) {
-        const yawAction = inopEngine === 'LEFT' ? AnimationActions.SeminoleYawRight : AnimationActions.SeminoleYawLeft;
-        const attachedAction = inopEngine === 'LEFT' ? AnimationActions.AttachedYawRight : AnimationActions.AttachedYawLeft;
+        const yawAction = inopEngine === 'LEFT' ? SeminoleAnimationAction.SeminoleYawRight : SeminoleAnimationAction.SeminoleYawLeft;
+        const attachedAction = inopEngine === 'LEFT' ? SeminoleAnimationAction.AttachedYawRight : SeminoleAnimationAction.AttachedYawLeft;
 
         this._animationDriver.jumpTo(environment.seminole, yawAction, 100);
         this._animationDriver.jumpTo(environment.attachedMarkings, attachedAction, 100);
 
-        this._animationDriver.jumpTo(environment.attachedMarkings, AnimationActions.AttachedRollLeft, 0);
+        this._animationDriver.jumpTo(environment.attachedMarkings, SeminoleAnimationAction.AttachedRollLeft, 0);
     }
 
     private _zeroSideSlip(inopEngine: string) {
-        const rollAction = inopEngine === 'LEFT' ? AnimationActions.SeminoleRollRight : AnimationActions.SeminoleRollLeft;
-        const attachedAction = inopEngine === 'LEFT' ? AnimationActions.AttachedRollRight : AnimationActions.AttachedRollLeft;
+        const rollAction = inopEngine === 'LEFT' ? SeminoleAnimationAction.SeminoleRollRight : SeminoleAnimationAction.SeminoleRollLeft;
+        const attachedAction = inopEngine === 'LEFT' ? SeminoleAnimationAction.AttachedRollRight : SeminoleAnimationAction.AttachedRollLeft;
 
         this._animationDriver.jumpTo(environment.seminole, rollAction, 100);
         this._animationDriver.jumpTo(environment.attachedMarkings, attachedAction, 100);
 
-        this._animationDriver.jumpTo(environment.attachedMarkings, AnimationActions.AttachedYawLeft, 0);
+        this._animationDriver.jumpTo(environment.attachedMarkings, SeminoleAnimationAction.AttachedYawLeft, 0);
     }
 }

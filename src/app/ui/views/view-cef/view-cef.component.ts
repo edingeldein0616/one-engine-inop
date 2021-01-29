@@ -1,19 +1,15 @@
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { EngineService } from 'src/app/engine/engine.service';
-import { AnimationDriver } from 'src/app/utils/animation-driver';
+import { AnimationDriver } from 'src/app/utils/animation/animation-driver';
 import { SeminoleActionModel } from 'src/app/utils/seminole-action-model';
 import { TextDictionary } from 'src/app/utils/text-dictionary';
 import { environment } from 'src/environments/environment';
 import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { ViewManagerService } from 'src/app/services/view-manager.service';
 
-import { AnimationActions, Parts } from 'src/app/utils'; // ActionPair, SlipstreamPair, AcceleratedPair, TorquePair, PfactorPair, Parts } from 'src/app/utils';
-import { Pfactor } from 'src/app/utils/animation/markings/pfactor';
-import { MarkingsBase } from 'src/app/utils/animation/markings/markings';
-import { Accelerated } from 'src/app/utils/animation/markings/accelerated';
-import { Slipstream } from 'src/app/utils/animation/markings/slipstream';
-import { Torque } from 'src/app/utils/animation/markings/torque';
+import { SeminoleAnimationAction, PropParts } from 'src/app/utils';
+import { MarkingsBase, Pfactor, Accelerated, Slipstream, Torque } from 'src/app/utils/animation/markings';
 
 @Component({
   selector: 'app-view-cef',
@@ -164,14 +160,14 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
   private propellers(inopEngine: string, engConfig: string) {
     this.resetProps();
 
-    const rightEngineAction = engConfig === 'CONVENTIONAL' ? AnimationActions.PropRightConv : AnimationActions.PropRightCr;
+    const rightEngineAction = engConfig === 'CONVENTIONAL' ? SeminoleAnimationAction.PropRightConv : SeminoleAnimationAction.PropRightCr;
     this._animationDriver.play(environment.seminole, rightEngineAction);
-    this._animationDriver.play(environment.seminole, AnimationActions.PropLeft);
+    this._animationDriver.play(environment.seminole, SeminoleAnimationAction.PropLeft);
 
-    const inopPropVis = inopEngine === 'LEFT' ? Parts.propLeft : Parts.propRight;
-    const inopPropHide = inopEngine === 'LEFT' ? Parts.propRight : Parts.propLeft;
-    const opPropVis = inopEngine === 'LEFT' ? Parts.operativePropRight : Parts.operativePropLeft;
-    const opPropHide = inopEngine === 'LEFT' ? Parts.operativePropLeft : Parts.operativePropRight;
+    const inopPropVis = inopEngine === 'LEFT' ? PropParts.propLeft : PropParts.propRight;
+    const inopPropHide = inopEngine === 'LEFT' ? PropParts.propRight : PropParts.propLeft;
+    const opPropVis = inopEngine === 'LEFT' ? PropParts.operativePropRight : PropParts.operativePropLeft;
+    const opPropHide = inopEngine === 'LEFT' ? PropParts.operativePropLeft : PropParts.operativePropRight;
 
     this.engineService.hideObject(inopPropVis, false);
     this.engineService.hideObject(inopPropHide, true);
@@ -181,13 +177,13 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private flapsToZero() {
-    this._animationDriver.jumpTo(environment.seminole, AnimationActions.Flaps, 0);
+    this._animationDriver.jumpTo(environment.seminole, SeminoleAnimationAction.Flaps, 0);
   }
 
   private resetProps() {
-    this._animationDriver.stop(environment.seminole, AnimationActions.PropLeft);
-    this._animationDriver.stop(environment.seminole, AnimationActions.PropRightConv);
-    this._animationDriver.stop(environment.seminole, AnimationActions.PropRightCr);
+    this._animationDriver.stop(environment.seminole, SeminoleAnimationAction.PropLeft);
+    this._animationDriver.stop(environment.seminole, SeminoleAnimationAction.PropRightConv);
+    this._animationDriver.stop(environment.seminole, SeminoleAnimationAction.PropRightCr);
   }
 
   private opEngine(inopEngine: string) {
@@ -208,11 +204,11 @@ export class ViewCefComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private orientation() {
-    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleYawRight);
-    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleYawLeft);
-    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleRollRight);
-    this._animationDriver.stop(environment.seminole, AnimationActions.SeminoleRollLeft);
-    this._animationDriver.jumpTo(environment.seminole, AnimationActions.SeminoleRollLeft, 0);
+    this._animationDriver.stop(environment.seminole, SeminoleAnimationAction.SeminoleYawRight);
+    this._animationDriver.stop(environment.seminole, SeminoleAnimationAction.SeminoleYawLeft);
+    this._animationDriver.stop(environment.seminole, SeminoleAnimationAction.SeminoleRollRight);
+    this._animationDriver.stop(environment.seminole, SeminoleAnimationAction.SeminoleRollLeft);
+    this._animationDriver.jumpTo(environment.seminole, SeminoleAnimationAction.SeminoleRollLeft, 0);
   }
 
   private rudder(inopEngine: string) {
