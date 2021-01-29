@@ -7,7 +7,7 @@ import { AppInjector } from 'src/app/app-injector.service';
 import { ViewManagerService } from 'src/app/services/view-manager.service';
 
 /**
- * Base class for all model display views that enforces value handling, label selection, content display and
+ * Base class for all views with control panels and data display that enforces value handling, label selection, content display, and
  * Angular lifecycles.
  */
 export abstract class DisplayViewComponent implements AfterViewInit {
