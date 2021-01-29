@@ -6,7 +6,8 @@ import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { ViewManagerService } from 'src/app/services/view-manager.service';
 
 import { environment } from 'src/environments/environment';
-import { AnimationDriver,  TextDictionary, SeminoleActionModel } from 'src/app/utils';  //AnimationAcSeminoleAnimationActionrom 'src/app/utils';//ActionPair, ZerosideslipPair } 
+import { SeminoleActionModel } from 'src/app/utils';
+import { AnimationDriver, SeminoleAnimationAction, PropParts } from 'src/app/utils/animation';  //AnimationAcSeminoleAnimationActionrom 'src/app/utils';//ActionPair, ZerosideslipPair } 
 
 @Component({
   selector: 'app-view-zst',
@@ -54,7 +55,7 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
         this.setImage(inopEngine, controlTechnique);
 
         const contentLookup = inopEngine === 'LEFT' ? 'zst-inopEngine-left' : 'zst-inopEngine-right';
-        if(!this._loading) this.content = TextDictionary.getContent(contentLookup);
+        //if(!this._loading) this.content = TextDictionary.getContent(contentLookup);
       }),
       this._sam.controlTechnique.subject.subscribe(controlTechnique => {
         var inopEngine = this._sam.inopEngine.property;
@@ -64,7 +65,7 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
         this.setImage(inopEngine, controlTechnique);
 
         const contentLookup = controlTechnique === 'WINGS LEVEL' ? 'zst-wingsLevel' : 'zst-zeroSideslip';
-        if(!this._loading) this.content = TextDictionary.getContent(contentLookup);
+        //if(!this._loading) this.content = TextDictionary.getContent(contentLookup);
       })
     ];
 
@@ -91,18 +92,14 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  public lookupContent(lookup: string) {
-    this.content = TextDictionary.getContent(lookup);
-  }
-
   private propellers(inopEngine: string) {
     this._animationDriver.play(environment.seminole, SeminoleAnimationAction.PropRightCr);
     this._animationDriver.play(environment.seminole, SeminoleAnimationAction.PropLeft);
 
-    const inopPropVis = inopEngine === 'LEFT' ? Parts.propLeft : Parts.propRight;
-    const inopPropHide = inopEngine === 'LEFT' ? Parts.propRight : Parts.propLeft;
-    const opPropVis = inopEngine === 'LEFT' ? Parts.operativePropRight : Parts.operativePropLeft;
-    const opPropHide = inopEngine === 'LEFT' ? Parts.operativePropLeft : Parts.operativePropRight;
+    const inopPropVis = inopEngine === 'LEFT' ? PropParts.propLeft : PropParts.propRight;
+    const inopPropHide = inopEngine === 'LEFT' ? PropParts.propRight : PropParts.propLeft;
+    const opPropVis = inopEngine === 'LEFT' ? PropParts.operativePropRight : PropParts.operativePropLeft;
+    const opPropHide = inopEngine === 'LEFT' ? PropParts.operativePropLeft : PropParts.operativePropRight;
 
     this.engineService.hideObject(inopPropVis, false);
     this.engineService.hideObject(inopPropHide, true);

@@ -1,6 +1,4 @@
 export * from './aerodynamics-model';
-export * from './animation/animation-actions';
-export * from './animation/animation-driver'
 export * from './custom-events';
 export * from './raycast-controller';
 export * from './scale';

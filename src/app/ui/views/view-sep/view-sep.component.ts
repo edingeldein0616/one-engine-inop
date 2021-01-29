@@ -33,8 +33,8 @@ export class ViewSepComponent extends InteractableModelViewComponent {
   public ngAfterViewInit() {
     this.viewManagerService.setCurrentView('Single Engine Performance');
 
-    this.engineService.loadSeminole(environment.seminole);
-    this.engineService.loadAttachedMarkings(environment.attachedMarkings);
+    this._engineService.loadSeminole(environment.seminole);
+    this._engineService.loadAttachedMarkings(environment.attachedMarkings);
 
     this._disposables = [
       this._seminoleActionModel.inopEngine.subject.subscribe(inopEngine => {
@@ -66,7 +66,7 @@ export class ViewSepComponent extends InteractableModelViewComponent {
       })
     ];
 
-    var staticMarkings = this.engineService.loadMarkings(environment.sepStaticMarkings, this._aeroModel);
+    var staticMarkings = this._engineService.loadMarkings(environment.sepStaticMarkings, this._aeroModel);
     this.sendRootToRaycaster(...staticMarkings.scene.children);
 
     this._seminoleActionModel.inopEngine.property = this._seminoleActionModel.inopEngine.property;

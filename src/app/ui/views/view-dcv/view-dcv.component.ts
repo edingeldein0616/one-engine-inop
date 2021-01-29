@@ -33,10 +33,10 @@ export class ViewDcvComponent extends InteractableModelViewComponent {
   public ngAfterViewInit() {
     this.viewManagerService.setCurrentView('Directional Control and Vmca');
 
-    this.engineService.loadSeminole(environment.seminole);
-    this.engineService.loadAttachedMarkings(environment.attachedMarkings);
+    this._engineService.loadSeminole(environment.seminole);
+    this._engineService.loadAttachedMarkings(environment.attachedMarkings);
 
-    var staticMarkings = this.engineService.loadMarkings(environment.dcvStaticMarkings, this._aeroModel);
+    var staticMarkings = this._engineService.loadMarkings(environment.dcvStaticMarkings, this._aeroModel);
     this.sendRootToRaycaster(...staticMarkings.scene.children);
 
     this._disposables = [

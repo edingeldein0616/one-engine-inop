@@ -3,7 +3,8 @@ import { OnDestroy } from "@angular/core";
 import { Subscription } from "rxjs";
 import { AppInjector } from "src/app/app-injector.service";
 import { EngineService } from "src/app/engine/engine.service";
-import { SeminoleActionModel, AnimationDriver, SeminoleAnimationAction, PropParts, AerodynamicsModel } from "src/app/utils";
+import { SeminoleActionModel, AerodynamicsModel } from "src/app/utils";
+import { AnimationDriver, SeminoleAnimationAction, PropParts } from 'src/app/utils/animation';
 import { DisplayViewComponent } from "./display-view.component";
 
 export abstract class ModelViewComponent extends DisplayViewComponent implements OnDestroy {
@@ -16,20 +17,20 @@ export abstract class ModelViewComponent extends DisplayViewComponent implements
 
     protected _disposables: Subscription[];
 
-    protected engineService: EngineService;
+    protected _engineService: EngineService;
 
     constructor() {
         super();
 
         const injector = AppInjector.getInjector();
-        this.engineService = injector.get(EngineService);
+        this._engineService = injector.get(EngineService);
 
         this._animationDriver = new AnimationDriver();
         this._seminoleActionModel = new SeminoleActionModel();
     }
 
     public ngOnDestroy() {
-        this.engineService.dispose();
+        this._engineService.dispose();
         while (this._disposables.length > 0) {
             this._disposables.pop().unsubscribe();
         }
@@ -61,15 +62,15 @@ export abstract class ModelViewComponent extends DisplayViewComponent implements
         const opPropHide = inopEngine === 'LEFT' ? PropParts.operativePropLeft : PropParts.operativePropRight;
 
         if (!idle) {
-            this.engineService.hideObject(inopPropVis, false);
-            this.engineService.hideObject(inopPropHide, true);
-            this.engineService.hideObject(opPropVis, false);
-            this.engineService.hideObject(opPropHide, true);
+            this._engineService.hideObject(inopPropVis, false);
+            this._engineService.hideObject(inopPropHide, true);
+            this._engineService.hideObject(opPropVis, false);
+            this._engineService.hideObject(opPropHide, true);
         } else {
-            this.engineService.hideObject(PropParts.operativePropRight, true);
-            this.engineService.hideObject(PropParts.operativePropLeft, true);
-            this.engineService.hideObject(PropParts.propRight, false);
-            this.engineService.hideObject(PropParts.propLeft, false);
+            this._engineService.hideObject(PropParts.operativePropRight, true);
+            this._engineService.hideObject(PropParts.operativePropLeft, true);
+            this._engineService.hideObject(PropParts.propRight, false);
+            this._engineService.hideObject(PropParts.propLeft, false);
         }
 
         if (propeller === 'FEATHER') {
