@@ -70,6 +70,7 @@ export class ViewCefComponent extends ModelViewComponent {
     ];
 
     this._neutralOrientation();
+    this._animationDriver.jumpTo(environment.seminole, SeminoleAnimationAction.SeminoleRollRight, 0);
     this._gear(false);
     this._flaps(0);
 

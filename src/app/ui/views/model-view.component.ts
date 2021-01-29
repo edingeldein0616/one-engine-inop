@@ -122,7 +122,7 @@ export abstract class ModelViewComponent extends DisplayViewComponent implements
      * @param inopEngine Inoperative engine state
      */
     protected _rudder(inopEngine: string) {
-        const jumpToLocation = inopEngine === 'LEFT' ? 0 : 100;
+        const jumpToLocation = inopEngine === 'LEFT' ? 100 : 0;
         this._animationDriver.jumpTo(environment.seminole, 'rudder-action', jumpToLocation);
     }
 
