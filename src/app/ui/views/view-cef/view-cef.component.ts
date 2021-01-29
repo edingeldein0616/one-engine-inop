@@ -9,6 +9,7 @@ import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { SeminoleAnimationAction, PropParts } from 'src/app/utils/animation';
 import { MarkingsBase, Pfactor, Accelerated, Slipstream, Torque } from 'src/app/utils/animation/markings';
 import { ModelViewComponent } from '../model-view.component';
+import { StarterTitle } from 'src/app/utils';
 
 @Component({
   selector: 'app-view-cef',
@@ -76,6 +77,8 @@ export class ViewCefComponent extends ModelViewComponent {
     this._flaps(0);
 
     this._loaded = true;
+
+    this.onLabelSelected(StarterTitle.CEF);
   }
 
   protected _dispose() {}

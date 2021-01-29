@@ -1,200 +1,132 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
-import { Subscription } from 'rxjs';
-
-import { EngineService } from 'src/app/engine/engine.service';
-import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
-import { ViewManagerService } from 'src/app/services/view-manager.service';
-
 import { environment } from 'src/environments/environment';
-import { SeminoleActionModel } from 'src/app/utils';
-import { AnimationDriver, SeminoleAnimationAction, PropParts } from 'src/app/utils/animation';  //AnimationAcSeminoleAnimationActionrom 'src/app/utils';//ActionPair, ZerosideslipPair } 
+
+import { ChangeDetectorRef, Component } from '@angular/core';
+import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
+import { ModelViewComponent } from '../model-view.component';
+import { ZeroSideslip } from 'src/app/utils/animation/markings/zerosideslip';
+import { SeminoleAnimationAction } from 'src/app/utils/animation';
+import { SeminoleActionModel, StarterTitle, ZSTTitle } from 'src/app/utils';
 
 @Component({
   selector: 'app-view-zst',
   templateUrl: './view-zst.component.html',
   styleUrls: ['./view-zst.component.scss']
 })
-export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
-
+export class ViewZstComponent extends ModelViewComponent {
+  
+  protected _aeroModel = null;
+  private _zeroSideslip: ZeroSideslip;
+  
   public inclinometerImages = [
     environment.assetUrl + 'inclinometerLeft.png',
     environment.assetUrl + 'inclinometerCenter.png',
     environment.assetUrl + 'inclinometerRight.png'
   ];
   public image = this.inclinometerImages[1];
-
-  public content = `<h3>This section Covers zero sideslip control technique.</h3>`
-
-  private _sam: SeminoleActionModel;
-  private _animationDriver: AnimationDriver;
-  private _disposables: Subscription[];
+  
   private _loading: boolean = true;
-
-  constructor(private engineService: EngineService,
-    private vms: ViewManagerService) { }
-
-  public ngOnInit() {
-    this._sam = new SeminoleActionModel();
-    this._animationDriver = new AnimationDriver();
-    this.vms.setCurrentView('Zero Sideslip Technique');
-  }
+  
+  constructor(private ref: ChangeDetectorRef) { super(); }
 
   public ngAfterViewInit() {
-    this.engineService.loadSeminole(environment.seminole);
-    this.engineService.loadWindPlane(environment.windplane);
-    this.engineService.loadMarkings(environment.zerosideslipMarkings);
+    this.viewManagerService.setCurrentView('Zero Sideslip Technique');
+    
+    this._engineService.loadSeminole(environment.seminole);
+    this._engineService.loadWindPlane(environment.windplane);
+    this._engineService.loadMarkings(environment.zerosideslipMarkings);
+
+    this._zeroSideslip = new ZeroSideslip(this._engineService, this._animationDriver);
+    this._zeroSideslip.hide();
 
     this._disposables = [
-      this._sam.inopEngine.subject.subscribe(inopEngine => {
-        var controlTechnique = this._sam.controlTechnique.property;
+      this._seminoleActionModel.inopEngine.subject.subscribe(inopEngine => {
+        var controlTechnique = this._seminoleActionModel.controlTechnique.property;
 
-        this.propellers(inopEngine)
-        this.rudder(inopEngine);
-        this.controlTechnique(inopEngine, controlTechnique);
-        // this.markings(inopEngine, controlTechnique);
-        this.setImage(inopEngine, controlTechnique);
+        this._propellers('WINDMILL', inopEngine, false);
+       
+        this._rudder(inopEngine);
+       
+        this._controlTechnique(controlTechnique, inopEngine, false);
+        this._zstControlTechnique(inopEngine, controlTechnique);
+       
+        this._zeroSideslip.animate(inopEngine, controlTechnique);
+       
+        this._setImage(inopEngine, controlTechnique);
 
-        const contentLookup = inopEngine === 'LEFT' ? 'zst-inopEngine-left' : 'zst-inopEngine-right';
-        //if(!this._loading) this.content = TextDictionary.getContent(contentLookup);
+        const contentLookup = inopEngine === 'LEFT' ? this.inopEngineLeft : this.inopEngineRight;
+       
+        if(!this._loading) this.onLabelSelected(contentLookup);
+
       }),
-      this._sam.controlTechnique.subject.subscribe(controlTechnique => {
-        var inopEngine = this._sam.inopEngine.property;
+      this._seminoleActionModel.controlTechnique.subject.subscribe(controlTechnique => {
+        var inopEngine = this._seminoleActionModel.inopEngine.property;
 
-        this.controlTechnique(inopEngine, controlTechnique);
-        // this.markings(inopEngine, controlTechnique);
-        this.setImage(inopEngine, controlTechnique);
+        this._controlTechnique(controlTechnique, inopEngine, false);
+        this._zstControlTechnique(inopEngine, controlTechnique);
+        
+        this._zeroSideslip.animate(inopEngine, controlTechnique);
 
-        const contentLookup = controlTechnique === 'WINGS LEVEL' ? 'zst-wingsLevel' : 'zst-zeroSideslip';
-        //if(!this._loading) this.content = TextDictionary.getContent(contentLookup);
+        this._setImage(inopEngine, controlTechnique);
+
+        console.log(controlTechnique);
+        const contentLookup = controlTechnique === 'WINGS LEVEL' ? this.wingsLevel : this.zeroSideslip;
+        
+        this.onLabelSelected(contentLookup);
+
       })
     ];
 
     this._animationDriver.play(environment.windplane, 'windplane-action');
-    this.gear();
-    this.flapsToZero();
+    this._gear(false);
+    this._flaps(0);
 
     this._loading = false;
+
+    this.onLabelSelected(StarterTitle.ZST);
+
+    this.ref.detectChanges();
   }
 
-  public ngOnDestroy() {
-    this.engineService.dispose();
-    this._disposables.forEach(disp => disp.unsubscribe());
-  }
+  protected _dispose() {}
 
-  public onValueSelected(data: SelectionData) {
-    switch (data.label) {
-      case 'INOP. ENGINE':
-        this._sam.inopEngine.property = data.value;
-      break;
-      case 'CONTROL TECHNIQUE':
-        this._sam.controlTechnique.property = data.value;
-      break
-    }
-  }
+  private _zstControlTechnique(inopEngine: string, controlTechnique: string) {
+    this._animationDriver.stop(environment.zerosideslipMarkings, SeminoleAnimationAction.ZerosideslipYaw);
 
-  private propellers(inopEngine: string) {
-    this._animationDriver.play(environment.seminole, SeminoleAnimationAction.PropRightCr);
-    this._animationDriver.play(environment.seminole, SeminoleAnimationAction.PropLeft);
-
-    const inopPropVis = inopEngine === 'LEFT' ? PropParts.propLeft : PropParts.propRight;
-    const inopPropHide = inopEngine === 'LEFT' ? PropParts.propRight : PropParts.propLeft;
-    const opPropVis = inopEngine === 'LEFT' ? PropParts.operativePropRight : PropParts.operativePropLeft;
-    const opPropHide = inopEngine === 'LEFT' ? PropParts.operativePropLeft : PropParts.operativePropRight;
-
-    this.engineService.hideObject(inopPropVis, false);
-    this.engineService.hideObject(inopPropHide, true);
-    this.engineService.hideObject(opPropVis, false);
-    this.engineService.hideObject(opPropHide, true);
-
-  }
-
-  private controlTechnique(inopEngine: string, controlTechnique: string) {
-    this.clearOrientation();
     if(controlTechnique === 'WINGS LEVEL') {
-      const seminoleYawAction = inopEngine === 'LEFT' ? SeminoleAnimationAction.SeminoleYawRight : SeminoleAnimationAction.SeminoleYawLeft;
       const zerosideslipYaw = inopEngine === 'LEFT' ? 100 : 0;
-      this._animationDriver.jumpTo(environment.seminole, seminoleYawAction, 100);
       this._animationDriver.jumpTo(environment.zerosideslipMarkings, SeminoleAnimationAction.ZerosideslipYaw, zerosideslipYaw);
     } else {
       this._animationDriver.jumpTo(environment.zerosideslipMarkings, SeminoleAnimationAction.ZerosideslipYaw, 50);
-      const rollAction = inopEngine === 'LEFT' ? SeminoleAnimationAction.SeminoleRollRight : SeminoleAnimationAction.SeminoleRollLeft;
-      this._animationDriver.jumpTo(environment.seminole, rollAction, 100);
     }
   }
 
-  // private markings(inopEngine: string, controlTechnique: string) {
-  //   this.hideZerosideslip();
-
-  //   let direction: ActionPair = ZerosideslipPair.directionForward;
-  //   let prop: ActionPair;
-  //   let rudder: ActionPair;
-  //   let slide: ActionPair;
-
-  //   if(inopEngine === 'LEFT') {
-  //     prop = ZerosideslipPair.propRight;
-  //     rudder = ZerosideslipPair.rudderLeft;
-  //     slide = ZerosideslipPair.slideRight;
-  //   } else {
-  //     prop = ZerosideslipPair.propLeft;
-  //     rudder = ZerosideslipPair.rudderRight;
-  //     slide = ZerosideslipPair.slideLeft;
-  //   }
-
-  //   this.engineService.hideObject(direction.obj, false);
-  //   this.engineService.hideObject(prop.obj, false);
-  //   this.engineService.hideObject(rudder.obj, false);
-  //   this._animationDriver.play(environment.zerosideslipMarkings, direction.action);
-  //   this._animationDriver.play(environment.zerosideslipMarkings, prop.action);
-  //   this._animationDriver.play(environment.zerosideslipMarkings, rudder.action);
-
-  //   if(controlTechnique !== 'WINGS LEVEL') {
-  //     this.engineService.hideObject(slide.obj, false);
-  //     this._animationDriver.play(environment.zerosideslipMarkings, slide.action);
-  //   }
-  // }
-
-  private rudder(inopEngine: string) {
-    const rudderAction = inopEngine === 'LEFT' ? 100 : 0;
-    this._animationDriver.jumpTo(environment.seminole, SeminoleAnimationAction.Rudder, rudderAction);
-  }
-
-  private flapsToZero() {
-    this._animationDriver.jumpTo(environment.seminole, SeminoleAnimationAction.Flaps, 0);
-  }
-
-  public clearOrientation() {
-    this._animationDriver.stop(environment.seminole, SeminoleAnimationAction.SeminoleYawRight);
-    this._animationDriver.stop(environment.seminole, SeminoleAnimationAction.SeminoleYawLeft);
-    this._animationDriver.stop(environment.seminole, SeminoleAnimationAction.SeminoleRollRight);
-    this._animationDriver.stop(environment.seminole, SeminoleAnimationAction.SeminoleRollLeft);
-  }
-
-  private gear() {
-    this._animationDriver.jumpTo(environment.seminole, SeminoleAnimationAction.Gear, 100);
-  }
-
-  private setImage(inopEngine: string, controlTechnique: string) {
+  private _setImage(inopEngine: string, controlTechnique: string) {
     if(controlTechnique === 'ZERO SIDESLIP') {
       this.image = inopEngine === 'LEFT' ? this.inclinometerImages[2] : this.inclinometerImages[0];;
     } else {
       this.image = this.inclinometerImages[1];
     }
   }
+  
+  public onValueChanged(data: SelectionData) {
+    
+    if(this._zeroSideslip) this._zeroSideslip.hide();
 
-  // private hideZerosideslip() {
-  //   this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.directionForward.action);
-  //   this.engineService.hideObject(ZerosideslipPair.directionForward.obj, true);
-  //   this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.propLeft.action);
-  //   this.engineService.hideObject(ZerosideslipPair.propLeft.obj, true);
-  //   this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.propRight.action);
-  //   this.engineService.hideObject(ZerosideslipPair.propRight.obj, true);
-  //   this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.rudderRight.action);
-  //   this.engineService.hideObject(ZerosideslipPair.rudderRight.obj, true);
-  //   this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.rudderLeft.action);
-  //   this.engineService.hideObject(ZerosideslipPair.rudderLeft.obj, true);
-  //   this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.slideRight.action);
-  //   this.engineService.hideObject(ZerosideslipPair.slideRight.obj, true);
-  //   this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.slideLeft.action);
-  //   this.engineService.hideObject(ZerosideslipPair.slideLeft.obj, true);
-  // }
+    switch (data.label) {
+      case 'INOP. ENGINE':
+        this._seminoleActionModel.inopEngine.property = data.value;
+      break;
+      case 'CONTROL TECHNIQUE':
+        this._seminoleActionModel.controlTechnique.property = data.value;
+      break
+    }
+  }
+
+  public inopEngineLeft = ZSTTitle.InopEngineLeft;
+  public inopEngineRight = ZSTTitle.InopEngineRight;
+  public wingsLevel = ZSTTitle.WingsLevel;
+  public zeroSideslip = ZSTTitle.ZeroSideslip;
+  public inclinometer = ZSTTitle.Inclinometer;
+  public controlTechnique = ZSTTitle.ControlTechnique;
+
 }

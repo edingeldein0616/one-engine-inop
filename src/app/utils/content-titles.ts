@@ -69,10 +69,10 @@ export class CEFTitle {
 }
 
 export class ZSTTitle {
-    public static readonly InopEngineLeft;
-    public static readonly InopEngineRight;
-    public static readonly WingsLevel;
-    public static readonly ZeroSideslip;
-    public static readonly Inclinometer;
-    public static readonly ControlTechnique;
+    public static readonly InopEngineLeft = 'zst-inop-engine-left';
+    public static readonly InopEngineRight = 'zst-inop-engine-right';
+    public static readonly WingsLevel = 'zst-wings-level';
+    public static readonly ZeroSideslip = 'zst-zeroSideslip';
+    public static readonly Inclinometer = 'zst-inclinometer';
+    public static readonly ControlTechnique = 'zst-control-techinque';
 }
