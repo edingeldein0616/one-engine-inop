@@ -11,7 +11,7 @@
   <!-- INOP ENGINE -->
   <div class="row mb-auto align-items-center">
     <div class="col-4">
-      <app-selectable-label label="INOP. ENGINE" lookupValue="inop-engine" (contentClicked)="labelSelected($event)"></app-selectable-label>
+      <app-selectable-label label="INOP. ENGINE" [lookupValue]="inopEngine" (contentClicked)="labelSelected($event)"></app-selectable-label>
       <!-- <h5 class="text-center" (click)="contentSelected($event)">INOP. ENGINE</h5> -->
     </div>
     <div class="col-8">
@@ -23,7 +23,7 @@
   <!-- POWER -->
   <div class="row align-items-center">
     <div class="col-4">
-      <app-selectable-label label="POWER" lookupValue="sep-power" (contentClicked)="labelSelected($event)"></app-selectable-label>
+      <app-selectable-label label="POWER" [lookupValue]="power" (contentClicked)="labelSelected($event)"></app-selectable-label>
     </div>
     <div class="col-8">
       <div *ngIf="!disablePower; else disable">
@@ -40,7 +40,7 @@
   <!-- DENSITY ALTITUDE -->
   <div class="row align-items-center">
     <div class="col-4">
-      <app-selectable-label label="DENSITY ALTITUDE" lookupValue="sep-density-altitude" (contentClicked)="labelSelected($event)"></app-selectable-label>
+      <app-selectable-label label="DENSITY ALTITUDE" [lookupValue]="densityAltitude" (contentClicked)="labelSelected($event)"></app-selectable-label>
     </div>
     <div class="col-8">
       <app-selector label="DENSITY ALTITUDE" [useValue]="false" [toggleOptions]="['0','1500','3000','4500','6000']"
@@ -51,7 +51,7 @@
   <!-- PROPELLER -->
   <div class="row align-items-center">
     <div class="col-4">
-      <app-selectable-label label="PROPELLER" lookupValue="sep-propeller" (contentClicked)="labelSelected($event)"></app-selectable-label>
+      <app-selectable-label label="PROPELLER" [lookupValue]="propeller" (contentClicked)="labelSelected($event)"></app-selectable-label>
     </div>
     <div class="col-8">
       <app-selector label="PROPELLER" [useValue]="true" [toggleOptions]="['WINDMILL','FEATHER']" [initialValue]="1"
@@ -62,7 +62,7 @@
   <!-- CONTROL TECHNIQUE -->
   <div class="row align-items-center">
     <div class="col-4">
-      <app-selectable-label label="CONTROL TECHNIQUE" lookupValue="sep-control-technique" (contentClicked)="labelSelected($event)"></app-selectable-label>
+      <app-selectable-label label="CONTROL TECHNIQUE" [lookupValue]="controlTechnique" (contentClicked)="labelSelected($event)"></app-selectable-label>
     </div>
     <div class="col-8">
       <app-selector label="CONTROL TECHNIQUE" [useValue]="true" [toggleOptions]="['WINGS LEVEL','ZERO SIDESLIP']"
@@ -73,7 +73,7 @@
   <!-- AIRSPEED (KIAS) -->
   <div class="row align-items-center">
     <div class="col-4">
-      <app-selectable-label label="AIRSPEED (KIAS)" lookupValue="sep-airspeed" (contentClicked)="labelSelected($event)"></app-selectable-label>
+      <app-selectable-label label="AIRSPEED (KIAS)" [lookupValue]="airspeed" (contentClicked)="labelSelected($event)"></app-selectable-label>
     </div>
     <div class="col-8">
       <app-selector label="AIRSPEED" [useValue]="false" [toggleOptions]="['83','-','88','-','93']"
@@ -84,7 +84,7 @@
   <!-- WEIGHT -->
   <div class="row align-items-center">
     <div class="col-4">
-      <app-selectable-label label="WEIGHT" lookupValue="sep-weight" (contentClicked)="labelSelected($event)"></app-selectable-label>
+      <app-selectable-label label="WEIGHT" [lookupValue]="weight" (contentClicked)="labelSelected($event)"></app-selectable-label>
     </div>
     <div class="col-8">
       <app-selector label="WEIGHT" [useValue]="false" [toggleOptions]="['MIN','-','-','-','MAX']" [initialValue]="2"
@@ -95,7 +95,7 @@
   <!-- CENTER OF GRAVTY -->
   <div class="row align-items-center">
     <div class="col-4">
-      <app-selectable-label label="CENTER OF GRAVITY" lookupValue="sep-cog" (contentClicked)="labelSelected($event)"></app-selectable-label>
+      <app-selectable-label label="CENTER OF GRAVITY" [lookupValue]="cog" (contentClicked)="labelSelected($event)"></app-selectable-label>
     </div>
     <div class="col-8">
       <app-selector label="CENTER OF GRAVITY" [useValue]="false" [toggleOptions]="['AFT','-','-','-','FORE']"
@@ -106,7 +106,7 @@
   <!-- FLAPS -->
   <div class="row align-items-center">
     <div class="col-4">
-      <app-selectable-label label="FLAPS" lookupValue="sep-flaps" (contentClicked)="labelSelected($event)"></app-selectable-label>
+      <app-selectable-label label="FLAPS" [lookupValue]="flaps" (contentClicked)="labelSelected($event)"></app-selectable-label>
     </div>
     <div class="col-8">
       <app-selector label="FLAPS" [useValue]="false" [toggleOptions]="['0','10','25','40']" [initialValue]="0"
@@ -117,7 +117,7 @@
   <!-- LANDING GEAR -->
   <div class="row align-items-center">
     <div class="col-4">
-      <app-selectable-label label="LANDING GEAR" lookupValue="sep-gear" (contentClicked)="labelSelected($event)"></app-selectable-label>
+      <app-selectable-label label="LANDING GEAR" [lookupValue]="gear" (contentClicked)="labelSelected($event)"></app-selectable-label>
     </div>
     <div class="col-8">
       <app-selector label="LANDING GEAR" [useValue]="true" [toggleOptions]="['UP','DOWN']" [initialValue]="0"

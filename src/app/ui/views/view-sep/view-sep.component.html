@@ -12,7 +12,7 @@
     </div>
     <div class="row">
       <div class="col">
-        <app-selectable-label label="VYSE" lookupValue="vyse" (contentClicked)="labelSelected($event)" size="large"></app-selectable-label>
+        <app-selectable-label label="VYSE" lookupValue="vyse" (contentClicked)="onLabelSelected($event)" size="large"></app-selectable-label>
       </div>
     </div>
     <div class="row">
@@ -24,7 +24,7 @@
 
     <div class="row">
       <div class="col">
-        <app-selectable-label label="EXCESS THP" lookupValue="excess-thp" (contentClicked)="labelSelected($event)" size="large"></app-selectable-label>
+        <app-selectable-label label="EXCESS THP" lookupValue="excess-thp" (contentClicked)="onLabelSelected($event)" size="large"></app-selectable-label>
       </div>
     </div>
     <div class="row">
@@ -36,7 +36,7 @@
 
     <div class="row">
       <div class="col">
-        <app-selectable-label label="RATE OF CLIMB" lookupValue="rate-of-climb" (contentClicked)="labelSelected($event)" size="large"></app-selectable-label>
+        <app-selectable-label label="RATE OF CLIMB" lookupValue="rate-of-climb" (contentClicked)="onLabelSelected($event)" size="large"></app-selectable-label>
       </div>
     </div>
     <div class="row">
@@ -48,7 +48,7 @@
 
     <div class="row">
       <div class="col">
-        <app-selectable-label label="SERVICE CEILING" lookupValue="service-ceiling" (contentClicked)="labelSelected($event)" size="large"></app-selectable-label>
+        <app-selectable-label label="SERVICE CEILING" lookupValue="service-ceiling" (contentClicked)="onLabelSelected($event)" size="large"></app-selectable-label>
       </div>
     </div>
     <div class="row">
@@ -60,7 +60,7 @@
 
     <div class="row">
       <div class="col">
-        <app-selectable-label label="ABSOLUTE CEILING" lookupValue="absolute-ceiling" (contentClicked)="labelSelected($event)" size="large"></app-selectable-label>
+        <app-selectable-label label="ABSOLUTE CEILING" lookupValue="absolute-ceiling" (contentClicked)="onLabelSelected($event)" size="large"></app-selectable-label>
       </div>
     </div>
     <div class="row">
@@ -88,7 +88,7 @@
 <!--  CONTROL         -->
 <!-- ---------------- -->
 <div class="panel control">
-  <app-sep-control-factors title="PERFORMANCE FACTORS" [disablePower]="true" (controlOutput)="onValueChanged($event)" (labelOutput)="labelSelected($event)"></app-sep-control-factors>
+  <app-sep-control-factors title="PERFORMANCE FACTORS" [disablePower]="true" (controlOutput)="onValueChanged($event)" (labelOutput)="onLabelSelected($event)"></app-sep-control-factors>
 </div>
 
 <!-- ---------------- -->

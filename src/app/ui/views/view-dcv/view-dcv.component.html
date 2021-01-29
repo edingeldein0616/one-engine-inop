@@ -13,7 +13,7 @@
     </div>
     <div class="row">
       <div class="col">
-        <app-selectable-label label="STALL SPEED" lookupValue="stall-speed" (contentClicked)="labelSelected($event)" size="large"></app-selectable-label>
+        <app-selectable-label label="STALL SPEED" lookupValue="stall-speed" (contentClicked)="onLabelSelected($event)" size="large"></app-selectable-label>
       </div>
     </div>
     <div class="row">
@@ -24,7 +24,7 @@
     </div>
     <div class="row">
       <div class="col">
-        <app-selectable-label label="VMCA" lookupValue="vmca" (contentClicked)="labelSelected($event)" size="large"></app-selectable-label>
+        <app-selectable-label label="VMCA" lookupValue="vmca" (contentClicked)="onLabelSelected($event)" size="large"></app-selectable-label>
       </div>
     </div>
     <div class="row">
@@ -55,7 +55,7 @@
 <!--    CONTROL        -->
 <!-- ----------------  -->
 <div class="panel control">
-  <app-dcv-control-factors title="CONTROL FACTORS" [disablePower]="false" (controlOutput)="onValueChanged($event)" (labelOutput)="labelSelected($event)"></app-dcv-control-factors>
+  <app-dcv-control-factors title="CONTROL FACTORS" [disablePower]="false" (controlOutput)="onValueChanged($event)" (labelOutput)="onLabelSelected($event)"></app-dcv-control-factors>
 </div>
 
 <!-- ----------------  -->

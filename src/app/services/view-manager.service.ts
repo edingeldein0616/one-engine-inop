@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { ChangeDetectorRef, Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +14,4 @@ export class ViewManagerService {
     if(currentView === '') this._currentView = '';
     else this._currentView = `--- ${currentView}`;
   }
-
-  constructor() { }
 }

@@ -13,32 +13,32 @@
 
     <div class="row control">
       <div class="col-4">
-        <app-selectable-label label="INOP. ENGINE" lookupValue="cef-inop-engine" (contentClicked)="lookupContent($event)"></app-selectable-label>
+        <app-selectable-label label="INOP. ENGINE" lookupValue="inop-engine" (contentClicked)="onLabelSelected($event)"></app-selectable-label>
       </div>
       <div class="col-8">
-        <app-selector label="INOP. ENGINE" [useValue]="true" [toggleOptions]="['LEFT','RIGHT']" [initialValue]="0" (valueOutput)="onValueSelected($event)"></app-selector>
+        <app-selector label="INOP. ENGINE" [useValue]="true" [toggleOptions]="['LEFT','RIGHT']" [initialValue]="0" (valueOutput)="onValueChanged($event)"></app-selector>
       </div>
     </div>
 
     <div class="row control">
       <div class="col-4">
-        <app-selectable-label label="CONTROL TECHNIQUE" lookupValue="zst-control-technique" (contentClicked)="lookupContent($event)"></app-selectable-label>
+        <app-selectable-label label="CONTROL TECHNIQUE" [lookupValue]="controlTechnique" (contentClicked)="onLabelSelected($event)"></app-selectable-label>
       </div>
       <div class="col-8">
-        <app-selector label="CONTROL TECHNIQUE" [useValue]="true" [toggleOptions]="['WINGS LEVEL', 'ZERO SIDESLIP']" [initialValue]="0" (valueOutput)="onValueSelected($event)"></app-selector>
+        <app-selector label="CONTROL TECHNIQUE" [useValue]="true" [toggleOptions]="['WINGS LEVEL', 'ZERO SIDESLIP']" [initialValue]="0" (valueOutput)="onValueChanged($event)"></app-selector>
       </div>
     </div>
 
 
     <div class="row control">
       <div class="text-center col">
-        <app-selectable-label label="INCLINOMETER" lookupValue="zst-inclinometer" (contentClicked)="lookupContent($event)" size="large"></app-selectable-label>
+        <app-selectable-label label="INCLINOMETER" [lookupValue]="inclinometer" (contentClicked)="onLabelSelected($event)" size="large"></app-selectable-label>
       </div>
     </div>
 
     <div class="row">
       <div class="col text-center">
-        <img [src]="image" (click)="lookupContent('zst-inclinometer')"/>
+        <img [src]="image" (click)="onLabelSelected(this.inclinometer)"/>
       </div>
     </div>
 
