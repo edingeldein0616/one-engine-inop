@@ -6,7 +6,7 @@ import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { ViewManagerService } from 'src/app/services/view-manager.service';
 
 import { environment } from 'src/environments/environment';
-import { AnimationDriver, ActionPair, TextDictionary, SeminoleActionModel, AnimationActions, ZerosideslipPair, Parts } from 'src/app/utils';
+import { AnimationDriver,  TextDictionary, SeminoleActionModel, AnimationActions, Parts } from 'src/app/utils';//ActionPair, ZerosideslipPair } 
 
 @Component({
   selector: 'app-view-zst',
@@ -50,7 +50,7 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
         this.propellers(inopEngine)
         this.rudder(inopEngine);
         this.controlTechnique(inopEngine, controlTechnique);
-        this.markings(inopEngine, controlTechnique);
+        // this.markings(inopEngine, controlTechnique);
         this.setImage(inopEngine, controlTechnique);
 
         const contentLookup = inopEngine === 'LEFT' ? 'zst-inopEngine-left' : 'zst-inopEngine-right';
@@ -60,7 +60,7 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
         var inopEngine = this._sam.inopEngine.property;
 
         this.controlTechnique(inopEngine, controlTechnique);
-        this.markings(inopEngine, controlTechnique);
+        // this.markings(inopEngine, controlTechnique);
         this.setImage(inopEngine, controlTechnique);
 
         const contentLookup = controlTechnique === 'WINGS LEVEL' ? 'zst-wingsLevel' : 'zst-zeroSideslip';
@@ -125,36 +125,36 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private markings(inopEngine: string, controlTechnique: string) {
-    this.hideZerosideslip();
+  // private markings(inopEngine: string, controlTechnique: string) {
+  //   this.hideZerosideslip();
 
-    let direction: ActionPair = ZerosideslipPair.directionForward;
-    let prop: ActionPair;
-    let rudder: ActionPair;
-    let slide: ActionPair;
+  //   let direction: ActionPair = ZerosideslipPair.directionForward;
+  //   let prop: ActionPair;
+  //   let rudder: ActionPair;
+  //   let slide: ActionPair;
 
-    if(inopEngine === 'LEFT') {
-      prop = ZerosideslipPair.propRight;
-      rudder = ZerosideslipPair.rudderLeft;
-      slide = ZerosideslipPair.slideRight;
-    } else {
-      prop = ZerosideslipPair.propLeft;
-      rudder = ZerosideslipPair.rudderRight;
-      slide = ZerosideslipPair.slideLeft;
-    }
+  //   if(inopEngine === 'LEFT') {
+  //     prop = ZerosideslipPair.propRight;
+  //     rudder = ZerosideslipPair.rudderLeft;
+  //     slide = ZerosideslipPair.slideRight;
+  //   } else {
+  //     prop = ZerosideslipPair.propLeft;
+  //     rudder = ZerosideslipPair.rudderRight;
+  //     slide = ZerosideslipPair.slideLeft;
+  //   }
 
-    this.engineService.hideObject(direction.obj, false);
-    this.engineService.hideObject(prop.obj, false);
-    this.engineService.hideObject(rudder.obj, false);
-    this._animationDriver.play(environment.zerosideslipMarkings, direction.action);
-    this._animationDriver.play(environment.zerosideslipMarkings, prop.action);
-    this._animationDriver.play(environment.zerosideslipMarkings, rudder.action);
+  //   this.engineService.hideObject(direction.obj, false);
+  //   this.engineService.hideObject(prop.obj, false);
+  //   this.engineService.hideObject(rudder.obj, false);
+  //   this._animationDriver.play(environment.zerosideslipMarkings, direction.action);
+  //   this._animationDriver.play(environment.zerosideslipMarkings, prop.action);
+  //   this._animationDriver.play(environment.zerosideslipMarkings, rudder.action);
 
-    if(controlTechnique !== 'WINGS LEVEL') {
-      this.engineService.hideObject(slide.obj, false);
-      this._animationDriver.play(environment.zerosideslipMarkings, slide.action);
-    }
-  }
+  //   if(controlTechnique !== 'WINGS LEVEL') {
+  //     this.engineService.hideObject(slide.obj, false);
+  //     this._animationDriver.play(environment.zerosideslipMarkings, slide.action);
+  //   }
+  // }
 
   private rudder(inopEngine: string) {
     const rudderAction = inopEngine === 'LEFT' ? 100 : 0;
@@ -184,20 +184,20 @@ export class ViewZstComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private hideZerosideslip() {
-    this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.directionForward.action);
-    this.engineService.hideObject(ZerosideslipPair.directionForward.obj, true);
-    this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.propLeft.action);
-    this.engineService.hideObject(ZerosideslipPair.propLeft.obj, true);
-    this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.propRight.action);
-    this.engineService.hideObject(ZerosideslipPair.propRight.obj, true);
-    this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.rudderRight.action);
-    this.engineService.hideObject(ZerosideslipPair.rudderRight.obj, true);
-    this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.rudderLeft.action);
-    this.engineService.hideObject(ZerosideslipPair.rudderLeft.obj, true);
-    this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.slideRight.action);
-    this.engineService.hideObject(ZerosideslipPair.slideRight.obj, true);
-    this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.slideLeft.action);
-    this.engineService.hideObject(ZerosideslipPair.slideLeft.obj, true);
-  }
+  // private hideZerosideslip() {
+  //   this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.directionForward.action);
+  //   this.engineService.hideObject(ZerosideslipPair.directionForward.obj, true);
+  //   this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.propLeft.action);
+  //   this.engineService.hideObject(ZerosideslipPair.propLeft.obj, true);
+  //   this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.propRight.action);
+  //   this.engineService.hideObject(ZerosideslipPair.propRight.obj, true);
+  //   this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.rudderRight.action);
+  //   this.engineService.hideObject(ZerosideslipPair.rudderRight.obj, true);
+  //   this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.rudderLeft.action);
+  //   this.engineService.hideObject(ZerosideslipPair.rudderLeft.obj, true);
+  //   this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.slideRight.action);
+  //   this.engineService.hideObject(ZerosideslipPair.slideRight.obj, true);
+  //   this._animationDriver.stop(environment.zerosideslipMarkings, ZerosideslipPair.slideLeft.action);
+  //   this.engineService.hideObject(ZerosideslipPair.slideLeft.obj, true);
+  // }
 }

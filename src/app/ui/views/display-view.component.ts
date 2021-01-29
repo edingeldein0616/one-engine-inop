@@ -40,13 +40,6 @@ export abstract class DisplayViewComponent implements AfterViewInit {
 
     // Angular lifecycle interface function passed down to children
     abstract ngAfterViewInit(): void;
-
-    /**
-     * Event system callback function.
-     * @param topic Event topic
-     * @param subject Subject data
-     */
-    abstract receive(topic: string, subject: Subject): void;
     
     /**
      * 
