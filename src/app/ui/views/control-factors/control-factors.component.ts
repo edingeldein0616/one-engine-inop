@@ -1,7 +1,6 @@
-import { Component, Input, Output, forwardRef } from '@angular/core';
+import { Component, Input, Output, forwardRef, EventEmitter } from '@angular/core';
+import { DCVTitle, SEPTitle } from 'src/app/utils/static-text-data/content-titles';
 import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
-import { EventEmitter } from '@angular/core';
-import { DCVTitle, SEPTitle } from 'src/app/utils/content-titles';
 
 export class ControlFactorsComponent {
 

@@ -16,6 +16,7 @@ export class UiComponent implements OnInit, OnDestroy {
   constructor(private _loaderService: LoaderService) {
   }
 
+  
   public ngOnInit(): void {
     this._loadingSub = this._loaderService.isLoadingObservable
       .subscribe(value => this.loading = value);

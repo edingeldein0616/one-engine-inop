@@ -3,7 +3,7 @@ import { OnDestroy } from "@angular/core";
 import { Subscription } from "rxjs";
 import { AppInjector } from "src/app/app-injector.service";
 import { EngineService } from "src/app/engine/engine.service";
-import { SeminoleActionModel, AerodynamicsModel } from "src/app/utils";
+import { SeminoleActionModel, AerodynamicsModel } from "src/app/utils/aerodynamics";
 import { AnimationDriver, SeminoleAnimationAction, PropParts } from 'src/app/utils/animation';
 import { DisplayViewComponent } from "./display-view.component";
 

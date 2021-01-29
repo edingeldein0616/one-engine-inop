@@ -1,6 +1,6 @@
 import { OnInit } from "@angular/core";
 import { EventBus, Listener, Subject } from "src/app/engine/core/events";
-import { ThreeEngineEvent } from "src/app/utils";
+import { ThreeEngineEvent } from "src/app/utils/static-text-data";
 import { Intersection, Object3D } from "three";
 import { ModelViewComponent } from "./model-view.component";
 import { Raycastable } from "./raycastable";

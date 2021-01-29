@@ -1,11 +1,11 @@
+import { environment } from 'src/environments/environment';
 import { Component, ChangeDetectorRef } from '@angular/core';
 
-import { environment } from 'src/environments/environment';
+import { StarterTitle } from 'src/app/utils/static-text-data';
+import { SEPAerodynamicsModel } from 'src/app/utils/aerodynamics'
 
 import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
-
 import { InteractableModelViewComponent } from '../interactable-model-view.component';
-import { SEPAerodynamicsModel, StarterTitle } from 'src/app/utils';
 
 @Component({
   selector: 'app-view-sep',

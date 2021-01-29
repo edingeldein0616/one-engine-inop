@@ -3,7 +3,7 @@ import { Listener, Subject, EventBus } from 'src/app/engine/core/events';
 import { AnimatorComponent, MaterialAnimationComponent } from '../components/Animation';
 import { ModelEntity } from '../entities';
 import { AnimationAction, Clock } from 'three';
-import { ThreeEngineEvent } from 'src/app/utils/custom-events';
+import { ThreeEngineEvent } from 'src/app/utils/static-text-data/custom-events';
 
 export class AnimationSystem extends System implements Listener {
 

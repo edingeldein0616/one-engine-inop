@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GeneralTitle, DCVTitle, SEPTitle, RaycastTitle, CEFTitle, ZSTTitle, StarterTitle } from 'src/app/utils/content-titles';
+import { GeneralTitle, DCVTitle, SEPTitle, RaycastTitle, CEFTitle, ZSTTitle, StarterTitle } from 'src/app/utils/static-text-data';
 
 @Injectable({
   providedIn: 'root'

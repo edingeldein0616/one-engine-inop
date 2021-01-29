@@ -1,15 +1,12 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { EngineService } from 'src/app/engine/engine.service';
-import { AnimationDriver } from 'src/app/utils/animation/animation-driver';
-import { SeminoleActionModel } from 'src/app/utils/seminole-action-model';
 import { environment } from 'src/environments/environment';
+import { Component, ChangeDetectorRef } from '@angular/core';
 
 import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { SeminoleAnimationAction, PropParts } from 'src/app/utils/animation';
 import { MarkingsBase, Pfactor, Accelerated, Slipstream, Torque } from 'src/app/utils/animation/markings';
+
 import { ModelViewComponent } from '../model-view.component';
-import { StarterTitle } from 'src/app/utils';
+import { StarterTitle } from 'src/app/utils/static-text-data';
 
 @Component({
   selector: 'app-view-cef',

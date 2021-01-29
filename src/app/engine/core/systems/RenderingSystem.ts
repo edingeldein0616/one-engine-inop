@@ -1,12 +1,12 @@
 import { System, Engine, Entity, Family, FamilyBuilder, EngineEntityListener } from '@nova-engine/ecs';
-import { WebGLRenderer, PerspectiveCamera, Object3D, DataTexture, PMREMGenerator, sRGBEncoding, Mesh, SphereBufferGeometry, MeshBasicMaterial, Scene, Camera } from 'three';
+import { WebGLRenderer, PerspectiveCamera, Object3D, Mesh, SphereBufferGeometry, MeshBasicMaterial, Scene, Camera } from 'three';
 import { Sky } from 'three/examples/jsm/objects/Sky';
 import { SceneComponent, RootComponent, HideableComponent, LightComponent } from '../components';
 import { DirectionalLightEntity, SceneEntity } from '../entities'
 import { Listener, EventBus, Subject } from '../events';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { RaycastController } from 'src/app/utils/raycast-controller';
-import { ThreeEngineEvent } from 'src/app/utils/custom-events';
+import { ThreeEngineEvent } from 'src/app/utils/static-text-data/custom-events';
 
 /**
  * @class RenderingSystem

@@ -1,11 +1,11 @@
 import { environment } from 'src/environments/environment';
-
 import { Component, ChangeDetectorRef } from '@angular/core';
 
-import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
+import { StarterTitle} from 'src/app/utils/static-text-data';
+import { DCVAerodynamicsModel } from 'src/app/utils/aerodynamics';
 
-import { DCVAerodynamicsModel, StarterTitle} from 'src/app/utils';
 import { InteractableModelViewComponent } from '../interactable-model-view.component';
+import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 
 @Component({
   selector: 'app-view-dcv',

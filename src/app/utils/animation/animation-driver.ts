@@ -2,7 +2,7 @@ import { EventBus } from 'src/app/engine/core/events';
 import { AnimationAction } from 'three';
 import { Subject } from 'src/app/engine/core/events';
 import { AnimationData } from 'src/app/engine/core/systems';
-import { ThreeEngineEvent } from '../custom-events';
+import { ThreeEngineEvent } from '../static-text-data/custom-events';
 
 export class AnimationDriver {
 

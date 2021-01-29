@@ -1,3 +1,4 @@
+import { environment } from 'src/environments/environment';
 import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { Color, Mesh, MeshStandardMaterial } from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
@@ -8,9 +9,10 @@ import { HideableComponent, LightComponent, RootComponent } from './core/compone
 import { AnimatorComponent, MaterialAnimationComponent } from './core/components/Animation';
 import { EntityFactory, CameraEntity, SceneEntity, ModelEntity, DirectionalLightEntity, HemisphereLightEntity } from './core/entities';
 
-import { environment } from 'src/environments/environment';
 import { LoaderService } from 'src/app/services/loader.service';
-import { AerodynamicsModel, RaycastController, ThreeEngineEvent, ModelPainter } from 'src/app/utils';
+import { AerodynamicsModel } from 'src/app/utils/aerodynamics';
+import { ThreeEngineEvent } from 'src/app/utils/static-text-data'; 
+import { RaycastController, ModelPainter } from 'src/app/utils';
 
 @Injectable({
   providedIn: 'root'

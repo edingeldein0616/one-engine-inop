@@ -1,6 +1,6 @@
-import { Scale } from 'src/app/utils/scale';
+import { Scale } from 'src/app/utils/animation/scale';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
-import { Object3D, Color, Mesh } from 'three';
+import { Object3D, Mesh } from 'three';
 import { SeminoleActionModel } from './seminole-action-model';
 
 export abstract class AerodynamicsModel {

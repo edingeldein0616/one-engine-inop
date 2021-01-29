@@ -1,11 +1,12 @@
 import { environment } from 'src/environments/environment';
-
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
-import { ModelViewComponent } from '../model-view.component';
+
 import { ZeroSideslip } from 'src/app/utils/animation/markings';
 import { SeminoleAnimationAction } from 'src/app/utils/animation';
-import { StarterTitle, ZSTTitle } from 'src/app/utils';
+import { StarterTitle, ZSTTitle } from 'src/app/utils/static-text-data';
+
+import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
+import { ModelViewComponent } from '../model-view.component';
 
 @Component({
   selector: 'app-view-zst',
