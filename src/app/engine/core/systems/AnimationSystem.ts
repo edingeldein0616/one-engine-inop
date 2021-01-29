@@ -5,14 +5,21 @@ import { ModelEntity } from '../entities';
 import { AnimationAction, Clock } from 'three';
 import { ThreeEngineEvent } from 'src/app/utils/static-text-data/custom-events';
 
+/**
+ * Integrates all Three.js animation functionality into the ECS engine. Recieves animation calls from front end.
+ */
 export class AnimationSystem extends System implements Listener {
 
+  /** Family of Animator components. */
   private _family: Family;
+  /** Family of Material animation components */
   private _macFamily: Family;
+  /** Clock that keeps animations running on time */
   private _clock: Clock = new Clock();
-
+  /** FIFO queue of pending animation requests */
   private _animationQueue: AnimationData[] = [];
 
+  /**  */
   public onAttach(engine: Engine) {
     super.onAttach(engine);
 
