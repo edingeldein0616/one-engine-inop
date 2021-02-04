@@ -227,56 +227,11 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     });
   }
 
-  private _skybox_old(): void {
-    // Create sky
-    const sky = new Sky();
-    sky.scale.setScalar(450000);
-
-    var effectController = {
-      turbidity: 10,
-      rayleigh: 2,
-      mieCoefficient: 0.005,
-      mieDirectionalG: 0.8,
-      luminance: 1,
-      inclination: 0.7457, // elevation / inclination
-      azimuth: 0.659, // Facing front,
-      sun: ! true
-    };
-
-    // Add Sun Helper
-    const sunSphere = new Mesh(
-      new SphereBufferGeometry(20000, 16, 8),
-      new MeshBasicMaterial({ color: 0xffffff })
-    );
-    sunSphere.position.y = - 700000;
-    sunSphere.visible = false;
-
-    var uniforms = sky.material.uniforms;
-    uniforms[ "turbidity" ].value = effectController.turbidity;
-    uniforms[ "rayleigh" ].value = effectController.rayleigh;
-    uniforms[ "mieCoefficient" ].value = effectController.mieCoefficient;
-    uniforms[ "mieDirectionalG" ].value = effectController.mieDirectionalG;
-    uniforms[ "luminance" ].value = effectController.luminance;
-
-    const theta = Math.PI * ( effectController.inclination - 0.5 );
-    const phi = 2 * Math.PI * ( effectController.azimuth - 0.5 );
-
-    const distance = 400000;
-    sunSphere.position.x = distance * Math.cos( phi );
-    sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
-    sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );
-
-    sunSphere.visible = effectController.sun;
-
-    uniforms[ "sunPosition" ].value.copy( sunSphere.position );
-
-    this._sceneFamily.entities.forEach(sceneEntity => {
-      const scene = sceneEntity.getComponent(SceneComponent).scene;
-      scene.add(sky, sunSphere);
-    })
-    //this._addToScene(sky);
-  }
-
+  /**
+   * Hides object in the scene
+   * @param name name of the object to hide
+   * @param hide show or hide the object
+   */
   private hide(name: string, hide: boolean) {
     this._hideableFamily.entities.forEach(entity => {
       entity.getComponent(HideableComponent).hide(name, hide);
