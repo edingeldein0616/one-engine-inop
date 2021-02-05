@@ -28,6 +28,7 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
   private _raycastController: RaycastController;
   private _cast: boolean = false;
   private _clickOnRelease: boolean = false;
+  private _pointerState: boolean = false;
 
   public get camera() { return this._camera};
 
@@ -46,7 +47,6 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     this._setupCanvasMouseEvents(this._canvas);
 
     // setup raycasting
-    console.log('attach raycasting.');
     const rc = new RaycastController();
     rc.attachCamera(this._camera);
     rc.attachCanvas(this._canvas);
@@ -198,7 +198,6 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
   }
 
   private _setupCanvasMouseEvents(canvas: HTMLCanvasElement) {
-    console.log('setup click events');
     canvas.addEventListener('mousedown', () => {
       this._clickOnRelease = true;
     });
@@ -220,63 +219,17 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     });
     canvas.addEventListener('touchend', touchEvent => {
       if(this._clickOnRelease) {
-        console.log('touch end');
         this._raycastController.onTouchEnd(touchEvent);
         this._cast = true;
       }
     });
   }
 
-  private _skybox_old(): void {
-    // Create sky
-    const sky = new Sky();
-    sky.scale.setScalar(450000);
-
-    var effectController = {
-      turbidity: 10,
-      rayleigh: 2,
-      mieCoefficient: 0.005,
-      mieDirectionalG: 0.8,
-      luminance: 1,
-      inclination: 0.7457, // elevation / inclination
-      azimuth: 0.659, // Facing front,
-      sun: ! true
-    };
-
-    // Add Sun Helper
-    const sunSphere = new Mesh(
-      new SphereBufferGeometry(20000, 16, 8),
-      new MeshBasicMaterial({ color: 0xffffff })
-    );
-    sunSphere.position.y = - 700000;
-    sunSphere.visible = false;
-
-    var uniforms = sky.material.uniforms;
-    uniforms[ "turbidity" ].value = effectController.turbidity;
-    uniforms[ "rayleigh" ].value = effectController.rayleigh;
-    uniforms[ "mieCoefficient" ].value = effectController.mieCoefficient;
-    uniforms[ "mieDirectionalG" ].value = effectController.mieDirectionalG;
-    uniforms[ "luminance" ].value = effectController.luminance;
-
-    const theta = Math.PI * ( effectController.inclination - 0.5 );
-    const phi = 2 * Math.PI * ( effectController.azimuth - 0.5 );
-
-    const distance = 400000;
-    sunSphere.position.x = distance * Math.cos( phi );
-    sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
-    sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );
-
-    sunSphere.visible = effectController.sun;
-
-    uniforms[ "sunPosition" ].value.copy( sunSphere.position );
-
-    this._sceneFamily.entities.forEach(sceneEntity => {
-      const scene = sceneEntity.getComponent(SceneComponent).scene;
-      scene.add(sky, sunSphere);
-    })
-    //this._addToScene(sky);
-  }
-
+  /**
+   * Hides object in the scene
+   * @param name name of the object to hide
+   * @param hide show or hide the object
+   */
   private hide(name: string, hide: boolean) {
     this._hideableFamily.entities.forEach(entity => {
       entity.getComponent(HideableComponent).hide(name, hide);
@@ -327,10 +280,21 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     // Update camera controls since damping is enabled.f
     this._controls.update();
 
+    this._raycastController.raycast();
+
+    
+    if(this._raycastController.pointer != this._pointerState) {
+      this._pointerState = this._raycastController.pointer;
+      const sub = new Subject();
+      sub.data = this._pointerState;
+      EventBus.get().publish(ThreeEngineEvent.RAYCASTCURSOR, sub);
+    }
+    
     if(this._cast && this._raycastController) {
-      var intersects = this._raycastController.raycast();
+      var intersects = this._raycastController.getIntersects();
       if(intersects) {
         if(intersects.length > 0) {
+          
           var sub = new Subject();
           sub.data = intersects
           EventBus.get().publish(ThreeEngineEvent.INTERSECT, sub);

@@ -25,6 +25,7 @@ export abstract class InteractableModelViewComponent extends ModelViewComponent 
    */
   public ngOnInit() {
     EventBus.get().subscribe(ThreeEngineEvent.INTERSECT, this);
+    EventBus.get().subscribe(ThreeEngineEvent.RAYCASTCURSOR, this);
   }
 
   /** 
@@ -32,6 +33,7 @@ export abstract class InteractableModelViewComponent extends ModelViewComponent 
   */
   protected _dispose() {
     EventBus.get().unsubscribe(ThreeEngineEvent.INTERSECT, this);
+    EventBus.get().unsubscribe(ThreeEngineEvent.RAYCASTCURSOR, this);
   }
 
   /**
@@ -51,11 +53,15 @@ export abstract class InteractableModelViewComponent extends ModelViewComponent 
    */
   public receive(topic: string, subject: Subject) {
     switch (topic) {
-      case ThreeEngineEvent.INTERSECT: {
+      case ThreeEngineEvent.INTERSECT:
         var firstIntersect = subject.data.shift() as Intersection;
         this.onLabelSelected(firstIntersect.object.name);
         this.detectChange();
-      }
+      break;
+      case ThreeEngineEvent.RAYCASTCURSOR:
+        const cursorStyle = subject.data ? "pointer" : "default";
+        document.body.style.cursor = cursorStyle;
+      break;
     }
   }
 }
