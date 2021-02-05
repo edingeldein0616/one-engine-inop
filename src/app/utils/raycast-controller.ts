@@ -1,8 +1,12 @@
 import { Camera, Intersection, Object3D, Raycaster, Vector2 } from 'three';
 export class RaycastController {
 
-  public intersects: Intersection[];
-
+  private _intersects: Intersection[];
+  private _pointer: boolean;
+  public get pointer() : boolean {
+    return this._pointer;
+  }
+  
   private _root: Object3D[];
   private _camera: Camera;
   private _canvas: HTMLCanvasElement;
@@ -32,13 +36,21 @@ export class RaycastController {
     this._root = root;
   }
 
-  public raycast(): Intersection[] {
-    if(!this._positionUpdated) return;
-
+  public raycast(): void {
     this._raycaster.setFromCamera(this._mousePosition, this._camera);
-    var intersects = this._raycaster.intersectObjects(this._root, true);
+    this._intersects = this._raycaster.intersectObjects(this._root, true);
+    this._pointer = this._intersects.length > 0;
+  }
+
+  public getIntersects(): Intersection[] {
+    if(!this._positionUpdated) return;
     this._positionUpdated = false;
-    return intersects;
+    return this._intersects;
+  }
+
+  public sense(): boolean {
+    var intersects = this._raycaster.intersectObjects(this._root, true);
+    return intersects.length > 0;
   }
 
   public onMouseMove(event: MouseEvent): void {

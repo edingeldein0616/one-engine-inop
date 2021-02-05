@@ -52,6 +52,7 @@ export abstract class InteractableModelViewComponent extends ModelViewComponent 
   public receive(topic: string, subject: Subject) {
     switch (topic) {
       case ThreeEngineEvent.INTERSECT: {
+        console.log(subject.data);
         var firstIntersect = subject.data.shift() as Intersection;
         this.onLabelSelected(firstIntersect.object.name);
         this.detectChange();

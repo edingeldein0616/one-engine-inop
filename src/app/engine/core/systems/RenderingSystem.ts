@@ -46,7 +46,6 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     this._setupCanvasMouseEvents(this._canvas);
 
     // setup raycasting
-    console.log('attach raycasting.');
     const rc = new RaycastController();
     rc.attachCamera(this._camera);
     rc.attachCanvas(this._canvas);
@@ -282,10 +281,13 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     // Update camera controls since damping is enabled.f
     this._controls.update();
 
+    this._raycastController.raycast();
+    
     if(this._cast && this._raycastController) {
-      var intersects = this._raycastController.raycast();
+      var intersects = this._raycastController.getIntersects();
       if(intersects) {
         if(intersects.length > 0) {
+          
           var sub = new Subject();
           sub.data = intersects
           EventBus.get().publish(ThreeEngineEvent.INTERSECT, sub);
