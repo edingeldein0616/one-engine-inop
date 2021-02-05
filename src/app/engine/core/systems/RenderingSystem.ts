@@ -28,6 +28,7 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
   private _raycastController: RaycastController;
   private _cast: boolean = false;
   private _clickOnRelease: boolean = false;
+  private _pointerState: boolean = false;
 
   public get camera() { return this._camera};
 
@@ -197,7 +198,6 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
   }
 
   private _setupCanvasMouseEvents(canvas: HTMLCanvasElement) {
-    console.log('setup click events');
     canvas.addEventListener('mousedown', () => {
       this._clickOnRelease = true;
     });
@@ -219,7 +219,6 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     });
     canvas.addEventListener('touchend', touchEvent => {
       if(this._clickOnRelease) {
-        console.log('touch end');
         this._raycastController.onTouchEnd(touchEvent);
         this._cast = true;
       }
@@ -282,6 +281,14 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     this._controls.update();
 
     this._raycastController.raycast();
+
+    
+    if(this._raycastController.pointer != this._pointerState) {
+      this._pointerState = this._raycastController.pointer;
+      const sub = new Subject();
+      sub.data = this._pointerState;
+      EventBus.get().publish(ThreeEngineEvent.RAYCASTCURSOR, sub);
+    }
     
     if(this._cast && this._raycastController) {
       var intersects = this._raycastController.getIntersects();

@@ -9,4 +9,5 @@ export class ThreeEngineEvent {
   public static readonly SKYBOX: string = 'skybox';
   public static readonly HIDEOBJECT: string = 'hide-object';
   public static readonly SENDROOTTORAYCASTER: string = 'send-root-to-raycaster';
+  public static readonly RAYCASTCURSOR: string = 'raycast-cursor';
 }
