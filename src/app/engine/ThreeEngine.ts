@@ -37,7 +37,7 @@ class ThreeEngine extends Engine {
     this._canvas = canvas;
     // Set up camera entity
     this._camera = camera.getComponent(PerspectiveCameraComponent).camera;
-    this._camera.position.z = this._camera.position.x = this._camera.position.y = 7;
+    this._camera.position.z = this._camera.position.x = this._camera.position.y = 22;
     // Set up rendering system
     this._time = 0;
     this._initRenderingSystem();

@@ -18,7 +18,7 @@ class CameraEntity extends Entity {
   constructor() {
     super();
     const cameraComp = this.putComponent(PerspectiveCameraComponent);
-    cameraComp.camera = new PerspectiveCamera(75, 1, 0.01, 100);
+    cameraComp.camera = new PerspectiveCamera(30, 1, 0.01, 100);
     cameraComp.camera.addEventListener('onSceneDispose', () => { console.log('camera disposed'); });
     return this;
   }
