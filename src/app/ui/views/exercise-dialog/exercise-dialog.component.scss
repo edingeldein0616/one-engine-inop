@@ -1,0 +1,48 @@
+.inline {
+    display: inline-block;    
+}
+
+.right {
+    float: right;
+}
+
+.left {
+    float: left;
+}
+
+.dialog-title {
+    height: 10%;
+}
+
+.engine-view {
+    top: 10%;
+    width: 100%;
+    height: 70%;
+}
+
+.control-view {
+    bottom: 0%;
+    height: 20%;
+    display: flex;
+}
+
+.description-view {
+    display: inline;
+    width: 70%;
+    padding: 10px;
+    overflow-y:scroll;
+}
+
+.button-group {
+    display:inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 30%;
+    padding: 10px;
+}
+
+.button {
+    height: 5vh;
+    width: 10vw;
+    margin: 5px;
+}
