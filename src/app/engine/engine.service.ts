@@ -152,6 +152,10 @@ export class EngineService implements OnDestroy {
     EventBus.get().publish(ThreeEngineEvent.HIDEOBJECT, subject);
   }
 
+  public pause(pause: boolean): void {
+    this._threeEngine.pauseEngine(pause);
+  }
+
   public attachRaycaster(raycastController: RaycastController) {
     this._threeEngine.attachRaycaster(raycastController);
   }

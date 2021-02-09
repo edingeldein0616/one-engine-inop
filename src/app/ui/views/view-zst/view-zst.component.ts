@@ -126,9 +126,14 @@ export class ViewZstComponent extends ModelViewComponent {
   }
 
   public openExercise(): void {
-    this.dialog.open(ExerciseDialogComponent, {
+    this._engineService.pause(true);
+    const dialogRef = this.dialog.open(ExerciseDialogComponent, {
       width: '100vh',
       height: '90vh'
+    });
+
+    dialogRef.afterClosed().subscribe(_ => {
+      this._engineService.pause(false);
     });
   }
 

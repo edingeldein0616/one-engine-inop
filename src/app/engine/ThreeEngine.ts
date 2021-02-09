@@ -15,22 +15,24 @@ import { RaycastController } from '../utils/raycast-controller';
 class ThreeEngine extends Engine {
 
   /** Time since engine startup. */
-  private _time: number;
-  private _frameId: number;
+  protected _time: number;
+  protected _frameId: number;
+  protected _paused: boolean;
+  public isPaused() { return this._paused; }
 
   /** HTML Canvas to render to */
-  private _canvas: HTMLCanvasElement;
+  protected _canvas: HTMLCanvasElement;
   /** Camera for the Three.js Renderer */
-  private _camera: PerspectiveCamera;
+  protected _camera: PerspectiveCamera;
   /** Handles Three.js rendering functionality of the engine */
-  private _renderingSystem: any;
+  protected _renderingSystem: any;
   /** Handles Three.js animation functionality of the engine */
-  private _animationSystem: any;
+  protected _animationSystem: any;
 
   /** All current entities of the engine */
-  private _registeredEntities: Entity[] = [];
+  protected _registeredEntities: Entity[] = [];
   /** All current systems of the engine */
-  private _registeredSystems: System[] = [];
+  protected _registeredSystems: System[] = [];
 
   constructor(canvas: HTMLCanvasElement, camera: CameraEntity, scene: SceneEntity) {
     super();
@@ -113,6 +115,14 @@ class ThreeEngine extends Engine {
   public addSystems(...systems: System[]) {
     systems.forEach(system => this.addSystem(system));
     return this;
+  }
+
+  /**
+   * Pauses rendering of engine
+   * @param pause 
+   */
+  public pauseEngine(pause: boolean) : void {    
+    this._paused = pause;
   }
 
   /**
