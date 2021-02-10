@@ -278,7 +278,7 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
     const threeEngine = engine as ThreeEngine;
     if(threeEngine.isPaused()) return;
 
-    // Update camera controls since damping is enabled.f
+    // Update camera controls since damping is enabled.
     this._controls.update();
 
     this._raycastController.raycast();
