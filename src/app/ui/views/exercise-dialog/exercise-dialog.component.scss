@@ -28,7 +28,7 @@
 
 .description-view {
     display: inline;
-    width: 70%;
+    width: 100%;
     padding: 10px;
     overflow-y:scroll;
 }
@@ -47,8 +47,7 @@
     margin: 5px;
 }
 
-.bm-player {
-    width: 100%;
+.tab-group {
     height: 100%;
     max-height: 100%;
 }

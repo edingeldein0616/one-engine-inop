@@ -16,6 +16,7 @@ import { ViewMenuComponent } from './ui/views/view-menu/view-menu.component';
 import { EngineComponent } from './engine/engine.component';
 import { DcvControlFactorsComponent, SepControlFactorsComponent } from './ui/views/control-factors/control-factors.component';
 import { ExerciseDialogComponent } from './ui/views/exercise-dialog/exercise-dialog.component';
+import { SvgViewComponent } from './ui/views/exercise-dialog/svg-view/svg-view.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { ExerciseDialogComponent } from './ui/views/exercise-dialog/exercise-dia
     EngineComponent,
     DcvControlFactorsComponent,
     SepControlFactorsComponent,
-    ExerciseDialogComponent
+    ExerciseDialogComponent,
+    SvgViewComponent
   ],
   imports: [
     BrowserModule,

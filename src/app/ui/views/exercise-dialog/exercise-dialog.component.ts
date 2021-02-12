@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import lottie from 'lottie-web';
+import lottie, { AnimationItem } from 'lottie-web';
 
 @Component({
   selector: 'app-exercise-dialog',
@@ -9,18 +9,35 @@ import lottie from 'lottie-web';
 })
 export class ExerciseDialogComponent implements OnInit {
 
-  constructor(public dialogRef: MatDialogRef<ExerciseDialogComponent>) { }
+  private _containers: HTMLCollectionOf<Element>;
+  private _animations: AnimationItem[];
+  private _currentAnimation: number;
+
+  constructor(public dialogRef: MatDialogRef<ExerciseDialogComponent>) {
+  }
 
   ngOnInit(): void {
     var animation = lottie.loadAnimation({
-      container: document.getElementById('bm'),
+      container: document.getElementById('step-1'),
       renderer: 'svg',
-      loop: false,
+      loop: true,
       autoplay: true,
       path: 'assets/step-2.json'
     });
+    var animation = lottie.loadAnimation({
+      container: document.getElementById('step-2'),
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: 'assets/step-1.json'
+    });
   }
 
+  public next(): void {
+  }
+
+  public previous(): void {
+  }
 
   public exitExercise(): void {
     this.dialogRef.close();
