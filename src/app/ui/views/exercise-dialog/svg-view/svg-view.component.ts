@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
 import lottie, { AnimationItem } from 'lottie-web';
+import { ContentDictionaryService } from 'src/app/services/content-dictionary.service';
 
 @Component({
   selector: 'app-svg-view',
@@ -10,18 +11,17 @@ export class SvgViewComponent implements AfterViewInit {
 
   private static _assetPath = 'assets/';
 
+  public content: string;
+
   @Input() animation: string;
   @Input() autoplay: boolean;
   @Input() loop: boolean;
   private _animationItem: AnimationItem
   private _container: HTMLElement;
 
-  constructor() { }
+  constructor(private _contentDictionary: ContentDictionaryService) { }
 
-  ngAfterViewInit(): void {
-    console.log('animation: ' + this.animation + ', typeof ' + typeof this.animation);
-    console.log('autoplay: ' + this.autoplay + ', typeof ' + typeof this.autoplay);
-    console.log('loop: ' + this.loop + ', typeof ' + typeof this.loop);
+  public ngAfterViewInit(): void {
     this._container = document.getElementById(this.animation);
     this._animationItem = lottie.loadAnimation({
       container: this._container,
@@ -34,6 +34,9 @@ export class SvgViewComponent implements AfterViewInit {
     if(!this.autoplay) {
       this._animationItem.hide();
     }
+
+    this.content = this._contentDictionary.getContent(this.animation);
+
   }
 
   public play() {

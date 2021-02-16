@@ -129,7 +129,8 @@ export class ViewZstComponent extends ModelViewComponent {
     this._engineService.pause(true);
     const dialogRef = this.dialog.open(ExerciseDialogComponent, {
       width: '100vh',
-      height: '90vh'
+      height: '90vh',
+      panelClass: 'app-dialog'
     });
 
     dialogRef.afterClosed().subscribe(_ => {
