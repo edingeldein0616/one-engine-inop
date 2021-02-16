@@ -76,3 +76,11 @@ export class ZSTTitle {
     public static readonly Inclinometer = 'zst-inclinometer';
     public static readonly ControlTechnique = 'zst-control-techinque';
 }
+
+export class ZSExercise {
+    public static readonly Step1 = 'step-1';
+    public static readonly Step2 = 'step-2';
+    public static readonly Step3 = 'step-3';
+    public static readonly Step4 = 'step-4';
+    public static readonly Step5 = 'step-5';
+}

@@ -7,6 +7,7 @@ import { Listener, EventBus, Subject } from '../events';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { RaycastController } from 'src/app/utils/raycast-controller';
 import { ThreeEngineEvent } from 'src/app/utils/static-text-data/custom-events';
+import { ThreeEngine } from '../../ThreeEngine';
 
 /**
  * @class RenderingSystem
@@ -274,7 +275,10 @@ class RenderingSystem extends System implements EngineEntityListener, Listener {
    */
   public update(engine: Engine, delta: number): void {
 
-    // Update camera controls since damping is enabled.f
+    const threeEngine = engine as ThreeEngine;
+    if(threeEngine.isPaused()) return;
+
+    // Update camera controls since damping is enabled.
     this._controls.update();
 
     this._raycastController.raycast();

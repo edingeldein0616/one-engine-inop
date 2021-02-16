@@ -22,3 +22,7 @@ img:hover {
   padding: 10px;
   overflow-y: scroll;
 }
+
+.cdk-overlay-pane.app-dialog {
+  position: relative!important;
+}

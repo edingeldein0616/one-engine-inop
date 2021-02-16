@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GeneralTitle, DCVTitle, SEPTitle, RaycastTitle, CEFTitle, ZSTTitle, StarterTitle } from 'src/app/utils/static-text-data';
+import { GeneralTitle, DCVTitle, SEPTitle, RaycastTitle, CEFTitle, ZSTTitle, StarterTitle, ZSExercise } from 'src/app/utils/static-text-data';
 
 @Injectable({
   providedIn: 'root'
@@ -127,7 +127,12 @@ export class TextDictionary {
       </ol>`},
     {title: ZSTTitle.Inclinometer, content: `<h3>The inclinometer, or "ball" can be used to establish a zero sideslip condition. Using a yaw string, a zero sideslip can be established, noting the position of the ball. This ball position can then be used to help establish a zero sideslip for future single-engine conditions when a yaw string is not available.</h3>
       <h3>In the Seminole, a zero sideslip is established with about 1/2 ball deflection towards the operating engine. In a zero sideslip condition, there are no rolling or yawing forces present - the ball merely sits at the lowest point in the inclinometer tube, which is slightly off center due to the aircraft's bank angle.</h3>`},
-    {title: ZSTTitle.ControlTechnique, content: '<h3>Use these buttons to select which control technique to use.</h3>'}
+    {title: ZSTTitle.ControlTechnique, content: '<h3>Use these buttons to select which control technique to use.</h3>'},
+    {title: ZSExercise.Step1, content: '<h2>To try out this demonstration of zero sideslip, you will need two people, a multiengine airplane model, and a clear table.</h2>'},
+    {title: ZSExercise.Step2, content: '<h2>To simulate a wings-level condition, one person should pull on the operating engine to simulate thrust while the other pushes on the tail to simulate the rudder force.</h2>'},
+    {title: ZSExercise.Step3, content: '<h2>As the airplane is pulled accross the table, apply enough force on the tail to keep the airplane on a constant heading. The airplane moves towards the inoperative engine.</h2>'},
+    {title: ZSExercise.Step4, content: '<h2>To simulate a zero sideslip condition, add an additional component of lift created by banking into the operating engine.</h2>'},
+    {title: ZSExercise.Step5, content: '<h2>Apply enough "horizontal component of lift" force to counteract the rudder force, and the airplane will move straight across the table while holding a heading.</h2>'}
   ];
 
   public getContent(title: string): string {

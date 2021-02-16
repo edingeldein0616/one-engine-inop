@@ -7,6 +7,8 @@ import { StarterTitle, ZSTTitle } from 'src/app/utils/static-text-data';
 
 import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 import { ModelViewComponent } from '../model-view.component';
+import { MatDialog } from '@angular/material';
+import { ExerciseDialogComponent } from '../exercise-dialog/exercise-dialog.component';
 
 @Component({
   selector: 'app-view-zst',
@@ -27,7 +29,7 @@ export class ViewZstComponent extends ModelViewComponent {
   
   private _loading: boolean = true;
   
-  constructor(private ref: ChangeDetectorRef) { super(); }
+  constructor(private ref: ChangeDetectorRef, public dialog: MatDialog) { super(); }
 
   public ngAfterViewInit() {
     this.viewManagerService.setCurrentView('Zero Sideslip Technique');
@@ -121,6 +123,19 @@ export class ViewZstComponent extends ModelViewComponent {
         this._seminoleActionModel.controlTechnique.property = data.value;
       break
     }
+  }
+
+  public openExercise(): void {
+    this._engineService.pause(true);
+    const dialogRef = this.dialog.open(ExerciseDialogComponent, {
+      width: '100vh',
+      height: '90vh',
+      panelClass: 'app-dialog'
+    });
+
+    dialogRef.afterClosed().subscribe(_ => {
+      this._engineService.pause(false);
+    });
   }
 
   public inopEngineLeft = ZSTTitle.InopEngineLeft;
