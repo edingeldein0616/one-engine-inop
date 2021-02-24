@@ -78,7 +78,7 @@ export class DCVAerodynamicsModel extends AerodynamicsModel {
 
   // 1, 3
   private controlTechnique(value: string): number {
-    return value === 'WINGS LEVEL' ? 1 : 3;
+    return value === 'WINGS LEVEL' ? 0 : 3;
   }
 
   // 0 - 3
