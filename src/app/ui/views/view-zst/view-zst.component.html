@@ -13,7 +13,7 @@
 
     <div class="row control">
       <div class="col-4">
-        <app-selectable-label label="INOP. ENGINE" lookupValue="inop-engine" (contentClicked)="onLabelSelected($event)"></app-selectable-label>
+        <app-selectable-label label="INOP. ENGINE" lookupValue="zst-inop-engine" (contentClicked)="onLabelSelected($event)"></app-selectable-label>
       </div>
       <div class="col-8">
         <app-selector label="INOP. ENGINE" [useValue]="true" [toggleOptions]="['LEFT','RIGHT']" [initialValue]="0" (valueOutput)="onValueChanged($event)"></app-selector>

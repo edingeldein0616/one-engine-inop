@@ -69,6 +69,7 @@ export class CEFTitle {
 }
 
 export class ZSTTitle {
+    public static readonly InopEngine = 'zst-inop-engine';
     public static readonly InopEngineLeft = 'zst-inop-engine-left';
     public static readonly InopEngineRight = 'zst-inop-engine-right';
     public static readonly WingsLevel = 'zst-wings-level';
