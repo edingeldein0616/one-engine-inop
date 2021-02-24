@@ -14,7 +14,7 @@ import { SelectionData } from 'src/app/ui/controls/selector/selection-data';
 })
 export class ViewDcvComponent extends InteractableModelViewComponent {
 
-  public vmca: number;
+  public vmca: string;
   public stallSpeed: number;
   public rudderEffectiveness: number;
 
@@ -121,7 +121,8 @@ export class ViewDcvComponent extends InteractableModelViewComponent {
     }
 
     this._aeroModel.calculateMarkings(this._seminoleActionModel);
-    this.vmca = this._aeroModel.vmca(this._seminoleActionModel);
+    var vmcaCalc = this._aeroModel.vmca(this._seminoleActionModel);
+    this.vmca =  isNaN(vmcaCalc) ? 'N/A' : vmcaCalc.toString();;
     this.stallSpeed = this._aeroModel.stallSpeed(this._seminoleActionModel);
     this.rudderEffectiveness = (this._aeroModel.rudderEffectiveness(this._seminoleActionModel) / 23) * 100;
   }
