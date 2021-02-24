@@ -49,7 +49,7 @@ export class SEPTitle {
     public static readonly InopEngine = 'inop-engine';
     public static readonly Power = 'sep-power';
     public static readonly DensityAltitude = 'sep-density-altitude';
-    public static readonly Propeller = 'dcv-propeller';
+    public static readonly Propeller = 'sep-propeller';
     public static readonly ControlTechnique = 'sep-control-technique';
     public static readonly Airspeed = 'sep-airspeed';
     public static readonly Weight = 'sep-weight';
