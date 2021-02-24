@@ -31,7 +31,7 @@ export class ViewDcvComponent extends InteractableModelViewComponent {
   }
 
   public ngAfterViewInit() {
-    this.viewManagerService.setCurrentView('Directional Control and Vmca');
+    this.viewManagerService.setCurrentView('Directional Control and V<sub>MCA</sub>');
 
     this._engineService.loadSeminole(environment.seminole);
     this._engineService.loadAttachedMarkings(environment.attachedMarkings);

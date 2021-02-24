@@ -48,6 +48,15 @@
                 }
               ]
             },
+            "local-staging": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.staging.ts"
+                }                                
+              ],
+              "baseHref": "/edingeldein/one-engine-inop/"
+            },
             "staging": {
               "fileReplacements": [
                 {

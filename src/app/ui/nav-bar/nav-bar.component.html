@@ -3,11 +3,11 @@
     <h1 class="title">One Engine Inoperative Aerodynamics</h1>
   </a>
   <span class="space"></span>
-  <h3>{{viewManagerService.currentView}}</h3>
+  <h3 [innerHtml]="viewManagerService.currentView"></h3>
   <span class="fill-middle"></span>
   <button mat-button [matMenuTriggerFor]="menu">Menu</button>
   <mat-menu #menu="matMenu" xPosition="after">
-    <button mat-menu-item routerLink="/directional-control-vmca" routerLinkActive="active-link">Directional Control/Vmca</button>
+    <button mat-menu-item routerLink="/directional-control-vmca" routerLinkActive="active-link">Directional Control/V<sub>MCA</sub></button>
     <button mat-menu-item routerLink="/single-engine-performance" routerLinkActive="active-link">Single-Engine Performance</button>
     <button mat-menu-item routerLink="/critical-engine-factors" routerLinkActive="active-link">Critical Engine Factors</button>
     <button mat-menu-item routerLink="/zero-sideslip-technique" routerLinkActive="active-link">Zero Sideslip Technique</button>
