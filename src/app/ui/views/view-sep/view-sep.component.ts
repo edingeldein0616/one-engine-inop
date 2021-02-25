@@ -111,7 +111,8 @@ export class ViewSepComponent extends InteractableModelViewComponent {
 
     this._aeroModel.calculateMarkings(this._seminoleActionModel);
     this.roc = this._aeroModel.roc(this._seminoleActionModel);
-    this.excessThp = this._aeroModel.excessTHP(this.roc);
+    if(data.label !== "AIRSPEED")
+      this.excessThp = this._aeroModel.excessTHP(this.roc);
     this.serviceCeiling = this._aeroModel.serviceCeiling(this._seminoleActionModel);
     this.absoluteCeiling = this._aeroModel.absoluteCeiling(this.serviceCeiling);
   }

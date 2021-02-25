@@ -8,7 +8,7 @@
 @mixin app-selectable-label($app-theme) {
   $primary: map-get($app-theme, primary);
 
-  h5:hover, h1:hover {
+  h5:hover, h4:hover, h3:hover, h2:hover {
     cursor: pointer;
     color: mat-color($primary);
   }

@@ -3,3 +3,11 @@
   width: 14em;
   height: 7em;
 }
+
+.mat-progress-bar-fill::after {
+  background-color: limegreen !important;
+}
+
+.mat-progress-bar-buffer {
+  background-color:#1e381d;
+}
