@@ -36,7 +36,6 @@ export class SvgViewComponent implements AfterViewInit {
     }
 
     this.content = this._contentDictionary.getContent(this.animation);
-
   }
 
   public play() {
