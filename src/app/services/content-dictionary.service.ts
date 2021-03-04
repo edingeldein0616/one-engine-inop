@@ -21,12 +21,18 @@ export class ContentDictionaryService {
 export class TextDictionary {
 
   private _dictonaryEntries: Entry[] = [
-    { title: StarterTitle.DCV, content: `<p>This section covers single-engine directional control and V<sub>MCA</sub>.</p>
-        <p>Click on the "Data" and "Control Factors" text labels to read descriptive text here.<p>
-        <p>Clicking on the arrows marking aerodynamic and control forces around the aircraft will display additional text here.</p>`},
-    { title: StarterTitle.SEP, content: `<p>This section covers single-engine performance.</p>
-        <p>Click on the "Data" and "Performance Factors" text labels to read descriptive text here.<p>
-        <p>Clicking on the arrows marking aerodynamic and control forces around the aircraft will display additional text here.</p>`},
+    { title: StarterTitle.DCV, content: `
+      <ol>
+        <li>This section covers single-engine directional control and V<sub>MCA</sub>.</li>
+        <li>Click on the "Data" and "Control Factors" text labels to read descriptive text here.</li>
+        <li>Clicking on the arrows marking aerodynamic and control forces around the aircraft will display additional text here.</li>
+      </ol>`},
+    { title: StarterTitle.SEP, content: `
+      <ol>
+        <li>This section covers single-engine performance.</li>
+        <li>Click on the "Data" and "Performance Factors" text labels to read descriptive text here.</li>
+        <li>Clicking on the arrows marking aerodynamic and control forces around the aircraft will display additional text here.</li>
+      </ol>`},
     { title: StarterTitle.CEF, content: `<p>This section covers critical engine factors that affect multiengine aircraft without counterrotating propellers.
         In most US-designed multiengine aircraft, both engines rotate to the right (clockwise) when viewed from the rear. Select a critical engine
         factor to see how each one makes the left engine the critical engine. The critical engine is the engine whose failure will most adversely affect
@@ -67,13 +73,13 @@ export class TextDictionary {
     { title: SEPTitle.Propeller, content: `<p>A feathered propeller produces much less drag than a windmilling propeller, increasing the aircraft's climb performance.</p>` },
     { title: SEPTitle.ControlTechnique, content: `<p>Flying wings level with an inoperative engine creates much more drag than flying with zero sideslip. This is due in part to the angle of the relative wind on the fuselage, vertical stabalizer, and rudder created by the side slip. Since the relative wind tends to parallel the rudder, the rudder must be deflected even further to get the same results.</p>
     <p>A zero sideslip is established by banking slightly into the operating engine. This allows the aircraft to fly with its longitudinal axis aligned with the flight path, creating much less drag and improving climb performance. See the "Zero sideslip" section for details.</p>`},
-    { title: SEPTitle.Airspeed, content: `<p>Changing airspeed above or below Vyse will gnerally decrease climb performance.</p>
-      <p>The indicated airspeed for the best rate of climb actually decreases slightly with altitude. As a result, it is possible at higher altitudes that flying slower than the published Vyse speed may actually yield slightly improved climb performance. This effect is not simulated here.</p>` },
+    { title: SEPTitle.Airspeed, content: `<p>Changing airspeed above or below V<sub>YSE</sub> will gnerally decrease climb performance.</p>
+      <p>The indicated airspeed for the best rate of climb actually decreases slightly with altitude. As a result, it is possible at higher altitudes that flying slower than the published V<sub>YSE</sub> speed may actually yield slightly improved climb performance. This effect is not simulated here.</p>` },
     { title: SEPTitle.Weight, content: `<p>An increase in weight requires the aircraft to generate more lift and fly at a higher angle of attack for any given airspeed, creating more drag and decreasing climb performance.</p>` },
     { title: SEPTitle.COG, content: `<p>Shifting the center of gravity (CG) requires a change in the amount of taildown force in order to balance the aircraft along the longitudinal axis. This in turn changes the amount of lift the wings must produce to maintain altitude at a given speed. The aircraft will have to fly at a different angle of attack, changing the amount of lift and drag being produced. For example, a CG shifted forward will require an increase in taildown force, an increase in angle of attack and lift, and an increase in drag, decreasing climb performance.</p>` },
     { title: SEPTitle.Flaps, content: `<p>Lowering flaps will produce more drag and decrease climb performance.</p>` },
     { title: SEPTitle.LandingGear, content: `<p>Extending the landing gear will create more drag and reduce climb performance.</p>` },
-    { title: SEPTitle.Vyse, content: '<p>Vyse is the single-engine best rate of climb speed. For the Piper Seminole, that speed is 88 KIAS</p>' },
+    { title: SEPTitle.Vyse, content: '<p>V<sub>YSE</sub> is the single-engine best rate of climb speed. For the Piper Seminole, that speed is 88 KIAS</p>' },
     { title: SEPTitle.ExcessTHP, content: `<p>Excess thrust horsepower (THP) is the horsepower in excess of the amount required to maintain straight and level flight. An aircraft's rate of climb is a function of the excess THP available. An aircraft with zero excess THP at a given airspeed is using all of its horsepower just to maintain altitude at that speed.</p>
       <p>When a multiengine airplane suffers an engine failure, it loses 50% of its total horsepower, but it can lose 80-90% of its excess THP available. For example, assuming an aircraft with 360 HP requires 160 HP to maintain level flight at 88 KIAS, there would be 200 excess THP (360-160) that could be used to climb. If this aircraft had an engine failure, it would be down to 180HP (50% loss). However, the aircraft still needs 160 HP to maintain level flight at 88 KIAS. This means that there would only be 20 excess THP (180-160) available for climbing (a 90% loss).</p>`},
     { title: SEPTitle.RateOfClimb, content: `<p>The rate of climb is a function of the excess THP available. A light twin like the Seminole will have difficulty maintaining a positive single-engine rate of climb if it is not flown in the best configuration possible, at the proper speed, and using proper control technique. An engine failure can result in an 80-90% decrease in climb performance.</p>` },
