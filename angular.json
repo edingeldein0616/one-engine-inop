@@ -41,10 +41,15 @@
               "baseHref": "/one-engine-inop/"
             },
             "local-testing": {
+              "baseHref": "/edingeldein/one-engine-inop/",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.staging.ts"
+                },
+                {
+                  "replace": "src/web.config",
+                  "with": "src/web.staging.config"
                 }
               ]
             },
@@ -74,8 +79,8 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "outputPath": "S:/edingeldein/one-engine-inop/",
-              "baseHref": "/edingeldein/one-engine-inop/",
+              "outputPath": "dist/one-engine-inop-production",
+              "baseHref": "/aero.und.edu/aviation/trainers/one-engine-inoperative-aerodynamics/",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
