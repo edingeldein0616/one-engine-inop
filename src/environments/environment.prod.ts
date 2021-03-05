@@ -1,5 +1,5 @@
 export const environment = {
-  assetUrl: 'http://staging.aero.und.edu/edingeldein/assets/',
+  assetUrl: 'https://mediafiles.aero.und.edu/aero.und.edu/aviation/trainers/one-engine-inoperative-aerodynamics/assets/',
   skybox: 'skybox',
   envmap: 'envmap',
   seminole: 'seminole-master',

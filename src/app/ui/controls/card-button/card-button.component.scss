@@ -1,20 +1,10 @@
-@import 'src/styles/styles.scss';
-
-@mixin app-card-button($app-theme) {
-  $background: map-get($app-theme, background);
-  $primary: map-get($app-theme, primary);
-
-  .card {
-    cursor: pointer;
-    background-color: mat-color($background, card);
-  }
-
-  .card:hover {
-    background-color: mat-color($primary);
-    .header {
-      color: $dark-primary-text;
-    }
-  }
+.card {
+  cursor: pointer;
 }
 
-@include app-card-button($app-theme);
+.card:hover {
+  background-color: #009a44;
+  .header {
+    color: #000000;
+  }
+}

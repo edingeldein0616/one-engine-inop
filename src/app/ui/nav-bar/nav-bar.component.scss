@@ -1,4 +1,4 @@
-@import "src/styles/styles.scss";
+// @import "src/styles/styles.scss";
 
 mat-toolbar {
   height:6%;
@@ -22,10 +22,14 @@ a:hover {
   width: 1vw;
 }
 
-@mixin app-title-hover($theme) {
-  $hover: map-get($theme, foreground);
-
-  h2:hover {
-    color: mat-color($foreground);
-  }
+h2:hover {
+  color: var(--foreground-color);
 }
+
+// @mixin app-title-hover($theme) {
+//   $hover: map-get($theme, foreground);
+
+//   h2:hover {
+//     color: mat-color($foreground);
+//   }
+// }

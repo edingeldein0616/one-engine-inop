@@ -107,3 +107,14 @@ $app-theme: mat-dark-theme(
   $app-accent,
   $app-warn
 );
+
+$background: mat-color(map-get($app-theme, background));
+$primary: mat-color(map-get($app-theme, primary));
+
+:root { 
+    --primary-color: #{$primary};
+    --accent-color: map-get($app-theme, accent); 
+    --foreground-color: map-get($app-theme, foreground);
+    --background-color: #{$background};
+    --dark-primary-text-color: mat-get($primary, 50);
+}
